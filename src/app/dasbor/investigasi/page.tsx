@@ -107,21 +107,21 @@ export default function InvestigasiPage() {
                         <h1 className="text-3xl md:text-5xl font-black text-white tracking-tighter uppercase leading-[1.1] italic">Analisis <span className="text-primary-blue">Forensik</span></h1>
                         <p className="text-dark-400 font-bold flex items-center gap-2 uppercase tracking-widest text-[10px]">
                             <span className="w-1.5 h-1.5 bg-status-error/50 rounded-full animate-pulse shrink-0" />
-                            Deep investigation: <span className="text-white">TXN-001 ANOMALY DETECTED</span>
+                            Investigasi mendalam: <span className="text-white">TXN-001 ANOMALI TERDETEKSI</span>
                         </p>
                     </div>
                     <div className="flex flex-wrap items-center gap-4">
                         <button onClick={handleSetujui} className="group relative px-6 py-3 rounded-2xl bg-status-success/10 hover:bg-status-success/20 text-status-success border border-status-success/20 font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-lg">
                             <div className="absolute inset-0 bg-status-success/5 blur-xl group-hover:opacity-100 opacity-0 transition-opacity" />
-                            ✓ Approve Clear
+                            ✓ Setujui Bersih
                         </button>
                         <button onClick={handleFlag} className="group relative px-6 py-3 rounded-2xl bg-amber-warning/10 hover:bg-amber-warning/20 text-amber-warning border border-amber-warning/20 font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-lg">
                             <div className="absolute inset-0 bg-amber-warning/5 blur-xl group-hover:opacity-100 opacity-0 transition-opacity" />
-                            ⚑ Flag Investigation
+                            ⚑ Tandai Investigasi
                         </button>
                         <button onClick={handleBlokir} className="group relative px-6 py-3 rounded-2xl bg-status-error/20 hover:bg-status-error/30 text-white border border-status-error/30 font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(239,68,68,0.2)]">
                             <div className="absolute inset-0 bg-status-error/10 blur-xl group-hover:opacity-100 opacity-0 transition-opacity" />
-                            ✕ Terminate & Block
+                            ✕ Hentikan & Blokir
                         </button>
                     </div>
                 </div>
@@ -138,14 +138,14 @@ export default function InvestigasiPage() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-10 gap-x-8">
                             {[
                                 { label: "Identifier", value: transaksiDetail.id, mono: true, cyan: true },
-                                { label: "Execution Timestamp", value: transaksiDetail.waktu },
-                                { label: "Source Identity", value: transaksiDetail.pengirim, white: true },
-                                { label: "Target Account", value: transaksiDetail.penerima, white: true },
-                                { label: "Payload Volume", value: formatCurrency(transaksiDetail.jumlah), error: true },
-                                { label: "Transmission Protocol", value: transaksiDetail.metode },
-                                { label: "Geo-Location", value: transaksiDetail.lokasi },
-                                { label: "Network Address (IP)", value: transaksiDetail.ip, mono: true },
-                                { label: "Terminal Signature", value: transaksiDetail.device },
+                                { label: "Waktu Eksekusi", value: transaksiDetail.waktu },
+                                { label: "Identitas Sumber", value: transaksiDetail.pengirim, white: true },
+                                { label: "Akun Tujuan", value: transaksiDetail.penerima, white: true },
+                                { label: "Volume Muatan", value: formatCurrency(transaksiDetail.jumlah), error: true },
+                                { label: "Protokol Transmisi", value: transaksiDetail.metode },
+                                { label: "Lokasi Geografis", value: transaksiDetail.lokasi },
+                                { label: "Alamat Jaringan (IP)", value: transaksiDetail.ip, mono: true },
+                                { label: "Tanda Tangan Terminal", value: transaksiDetail.device },
                                 { label: "User Agent", value: currentUserAgent, mono: true },
                             ].map((item) => (
                                 <div key={item.label} className="group/item">
@@ -166,8 +166,8 @@ export default function InvestigasiPage() {
                     <div className="glass-panel p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] flex flex-col items-center justify-center relative group overflow-hidden">
                         <div className="absolute inset-0 bg-status-error/5 group-hover:bg-status-error/10 transition-colors duration-700" />
                         <div className="flex items-center gap-2 mb-10 relative z-10">
-                            <h3 className="text-[10px] font-black text-dark-400 uppercase tracking-[0.3em]">Threat Intensity Matrix</h3>
-                            <InfoTooltip text="Skor risiko 0–100 yang dihitung oleh Neural Engine. Skor di atas 80 dikategorikan sebagai CRITICAL dan merekomendasikan pemblokiran segera." />
+                            <h3 className="text-[10px] font-black text-dark-400 uppercase tracking-[0.3em]">Matriks Intensitas Ancaman</h3>
+                            <InfoTooltip text="Skor risiko 0–100 yang dihitung oleh Neural Engine. Skor di atas 80 dikategorikan sebagai KRITIS dan merekomendasikan pemblokiran segera." />
                         </div>
                         
                         <div className="relative w-56 h-56 z-10">
@@ -192,10 +192,10 @@ export default function InvestigasiPage() {
                         </div>
 
                         <div className="mt-10 px-8 py-3 rounded-2xl bg-status-error/20 text-white text-xs font-black border border-status-error/30 tracking-widest uppercase relative z-10 shadow-[0_0_30px_rgba(239,68,68,0.2)]">
-                            Status: CRITICAL THREAT
+                            Status: ANCAMAN KRITIS
                         </div>
                         <p className="text-dark-500 text-[10px] font-bold mt-6 text-center leading-relaxed relative z-10 max-w-[200px] uppercase tracking-tighter">
-                            Neural Engine indicates high-confidence pattern match for <span className="text-white">Structured Money Laundering</span>
+                            Neural Engine menunjukkan kecocokan pola kepercayaan tinggi untuk <span className="text-white">Pencucian Uang Terstruktur</span>
                         </p>
                     </div>
                 </div>
@@ -207,17 +207,17 @@ export default function InvestigasiPage() {
                     <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-8 mb-10">
                         <div>
                             <div className="flex items-center gap-2">
-                                <h3 className="text-2xl font-black text-white tracking-tighter uppercase italic">Neural <span className="text-neon-cyan">Topology Graph</span></h3>
+                                <h3 className="text-2xl font-black text-white tracking-tighter uppercase italic">Grafik <span className="text-neon-cyan">Topologi Neural</span></h3>
                                 <InfoTooltip text="Visualisasi hubungan antar entitas menggunakan Graph Neural Network (GNN). Garis putus-putus merah menandai koneksi mencurigakan. Klik node untuk melihat skor risiko tiap entitas." />
                             </div>
-                            <p className="text-[10px] font-bold text-dark-500 mt-2 uppercase tracking-[0.2em]">Deep relational analysis via Graph Neural Networks (GNN)</p>
+                            <p className="text-[10px] font-bold text-dark-500 mt-2 uppercase tracking-[0.2em]">Analisis relasional mendalam melalui Graph Neural Networks (GNN)</p>
                         </div>
                         <div className="flex flex-wrap items-center gap-6 glass-panel px-6 py-3 rounded-2xl border-white/5 bg-dark-950/50">
                             {[
                                 { color: "bg-status-error", label: "NODE SUSPECT" },
-                                { color: "bg-primary-blue", label: "BANK NODE" },
-                                { color: "bg-amber-warning", label: "ENTITY NODE" },
-                                { color: "bg-status-success", label: "CLEAR" }
+                                { color: "bg-primary-blue", label: "NODE BANK" },
+                                { color: "bg-amber-warning", label: "NODE ENTITAS" },
+                                { color: "bg-status-success", label: "BERSIH" }
                             ].map(item => (
                                 <div key={item.label} className="flex items-center gap-2">
                                     <span className={`w-2 h-2 rounded-full ${item.color} shadow-[0_0_8px_rgba(0,0,0,0.5)]`} />
@@ -283,10 +283,10 @@ export default function InvestigasiPage() {
                     <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-8 mb-12">
                         <div>
                             <div className="flex items-center gap-2">
-                                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tighter uppercase italic">SHAP <span className="text-hyper-violet">Feature Impact</span></h3>
+                                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tighter uppercase italic">Dampak <span className="text-hyper-violet">Fitur SHAP</span></h3>
                                 <InfoTooltip text="Explainable AI (XAI) berbasis SHAP values. Menjelaskan faktor apa yang paling mempengaruhi keputusan model. Bar merah = dampak tinggi, kuning = sedang, hijau = rendah." />
                             </div>
-                            <p className="text-[10px] font-bold text-dark-500 mt-2 uppercase tracking-[0.2em]">Transparent AI decision reasoning & attribute weightings</p>
+                            <p className="text-[10px] font-bold text-dark-500 mt-2 uppercase tracking-[0.2em]">Penalaran keputusan AI yang transparan & pembobotan atribut</p>
                         </div>
                         <div className="px-6 py-2.5 rounded-2xl bg-dark-950 border border-white/5 text-hyper-violet text-[10px] font-black uppercase tracking-widest">
                             Hyper-Param Engine v4.0.1
@@ -315,10 +315,10 @@ export default function InvestigasiPage() {
                         <div className="absolute top-0 left-0 w-2 h-full bg-status-error opacity-40" />
                         <h4 className="text-xs font-black text-white uppercase tracking-[0.3em] mb-4 flex items-center gap-3">
                             <Cpu className="w-5 h-5 text-neon-cyan" strokeWidth={2.5} />
-                            Narrative Logic Protocol
+                            Protokol Logika Naratif
                         </h4>
                         <p className="text-sm font-bold text-dark-400 leading-relaxed uppercase tracking-tight">
-                            The Neural Matrix flagged <span className="text-status-error">TXN-001</span> with 92% confidence based on <span className="text-white">Temporal Discontinuity</span> (02:45 Execution) and <span className="text-white">Network Path Anomaly</span>. GNN Analysis reveals clear link to <span className="text-amber-warning uppercase">Node F (Offshore Shell)</span>. Location data suggests IP discrepancy between device certificate and current network gateway. Recommend <span className="text-status-error underline decoration-2 underline-offset-4">Full Lock & Asset Freezing</span>.
+                            Neural Matrix menandai <span className="text-status-error">TXN-001</span> dengan keyakinan 92% berdasarkan <span className="text-white">Temporal Discontinuity</span> (Eksekusi 02:45) dan <span className="text-white">Anomali Jalur Jaringan</span>. Analisis GNN mengungkapkan hubungan jelas ke <span className="text-amber-warning uppercase">Node F (Shell Luar Negeri)</span>. Data lokasi menunjukkan perbedaan IP antara sertifikat perangkat dan gateway jaringan saat ini. Merekomendasikan <span className="text-status-error underline decoration-2 underline-offset-4">Penguncian Penuh & Pembekuan Aset</span>.
                         </p>
                     </div>
                 </div>

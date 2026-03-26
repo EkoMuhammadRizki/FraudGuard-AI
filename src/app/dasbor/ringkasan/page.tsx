@@ -100,7 +100,7 @@ export default function RingkasanPage() {
                     <h1 className="text-3xl md:text-5xl font-black text-white tracking-tighter uppercase leading-[1.1]">Ringkasan <span className="text-primary-blue block sm:inline">Operasional</span></h1>
                     <p className="text-dark-400 font-bold flex items-center gap-2 uppercase tracking-widest text-[10px]">
                       <span className="w-1.5 h-1.5 bg-neon-cyan/50 rounded-full shrink-0" />
-                      Infrastructure monitoring: <span className="text-white">Active</span>
+                      Pemantauan infrastruktur: <span className="text-white">Aktif</span>
                     </p>
                 </div>
                 <div className="flex items-center justify-between sm:justify-start gap-4 sm:gap-6 glass-panel px-5 py-3 rounded-2xl border-white/5 bg-white/5">
@@ -109,10 +109,10 @@ export default function RingkasanPage() {
                           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-status-success opacity-75" />
                           <span className="relative inline-flex rounded-full h-3 w-3 bg-status-success shadow-[0_0_10px_rgba(34,197,94,0.8)]" />
                         </span>
-                        <span className="text-status-success font-black text-xs uppercase tracking-widest">Live Signal</span>
+                        <span className="text-status-success font-black text-xs uppercase tracking-widest">Sinyal Langsung</span>
                     </div>
                     <div className="w-[1px] h-4 bg-white/10" />
-                    <span className="text-dark-400 text-[10px] font-black uppercase tracking-tighter">Updated: <span className="text-white">Now</span></span>
+                    <span className="text-dark-400 text-[10px] font-black uppercase tracking-tighter">Diperbarui: <span className="text-white">Sekarang</span></span>
                 </div>
             </div>
 
@@ -156,16 +156,16 @@ export default function RingkasanPage() {
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-10">
                         <div>
                             <div className="flex items-center gap-2">
-                                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tighter uppercase italic">Geographic <span className="text-primary-blue">Threat Map</span></h3>
+                                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tighter uppercase italic">Peta <span className="text-primary-blue">Ancaman Geografis</span></h3>
                                 <InfoTooltip text="Peta persebaran ancaman fraud secara geografis. Setiap titik mewakili node transaksi mencurigakan yang terdeteksi di suatu wilayah, dengan warna menunjukkan tingkat keparahan." />
                             </div>
-                            <p className="text-[10px] font-bold text-dark-500 mt-2 uppercase tracking-[0.2em]">Hotspots density by regional nodes</p>
+                            <p className="text-[10px] font-bold text-dark-500 mt-2 uppercase tracking-[0.2em]">Kepadatan titik panas berdasarkan node regional</p>
                         </div>
                         <div className="flex items-center gap-4 glass-panel px-4 py-3 sm:py-2 rounded-xl border-white/5 bg-dark-950/50 w-fit">
                             {[
-                                { color: "bg-status-success", label: "SAFE" },
-                                { color: "bg-amber-warning", label: "WARN" },
-                                { color: "bg-status-error", label: "CRITICAL" }
+                                { color: "bg-status-success", label: "AMAN" },
+                                { color: "bg-amber-warning", label: "PERINGATAN" },
+                                { color: "bg-status-error", label: "KRITIS" }
                             ].map(item => (
                                 <div key={item.label} className="flex items-center gap-2">
                                     <span className={`w-2 h-2 rounded-full ${item.color}`} />
@@ -209,7 +209,7 @@ export default function RingkasanPage() {
                             })}
                         </svg>
                         <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 flex flex-col gap-1.5">
-                          <div className="text-[13px] sm:text-[12px] font-black text-neon-cyan tracking-[0.2em] uppercase">Grid Coordinates</div>
+                          <div className="text-[13px] sm:text-[12px] font-black text-neon-cyan tracking-[0.2em] uppercase">Koordinat Grid</div>
                           <div className="font-mono text-[11px] sm:text-[11px] text-dark-400 font-bold bg-dark-950/40 px-2 py-0.5 rounded-lg border border-white/5 w-fit">LAT: -6.2088 | LONG: 106.8456</div>
                         </div>
                     </div>
@@ -222,14 +222,14 @@ export default function RingkasanPage() {
                     <div className="flex flex-col gap-1 mb-10">
                         <div className="flex items-start sm:items-center justify-between gap-6 flex-wrap">
                           <div className="flex items-center gap-3">
-                              <h3 className="text-2xl font-black text-white tracking-tighter uppercase italic leading-tight">Model <br className="hidden xl:block 2xl:hidden" /><span className="text-hyper-violet">Precision</span></h3>
+                              <h3 className="text-2xl font-black text-white tracking-tighter uppercase italic leading-tight">Presisi <br className="hidden xl:block 2xl:hidden" /><span className="text-hyper-violet">Model</span></h3>
                               <InfoTooltip text="Grafik tren penurunan False Positive Rate (FPR) sepanjang tahun. Semakin rendah angkanya, semakin presisi model AI dalam membedakan transaksi sah vs. fraud." />
                           </div>
                           <span className="px-3 py-1.5 rounded-xl bg-status-success/10 text-status-success text-[10px] font-black border border-status-success/20 tracking-widest shrink-0">
-                              OPTIMIZED
+                              TEROPTIMALISASI
                           </span>
                         </div>
-                        <p className="text-[10px] font-bold text-dark-500 mt-1 uppercase tracking-[0.2em]">FP Rate reduction trend (Annual)</p>
+                        <p className="text-[10px] font-bold text-dark-500 mt-1 uppercase tracking-[0.2em]">Tren pengurangan FP Rate (Tahunan)</p>
                     </div>
 
                     <div className="h-72 w-full mt-6 relative">
@@ -263,17 +263,17 @@ export default function RingkasanPage() {
                         </div>
                         <div>
                             <div className="flex items-center gap-2">
-                                <h3 className="text-2xl font-black text-white tracking-tighter uppercase italic">Raw <span className="text-neon-cyan">Transaction Feed</span></h3>
+                                <h3 className="text-2xl font-black text-white tracking-tighter uppercase italic">Feed <span className="text-neon-cyan">Transaksi Mentah</span></h3>
                                 <InfoTooltip text="Live stream transaksi terbaru yang diproses sistem. Menampilkan ID node, timestamp, identitas pengirim/penerima, nominal, tingkat ancaman, dan status tindakan secara real-time." />
                             </div>
                             <div className="flex items-center gap-2 mt-1">
                                 <span className="w-1.5 h-1.5 rounded-full bg-status-success animate-pulse" />
-                                <span className="text-[10px] font-black text-dark-500 uppercase tracking-widest">Live Decrypting Protocol Active</span>
+                                <span className="text-[10px] font-black text-dark-500 uppercase tracking-widest">Protokol Dekripsi Langsung Aktif</span>
                             </div>
                         </div>
                     </div>
                     <Link href="/dasbor/transaksi" className="px-8 py-3.5 rounded-2xl bg-dark-900/50 hover:bg-white/5 text-dark-300 hover:text-white text-xs font-black transition-all border border-white/5 active:scale-95 uppercase tracking-widest">
-                        Access Full Database
+                        Akses Database Lengkap
                     </Link>
                 </div>
 
@@ -282,11 +282,11 @@ export default function RingkasanPage() {
                         <thead>
                             <tr className="text-left text-xs font-black text-dark-500 uppercase tracking-[0.2em]">
                                 <th className="pb-4 pl-6">ID Node</th>
-                                <th className="pb-4">Timestamp</th>
-                                <th className="pb-4">Source Node</th>
-                                <th className="pb-4">Target Node</th>
+                                <th className="pb-4">Waktu</th>
+                                <th className="pb-4">Node Sumber</th>
+                                <th className="pb-4">Node Tujuan</th>
                                 <th className="pb-4 text-right">Volume</th>
-                                <th className="pb-4 text-center">Threat Lvl</th>
+                                <th className="pb-4 text-center">Tingkat Ancaman</th>
                                 <th className="pb-4 text-center pr-6">Status</th>
                             </tr>
                         </thead>

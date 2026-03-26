@@ -33,8 +33,8 @@ export default function DasborLayout({
                             <Menu className="w-5 h-5" strokeWidth={2.5} />
                         </button>
                         <div>
-                           <h2 className="text-base md:text-xl font-black text-white tracking-tight uppercase leading-none">Dashboard</h2>
-                           <div className="hidden md:block text-[10px] font-bold text-neon-cyan tracking-[0.2em] uppercase opacity-60 mt-1">System Operational</div>
+                           <h2 className="text-base md:text-xl font-black text-white tracking-tight uppercase leading-none">Dasbor</h2>
+                           <div className="hidden md:block text-[10px] font-bold text-neon-cyan tracking-[0.2em] uppercase opacity-60 mt-1">Sistem Operasional</div>
                         </div>
                     </div>
 

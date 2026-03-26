@@ -22,49 +22,49 @@ interface TelemetryData {
 // ─── Scenario Config ──────────────────────────────────────
 const scenarioConfig = {
     normal: {
-        label: "Normal Human Activity",
+        label: "Aktivitas Manusia Normal",
         icon: <UserCheck className="w-5 h-5" />,
         color: "text-status-success",
         border: "border-status-success/40",
         bg: "bg-status-success/10",
         glow: "shadow-[0_0_30px_rgba(16,185,129,0.2)]",
         riskScore: () => Math.floor(Math.random() * 20) + 5,
-        verdict: "VERIFIED",
+        verdict: "TERVERIFIKASI",
         verdictColor: "text-status-success",
         description: "Input manual manusia yang lambat dan natural",
     },
     bot: {
-        label: "Bot-Driven Automation",
+        label: "Otomatisasi Berbasis Bot",
         icon: <Bot className="w-5 h-5" />,
         color: "text-status-error",
         border: "border-status-error/40",
         bg: "bg-status-error/10",
         glow: "shadow-[0_0_30px_rgba(239,68,68,0.2)]",
         riskScore: () => Math.floor(Math.random() * 10) + 88,
-        verdict: "BLOCKED",
+        verdict: "DIBLOKIR",
         verdictColor: "text-status-error",
         description: "Input instan melalui script otomatis — tidak manusiawi",
     },
     syndicate: {
-        label: "Syndicate / Money Mule",
+        label: "Sindikat / Pencucian Uang",
         icon: <Users className="w-5 h-5" />,
         color: "text-amber-400",
         border: "border-amber-400/40",
         bg: "bg-amber-400/10",
         glow: "shadow-[0_0_30px_rgba(251,191,36,0.2)]",
         riskScore: () => Math.floor(Math.random() * 8) + 90,
-        verdict: "BLOCKED",
+        verdict: "DIBLOKIR",
         verdictColor: "text-status-error",
         description: "Perangkat / akun masuk daftar hitam jaringan penipuan",
     },
 };
 
 const PIPELINE_STEPS: { stage: PipelineStage; label: string; detail: string; duration: number }[] = [
-    { stage: "capture", label: "Behavioral Data Captured", detail: "108 raw signals extracted from session", duration: 600 },
-    { stage: "tensor", label: "Feature Tensor Generated", detail: "Vector shape [1, 47] — XGBoost ready", duration: 900 },
-    { stage: "kafka", label: "Pushed to Kafka Pipeline", detail: "Topic: pending-tx | Partition: 0 | Offset: 8821", duration: 1200 },
-    { stage: "fds", label: "Hybrid FDS Engine Analyzing", detail: "GNN + XGBoost parallel inference running...", duration: 1800 },
-    { stage: "done", label: "Verdict Issued", detail: "", duration: 0 },
+    { stage: "capture", label: "Data Perilaku Ditangkap", detail: "108 sinyal mentah diekstrak dari sesi", duration: 600 },
+    { stage: "tensor", label: "Feature Tensor Dibuat", detail: "Vector shape [1, 47] — Siap XGBoost", duration: 900 },
+    { stage: "kafka", label: "Dikirim ke Pipeline Kafka", detail: "Topik: pending-tx | Partisi: 0 | Offset: 8821", duration: 1200 },
+    { stage: "fds", label: "Mesin FDS Sedang Menganalisis", detail: "GNN + XGBoost inferensi paralel berjalan...", duration: 1800 },
+    { stage: "done", label: "Vonis Dikeluarkan", detail: "", duration: 0 },
 ];
 
 // ─── Component ────────────────────────────────────────────
@@ -80,6 +80,7 @@ export default function SimulasiPage() {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const [completedSteps, setCompletedSteps] = useState<PipelineStage[]>([]);
     const [currentUserAgent, setCurrentUserAgent] = useState<string>("Detecting...");
+    const [currentIp, setCurrentIp] = useState<string>("Detecting...");
     const formRef = useRef<HTMLDivElement>(null);
     const keyDownTime = useRef<number>(0);
 
@@ -87,6 +88,12 @@ export default function SimulasiPage() {
         if (typeof window !== "undefined") {
             setCurrentUserAgent(window.navigator.userAgent);
         }
+
+        // Fetch user IP
+        fetch("https://api.ipify.org?format=json")
+            .then(res => res.json())
+            .then(data => setCurrentIp(data.ip))
+            .catch(() => setCurrentIp("192.168.1.xxx (Mock)"));
     }, []);
 
     // Mouse Tracker
@@ -208,10 +215,10 @@ export default function SimulasiPage() {
                     </div>
                     <div>
                         <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tighter uppercase italic">
-                            FraudGuard <span className="text-hyper-violet">Virtual Terminal</span>
+                            FraudGuard <span className="text-hyper-violet">Terminal Virtual</span>
                         </h1>
                         <p className="text-[10px] font-bold text-dark-500 uppercase tracking-[0.2em] mt-0.5">
-                            Behavioral Fraud Detection Simulation Engine
+                            Mesin Simulasi Deteksi Fraud Berbasis Perilaku
                         </p>
                     </div>
                 </div>
@@ -228,14 +235,14 @@ export default function SimulasiPage() {
                         {/* Bank Header */}
                         <div className="bg-gradient-to-r from-blue-950 via-blue-900 to-blue-950 px-8 py-5 flex items-center justify-between border-b border-white/5">
                             <div>
-                                <div className="text-[9px] font-black text-blue-300 tracking-[0.3em] uppercase mb-0.5">Secure Banking</div>
+                                <div className="text-[9px] font-black text-blue-300 tracking-[0.3em] uppercase mb-0.5">Perbankan Aman</div>
                                 <div className="text-lg font-black text-white tracking-tight uppercase italic">
                                     Bank <span className="text-blue-300">Rakyat</span> Digital
                                 </div>
                             </div>
                             <div className="flex items-center gap-2">
                                 <Wifi className="w-4 h-4 text-status-success" />
-                                <span className="text-[10px] font-black text-status-success tracking-widest uppercase">Secured</span>
+                                <span className="text-[10px] font-black text-status-success tracking-widest uppercase">Terlindungi</span>
                             </div>
                         </div>
 
@@ -243,10 +250,10 @@ export default function SimulasiPage() {
                         <div ref={formRef} className="p-6 md:p-8 space-y-5" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
-                                    <label className="text-[10px] font-black text-dark-500 uppercase tracking-[0.2em]">Sender Name</label>
+                                    <label className="text-[10px] font-black text-dark-500 uppercase tracking-[0.2em]">Nama Pengirim</label>
                                     <input
                                         type="text"
-                                        placeholder="e.g. Ahmad Rizki"
+                                        placeholder="cth: Ahmad Rizki"
                                         value={form.senderName}
                                         onChange={e => handleFormChange("senderName", e.target.value)}
                                         disabled={isRunning || isDone}
@@ -254,10 +261,10 @@ export default function SimulasiPage() {
                                     />
                                 </div>
                                 <div className="space-y-1.5">
-                                    <label className="text-[10px] font-black text-dark-500 uppercase tracking-[0.2em]">Receiver Name</label>
+                                    <label className="text-[10px] font-black text-dark-500 uppercase tracking-[0.2em]">Nama Penerima</label>
                                     <input
                                         type="text"
-                                        placeholder="e.g. Maya S."
+                                        placeholder="cth: Maya S."
                                         value={form.receiverName}
                                         onChange={e => handleFormChange("receiverName", e.target.value)}
                                         disabled={isRunning || isDone}
@@ -266,10 +273,10 @@ export default function SimulasiPage() {
                                 </div>
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-dark-500 uppercase tracking-[0.2em]">Destination Account</label>
+                                <label className="text-[10px] font-black text-dark-500 uppercase tracking-[0.2em]">Rekening Tujuan</label>
                                 <input
                                     type="text"
-                                    placeholder="e.g. 098-000-112-9931"
+                                    placeholder="cth: 098-000-112-9931"
                                     value={form.account}
                                     onChange={e => handleFormChange("account", e.target.value)}
                                     disabled={isRunning || isDone}
@@ -277,12 +284,12 @@ export default function SimulasiPage() {
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-dark-500 uppercase tracking-[0.2em]">Transfer Amount</label>
+                                <label className="text-[10px] font-black text-dark-500 uppercase tracking-[0.2em]">Nominal Transfer</label>
                                 <div className="relative">
                                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-black text-dark-400">IDR</span>
                                     <input
                                         type="text"
-                                        placeholder="25,000,000"
+                                        placeholder="25.000.000"
                                         value={form.amount}
                                         onChange={e => handleFormChange("amount", e.target.value)}
                                         disabled={isRunning || isDone}
@@ -291,10 +298,10 @@ export default function SimulasiPage() {
                                 </div>
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-dark-500 uppercase tracking-[0.2em]">Transaction Note</label>
+                                <label className="text-[10px] font-black text-dark-500 uppercase tracking-[0.2em]">Catatan Transaksi</label>
                                 <input
                                     type="text"
-                                    placeholder="e.g. Bayar Cicilan"
+                                    placeholder="cth: Bayar Cicilan"
                                     value={form.note}
                                     onChange={e => handleFormChange("note", e.target.value)}
                                     disabled={isRunning || isDone}
@@ -310,9 +317,9 @@ export default function SimulasiPage() {
                                         className="flex-1 flex items-center justify-center gap-3 py-4 rounded-2xl bg-primary-blue text-white text-sm font-black uppercase tracking-widest transition-all hover:bg-primary-blue-hover active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
                                     >
                                         {isRunning ? (
-                                            <><Loader2 className="w-4 h-4 animate-spin" /> Processing...</>
+                                            <><Loader2 className="w-4 h-4 animate-spin" /> Sedang Memproses...</>
                                         ) : (
-                                            <><Send className="w-4 h-4" /> Transfer Now</>
+                                            <><Send className="w-4 h-4" /> Transfer Sekarang</>
                                         )}
                                     </button>
                                 ) : (
@@ -320,7 +327,7 @@ export default function SimulasiPage() {
                                         onClick={resetSimulation}
                                         className="flex-1 flex items-center justify-center gap-3 py-4 rounded-2xl bg-dark-800 border border-white/10 text-white text-sm font-black uppercase tracking-widest hover:bg-white/5 transition-all active:scale-95"
                                     >
-                                        <RefreshCw className="w-4 h-4" /> Reset Simulation
+                                        <RefreshCw className="w-4 h-4" /> Reset Simulasi
                                     </button>
                                 )}
                             </div>
@@ -334,7 +341,7 @@ export default function SimulasiPage() {
                                 <Zap className="w-4 h-4 text-hyper-violet" strokeWidth={2.5} />
                             </div>
                             <div>
-                                <h3 className="text-sm font-black text-white uppercase tracking-widest">Scenario Injector</h3>
+                                <h3 className="text-sm font-black text-white uppercase tracking-widest">Injektor Skenario</h3>
                                 <p className="text-[10px] text-dark-500 font-bold uppercase tracking-tight">Pilih profil perilaku untuk diuji</p>
                             </div>
                         </div>
@@ -378,13 +385,13 @@ export default function SimulasiPage() {
                                     <TerminalSquare className="w-4 h-4 text-neon-cyan" strokeWidth={2.5} />
                                 </div>
                                 <div>
-                                    <h3 className="text-sm font-black text-white uppercase tracking-widest">Live Telemetry Feed</h3>
-                                    <p className="text-[10px] text-dark-500 font-bold uppercase tracking-tight">Raw behavioral signal capture</p>
+                                    <h3 className="text-sm font-black text-white uppercase tracking-widest">Feed Telemetri Langsung</h3>
+                                    <p className="text-[10px] text-dark-500 font-bold uppercase tracking-tight">Tangkapan sinyal perilaku mentah</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-1.5">
                                 <span className="w-1.5 h-1.5 rounded-full bg-neon-cyan animate-pulse" />
-                                <span className="text-[9px] font-black text-neon-cyan tracking-widest uppercase">Capturing</span>
+                                <span className="text-[9px] font-black text-neon-cyan tracking-widest uppercase">Menangkap</span>
                             </div>
                         </div>
 
@@ -396,7 +403,8 @@ export default function SimulasiPage() {
                                 { label: "Mouse Path", value: computedTelemetry.mousePath, mono: false },
                                 { label: "Hesitation Events", value: computedTelemetry.hesitation, mono: true },
                                 { label: "User Agent", value: currentUserAgent, mono: true },
-                                { label: "Geo-Location", value: "LAT: -6.2088 | LONG: 106.8456", mono: true },
+                                { label: "Alamat IP", value: currentIp, mono: true },
+                                { label: "Lokasi Geografis", value: "LAT: -6.2088 | LONG: 106.8456", mono: true },
                             ].map(row => (
                                 <div key={row.label} className="flex items-center justify-between px-5 py-3.5 group hover:bg-white/[0.02] transition-colors">
                                     <span className="text-[10px] font-black text-dark-500 uppercase tracking-widest">{row.label}</span>
@@ -409,7 +417,7 @@ export default function SimulasiPage() {
 
                         {/* Mouse path visualizer */}
                         <div className="mt-5 bg-dark-950/60 rounded-2xl border border-white/5 p-4 h-28 relative overflow-hidden">
-                            <div className="absolute top-2 left-3 text-[9px] font-black text-dark-600 uppercase tracking-widest">Mouse Path Trace</div>
+                            <div className="absolute top-2 left-3 text-[9px] font-black text-dark-600 uppercase tracking-widest">Jejak Jalur Mouse</div>
                             <svg className="w-full h-full" viewBox="0 0 400 80">
                                 {telemetry.mousePoints.length > 1 && scenario === "normal" && (
                                     <polyline
@@ -437,7 +445,7 @@ export default function SimulasiPage() {
                                 <Cpu className="w-4 h-4 text-primary-blue" strokeWidth={2.5} />
                             </div>
                             <div>
-                                <h3 className="text-sm font-black text-white uppercase tracking-widest">Pipeline Output</h3>
+                                <h3 className="text-sm font-black text-white uppercase tracking-widest">Output Pipeline</h3>
                                 <p className="text-[10px] text-dark-500 font-bold uppercase tracking-tight">Feature Tensor → Kafka → Hybrid FDS Engine</p>
                             </div>
                         </div>
@@ -445,7 +453,7 @@ export default function SimulasiPage() {
                         {pipelineStage === "idle" ? (
                             <div className="flex flex-col items-center justify-center py-12 gap-3 opacity-40">
                                 <Cpu className="w-10 h-10 text-dark-600" strokeWidth={1.5} />
-                                <p className="text-[10px] font-black text-dark-600 uppercase tracking-widest">Awaiting transaction signal...</p>
+                                <p className="text-[10px] font-black text-dark-600 uppercase tracking-widest">Menunggu sinyal transaksi...</p>
                             </div>
                         ) : (
                             <div className="space-y-3">
@@ -465,12 +473,12 @@ export default function SimulasiPage() {
                                     );
                                 })}
 
-                                {/* Verdict */}
+                                {/* Vonis */}
                                 {isDone && riskScore !== null && (
                                     <div className={`mt-4 rounded-2xl border p-6 text-center transition-all ${cfg.border} ${cfg.bg} ${cfg.glow}`}>
-                                        <div className="text-[10px] font-black text-dark-400 uppercase tracking-[0.3em] mb-3">FDS Verdict</div>
+                                        <div className="text-[10px] font-black text-dark-400 uppercase tracking-[0.3em] mb-3">Vonis FDS</div>
                                         <div className="flex items-center justify-center gap-3 mb-3">
-                                            {cfg.verdict === "BLOCKED"
+                                            {cfg.verdict === "DIBLOKIR"
                                                 ? <ShieldX className="w-10 h-10 text-status-error" strokeWidth={2} />
                                                 : <ShieldCheck className="w-10 h-10 text-status-success" strokeWidth={2} />
                                             }
@@ -478,7 +486,7 @@ export default function SimulasiPage() {
                                         </div>
                                         <div className="flex items-center justify-center gap-2 mt-2">
                                             <AlertTriangle className="w-3.5 h-3.5 text-dark-500" />
-                                            <span className="text-[11px] text-dark-400 font-black uppercase tracking-widest">Risk Score: <span className={cfg.verdictColor}>{riskScore}/100</span></span>
+                                            <span className="text-[11px] text-dark-400 font-black uppercase tracking-widest">Skor Risiko: <span className={cfg.verdictColor}>{riskScore}/100</span></span>
                                         </div>
                                     </div>
                                 )}

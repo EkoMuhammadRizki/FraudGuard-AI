@@ -97,7 +97,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             {/* Navigation Menu */}
             <nav className="flex-1 py-10 px-4 space-y-2 overflow-y-auto custom-scrollbar">
                 <div className="px-4 mb-4">
-                  <span className="text-[10px] font-black text-dark-500 uppercase tracking-[0.2em]">Main Operations</span>
+                  <span className="text-[10px] font-black text-dark-500 uppercase tracking-[0.2em]">Operasi Utama</span>
                 </div>
                 {menuItems.map((item) => {
                     const isActive = pathname === item.href || pathname.startsWith(item.href.split("#")[0]);
@@ -138,7 +138,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                         </div>
                         <div className="flex-1 min-w-0">
                             <p className="text-sm font-black text-white truncate leading-tight">Analis Fraud</p>
-                            <p className="text-[10px] font-bold text-dark-500 truncate mt-1 tracking-tight">LEVEL 4 CLEARANCE</p>
+                            <p className="text-[10px] font-bold text-dark-500 truncate mt-1 tracking-tight">AKSES LEVEL 4</p>
                         </div>
                     </div>
                     <button
@@ -146,7 +146,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                         className="flex items-center justify-center gap-3 w-full py-3 rounded-xl bg-dark-900/50 border border-white/5 text-xs font-black text-dark-400 hover:text-white hover:bg-status-error/10 hover:border-status-error/20 transition-all uppercase tracking-widest cursor-pointer"
                     >
                         <LogOut className="w-4 h-4" strokeWidth={2.5} />
-                        Log Out
+                        Keluar
                     </button>
                 </div>
             </div>

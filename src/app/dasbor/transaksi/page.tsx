@@ -48,13 +48,13 @@ export default function TransaksiPage() {
                     <h1 className="text-3xl md:text-5xl font-black text-white tracking-tighter uppercase leading-[1.1] italic">Arsip <span className="text-primary-blue block sm:inline">Transaksi</span></h1>
                     <p className="text-dark-400 font-bold flex items-center gap-2 uppercase tracking-widest text-[10px]">
                         <span className="w-1.5 h-1.5 bg-primary-blue/50 rounded-full shrink-0" />
-                        Comprehensive ledger: <span className="text-white">Secure Storage</span>
+                        Buku besar komprehensif: <span className="text-white">Penyimpanan Aman</span>
                     </p>
                 </div>
                 <div className="flex items-center gap-4">
                     <button className="group relative px-8 py-3.5 rounded-2xl bg-primary-blue text-white font-black text-xs uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(59,130,246,0.3)]">
                         <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
-                        Export Intelligence (CSV)
+                        Ekspor Intelijen (CSV)
                     </button>
                 </div>
             </div>
@@ -86,11 +86,11 @@ export default function TransaksiPage() {
                             value={filterRisk}
                             onChange={(e) => setFilterRisk(e.target.value)}
                         >
-                            <option value="Semua">All Threat Levels</option>
-                            <option value="Kritis">Critical (High-Risk)</option>
-                            <option value="Tinggi">High Intensity</option>
-                            <option value="Sedang">Medium Pattern</option>
-                            <option value="Rendah">Low / Safe</option>
+                            <option value="Semua">Semua Tingkat Ancaman</option>
+                            <option value="Kritis">Kritis (Risiko Tinggi)</option>
+                            <option value="Tinggi">Intensitas Tinggi</option>
+                            <option value="Sedang">Pola Sedang</option>
+                            <option value="Rendah">Rendah / Aman</option>
                         </select>
                         <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none">
                             <ChevronDown className="w-4 h-4 text-dark-500 group-focus-within/select:text-neon-cyan transition-colors" strokeWidth={3} />
@@ -104,11 +104,11 @@ export default function TransaksiPage() {
                         <thead>
                             <tr className="text-left text-[10px] font-black text-dark-500 uppercase tracking-[0.2em]">
                                 <th className="pb-4 pl-8">ID Node</th>
-                                <th className="pb-4">Execution Time</th>
-                                <th className="pb-4">Source Identity</th>
-                                <th className="pb-4">Target Identity</th>
-                                <th className="pb-4 text-right">Payload Value</th>
-                                <th className="pb-4 text-center">Threat Lvl</th>
+                                <th className="pb-4">Waktu Eksekusi</th>
+                                <th className="pb-4">Identitas Sumber</th>
+                                <th className="pb-4">Identitas Penerima</th>
+                                <th className="pb-4 text-right">Nilai Muatan</th>
+                                <th className="pb-4 text-center">Tingkat Ancaman</th>
                                 <th className="pb-4 text-center pr-8">Status</th>
                             </tr>
                         </thead>
@@ -144,7 +144,7 @@ export default function TransaksiPage() {
                                           <div className="w-16 h-16 rounded-full bg-dark-800 flex items-center justify-center border border-white/10">
                                               <Search className="w-8 h-8 text-dark-400" strokeWidth={1.5} />
                                           </div>
-                                          <p className="text-sm font-black text-dark-400 uppercase tracking-widest">No data matching filters detected</p>
+                                          <p className="text-sm font-black text-dark-400 uppercase tracking-widest">Tidak ada data yang cocok dengan filter</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -156,11 +156,11 @@ export default function TransaksiPage() {
                 {/* Footer / Pagination Row */}
                 <div className="mt-12 flex flex-col xl:flex-row items-center justify-between gap-8 border-t border-white/5 pt-10">
                     <div className="text-[10px] font-black text-dark-500 uppercase tracking-widest">
-                        Displaying <span className="text-white">1</span> of <span className="text-white">{filteredData.length}</span> total entities from ledger storage
+                        Menampilkan <span className="text-white">1</span> dari <span className="text-white">{filteredData.length}</span> total entitas dari penyimpanan buku besar
                     </div>
                     <div className="flex items-center gap-2">
                         <button className="px-5 py-2.5 rounded-xl border border-white/5 bg-dark-900/50 text-dark-500 font-black text-[10px] uppercase tracking-widest cursor-not-allowed">
-                            Previous Ledger
+                            Halaman Sebelumnya
                         </button>
                         <div className="flex items-center gap-1.5 px-1">
                           <button className="w-10 h-10 rounded-xl bg-primary-blue text-white text-xs font-black shadow-[0_0_15px_rgba(59,130,246,0.3)]">1</button>
@@ -168,7 +168,7 @@ export default function TransaksiPage() {
                           <button className="w-10 h-10 rounded-xl hover:bg-white/5 text-dark-400 hover:text-white text-xs font-black transition-all">3</button>
                         </div>
                         <button className="px-5 py-2.5 rounded-xl border border-white/5 bg-dark-900/50 hover:bg-white/5 text-dark-300 hover:text-white font-black text-[10px] uppercase tracking-widest transition-all">
-                            Next Ledger
+                            Halaman Berikutnya
                         </button>
                     </div>
                 </div>
