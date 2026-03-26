@@ -70,7 +70,7 @@ const PIPELINE_STEPS: { stage: PipelineStage; label: string; detail: string; dur
 // ─── Component ────────────────────────────────────────────
 export default function SimulasiPage() {
     const [scenario, setScenario] = useState<Scenario>("normal");
-    const [form, setForm] = useState({ account: "", amount: "", note: "" });
+    const [form, setForm] = useState({ senderName: "", receiverName: "", account: "", amount: "", note: "" });
     const [telemetry, setTelemetry] = useState<TelemetryData>({
         dwellTimes: [], flightTimes: [], mousePoints: [],
         hesitations: 0, lastKeyTime: 0, startTime: 0,
@@ -167,7 +167,7 @@ export default function SimulasiPage() {
 
     // Run pipeline
     const runPipeline = async () => {
-        if (!form.account || !form.amount) return;
+        if (!form.account || !form.amount || !form.senderName || !form.receiverName) return;
         setCompletedSteps([]);
         setPipelineStage("capture");
         const score = scenarioConfig[scenario].riskScore();
@@ -190,7 +190,7 @@ export default function SimulasiPage() {
         setPipelineStage("idle");
         setRiskScore(null);
         setCompletedSteps([]);
-        setForm({ account: "", amount: "", note: "" });
+        setForm({ senderName: "", receiverName: "", account: "", amount: "", note: "" });
         setTelemetry({ dwellTimes: [], flightTimes: [], mousePoints: [], hesitations: 0, lastKeyTime: 0, startTime: 0 });
     };
 
@@ -241,6 +241,30 @@ export default function SimulasiPage() {
 
                         {/* Form */}
                         <div ref={formRef} className="p-6 md:p-8 space-y-5" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-black text-dark-500 uppercase tracking-[0.2em]">Sender Name</label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. Ahmad Rizki"
+                                        value={form.senderName}
+                                        onChange={e => handleFormChange("senderName", e.target.value)}
+                                        disabled={isRunning || isDone}
+                                        className="w-full bg-dark-950/80 border border-white/8 rounded-xl px-4 py-3.5 text-sm font-mono text-white placeholder-dark-600 focus:outline-none focus:border-primary-blue/50 focus:bg-dark-950 transition disabled:opacity-40"
+                                    />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-black text-dark-500 uppercase tracking-[0.2em]">Receiver Name</label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. Maya S."
+                                        value={form.receiverName}
+                                        onChange={e => handleFormChange("receiverName", e.target.value)}
+                                        disabled={isRunning || isDone}
+                                        className="w-full bg-dark-950/80 border border-white/8 rounded-xl px-4 py-3.5 text-sm font-mono text-white placeholder-dark-600 focus:outline-none focus:border-primary-blue/50 focus:bg-dark-950 transition disabled:opacity-40"
+                                    />
+                                </div>
+                            </div>
                             <div className="space-y-1.5">
                                 <label className="text-[10px] font-black text-dark-500 uppercase tracking-[0.2em]">Destination Account</label>
                                 <input
@@ -282,7 +306,7 @@ export default function SimulasiPage() {
                                 {!isDone ? (
                                     <button
                                         onClick={runPipeline}
-                                        disabled={isRunning || !form.account || !form.amount}
+                                        disabled={isRunning || !form.account || !form.amount || !form.senderName || !form.receiverName}
                                         className="flex-1 flex items-center justify-center gap-3 py-4 rounded-2xl bg-primary-blue text-white text-sm font-black uppercase tracking-widest transition-all hover:bg-primary-blue-hover active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
                                     >
                                         {isRunning ? (
