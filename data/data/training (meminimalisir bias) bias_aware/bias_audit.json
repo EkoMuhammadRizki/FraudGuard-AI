@@ -1,0 +1,112 @@
+{
+  "binary": {
+    "rows": 2537,
+    "fraud_count": 90,
+    "fraud_rate": 0.035474970437524636,
+    "feature_count": 106,
+    "original_split_distribution": {
+      "test": {
+        "0": 368,
+        "1": 15
+      },
+      "train": {
+        "0": 1712,
+        "1": 62
+      },
+      "validation": {
+        "0": 367,
+        "1": 13
+      }
+    },
+    "split_bias_aware_distribution": {
+      "test": {
+        "0": 367,
+        "1": 14
+      },
+      "train": {
+        "0": 1713,
+        "1": 62
+      },
+      "validation": {
+        "0": 367,
+        "1": 14
+      }
+    },
+    "augmented_train_distribution": {
+      "0": 1713,
+      "1": 428
+    }
+  },
+  "multiclass": {
+    "rows": 2537,
+    "class_count": 5,
+    "class_distribution": {
+      "Legitimate": 2447,
+      "Account Takeover (ATO)": 65,
+      "Identity Theft": 17,
+      "Phishing": 5,
+      "Card Cloning": 3
+    },
+    "feature_count": 106,
+    "original_split_distribution": {
+      "test": {
+        "Account Takeover (ATO)": 13,
+        "Identity Theft": 2,
+        "Legitimate": 368
+      },
+      "train": {
+        "Account Takeover (ATO)": 43,
+        "Card Cloning": 3,
+        "Identity Theft": 13,
+        "Legitimate": 1712,
+        "Phishing": 3
+      },
+      "validation": {
+        "Account Takeover (ATO)": 9,
+        "Identity Theft": 2,
+        "Legitimate": 367,
+        "Phishing": 2
+      }
+    },
+    "split_bias_aware_distribution": {
+      "test": {
+        "Account Takeover (ATO)": 10,
+        "Card Cloning": 1,
+        "Identity Theft": 3,
+        "Legitimate": 367,
+        "Phishing": 1
+      },
+      "train": {
+        "Account Takeover (ATO)": 45,
+        "Card Cloning": 1,
+        "Identity Theft": 11,
+        "Legitimate": 1713,
+        "Phishing": 3
+      },
+      "validation": {
+        "Account Takeover (ATO)": 10,
+        "Card Cloning": 1,
+        "Identity Theft": 3,
+        "Legitimate": 367,
+        "Phishing": 1
+      }
+    },
+    "augmented_train_distribution": {
+      "Legitimate": 1713,
+      "Account Takeover (ATO)": 75,
+      "Identity Theft": 50,
+      "Phishing": 30,
+      "Card Cloning": 30
+    }
+  },
+  "generated_files": [
+    "tabular_fraud_binary_bias_aware.csv",
+    "fraud_type_multiclass_bias_aware.csv",
+    "tabular_fraud_binary_leak_free.csv",
+    "fraud_type_multiclass_leak_free.csv",
+    "tabular_fraud_binary_train_augmented.csv",
+    "fraud_type_multiclass_train_augmented.csv",
+    "leakage_feature_policy.json",
+    "bias_remediation_report.md"
+  ]
+}

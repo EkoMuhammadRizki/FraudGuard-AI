@@ -95,7 +95,7 @@ export default function Hero() {
                             isAnimated ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
                         }`}>
                             <a
-                                href="/daftar"
+                                href="/dasbor/ringkasan"
                                 className="w-full sm:w-auto px-8 py-4 rounded-xl bg-primary-blue hover:bg-primary-blue-hover text-white font-bold text-base transition-all active:scale-[0.98] shadow-md hover:shadow-lg text-center"
                             >
                                 Mulai Integrasi Sekarang

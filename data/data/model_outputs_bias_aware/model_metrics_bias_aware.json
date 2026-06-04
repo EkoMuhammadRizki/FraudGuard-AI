@@ -1,0 +1,150 @@
+{
+  "binary_models": {
+    "xgboost": {
+      "validation": {
+        "accuracy": 0.9921259842519685,
+        "precision": 1.0,
+        "recall": 0.7857142857142857,
+        "f1_score": 0.88,
+        "false_positive_rate": 0.0,
+        "confusion_matrix": {
+          "tn": 367,
+          "fp": 0,
+          "fn": 3,
+          "tp": 11
+        },
+        "roc_auc": 0.9963020630595563,
+        "pr_auc": 0.9312000162383793
+      },
+      "test": {
+        "accuracy": 0.9868766404199475,
+        "precision": 0.8461538461538461,
+        "recall": 0.7857142857142857,
+        "f1_score": 0.8148148148148148,
+        "false_positive_rate": 0.005449591280653951,
+        "confusion_matrix": {
+          "tn": 365,
+          "fp": 2,
+          "fn": 3,
+          "tp": 11
+        },
+        "roc_auc": 0.9984429739198132,
+        "pr_auc": 0.960354526425955
+      },
+      "selected_threshold": 0.38
+    },
+    "random_forest": {
+      "test": {
+        "accuracy": 0.9763779527559056,
+        "precision": 0.7777777777777778,
+        "recall": 0.5,
+        "f1_score": 0.6086956521739131,
+        "false_positive_rate": 0.005449591280653951,
+        "confusion_matrix": {
+          "tn": 365,
+          "fp": 2,
+          "fn": 7,
+          "tp": 7
+        },
+        "roc_auc": 0.993966523939276,
+        "pr_auc": 0.8311704298117342
+      }
+    }
+  },
+  "multiclass_model": {
+    "validation": {
+      "macro_f1": 0.5766937669376693,
+      "weighted_f1": 0.9866485052285078
+    },
+    "test": {
+      "macro_f1": 0.72226353928299,
+      "weighted_f1": 0.9907759204236405,
+      "classification_report": {
+        "Account Takeover (ATO)": {
+          "precision": 1.0,
+          "recall": 0.9,
+          "f1-score": 0.9473684210526315,
+          "support": 10.0
+        },
+        "Card Cloning": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 1.0
+        },
+        "Identity Theft": {
+          "precision": 0.6666666666666666,
+          "recall": 0.6666666666666666,
+          "f1-score": 0.6666666666666666,
+          "support": 3.0
+        },
+        "Legitimate": {
+          "precision": 0.994579945799458,
+          "recall": 1.0,
+          "f1-score": 0.9972826086956522,
+          "support": 367.0
+        },
+        "Phishing": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 1.0
+        },
+        "accuracy": 0.9921465968586387,
+        "macro avg": {
+          "precision": 0.7322493224932248,
+          "recall": 0.7133333333333333,
+          "f1-score": 0.72226353928299,
+          "support": 382.0
+        },
+        "weighted avg": {
+          "precision": 0.9895571730586415,
+          "recall": 0.9921465968586387,
+          "f1-score": 0.9907759204236405,
+          "support": 382.0
+        }
+      }
+    },
+    "classes": [
+      "Account Takeover (ATO)",
+      "Card Cloning",
+      "Identity Theft",
+      "Legitimate",
+      "Phishing"
+    ]
+  },
+  "anomaly_model": {
+    "accuracy": 0.9238845144356955,
+    "precision": 0.2857142857142857,
+    "recall": 0.7142857142857143,
+    "f1_score": 0.40816326530612246,
+    "false_positive_rate": 0.0681198910081744,
+    "confusion_matrix": {
+      "tn": 342,
+      "fp": 25,
+      "fn": 4,
+      "tp": 10
+    },
+    "roc_auc": 0.9478396263137407,
+    "pr_auc": 0.33758597467650475
+  },
+  "graph_baseline": {
+    "accuracy": 0.8765957446808511,
+    "precision": 0.3125,
+    "recall": 0.21739130434782608,
+    "f1_score": 0.2564102564102564,
+    "false_positive_rate": 0.05188679245283019,
+    "confusion_matrix": {
+      "tn": 201,
+      "fp": 11,
+      "fn": 18,
+      "tp": 5
+    },
+    "roc_auc": 0.7210828547990156,
+    "pr_auc": 0.30530891064157134
+  },
+  "geo_risk": {
+    "mode": "direct_aggregation",
+    "rows": 41
+  }
+}

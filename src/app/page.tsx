@@ -79,7 +79,7 @@ export default function HalamanLanding() {
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
               <a
-                href="/daftar"
+                href="/dasbor/ringkasan"
                 className="w-full sm:w-auto px-8 py-4 rounded-xl bg-white text-dark-900 hover:bg-primary-blue hover:text-white font-bold text-base transition-all active:scale-[0.98] shadow-md hover:shadow-lg"
               >
                 Mulai Uji Coba Gratis

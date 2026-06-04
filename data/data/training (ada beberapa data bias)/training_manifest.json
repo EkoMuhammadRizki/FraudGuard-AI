@@ -1,0 +1,84 @@
+{
+  "project": "FraudGuard-AI",
+  "source_input": "C:\\Users\\muhib\\Downloads\\fraudguard_enriched_dataset.csv",
+  "output_dir": "data\\training",
+  "seed": 42,
+  "row_count": 2537,
+  "fraud_count": 90,
+  "fraud_rate": 0.035475,
+  "train_validation_test_rows": {
+    "train": 1774,
+    "test": 383,
+    "validation": 380
+  },
+  "generated_files": {
+    "fraudguard_enriched_clean.csv": {
+      "rows": 2537,
+      "columns": 58
+    },
+    "tabular_fraud_binary_training.csv": {
+      "rows": 2537,
+      "columns": 120
+    },
+    "fraud_type_multiclass_training.csv": {
+      "rows": 2537,
+      "columns": 121
+    },
+    "anomaly_detection_training.csv": {
+      "rows": 2537,
+      "columns": 26
+    },
+    "gnn_edges.csv": {
+      "rows": 15222,
+      "columns": 17
+    },
+    "gnn_nodes.csv": {
+      "rows": 2243,
+      "columns": 15
+    },
+    "geo_threat_training.csv": {
+      "rows": 41,
+      "columns": 21
+    },
+    "case_management_feedback_seed.csv": {
+      "rows": 2537,
+      "columns": 19
+    },
+    "xai_shap_explanation_seed.csv": {
+      "rows": 2537,
+      "columns": 16
+    }
+  },
+  "recommended_model_sequence": [
+    {
+      "model": "LightGBM/XGBoost/CatBoost binary classifier",
+      "dataset": "tabular_fraud_binary_training.csv",
+      "target": "IsFraud",
+      "purpose": "Fraud risk score, alert thresholding, dashboard KPIs"
+    },
+    {
+      "model": "RandomForest/LogisticRegression baseline",
+      "dataset": "tabular_fraud_binary_training.csv",
+      "target": "IsFraud",
+      "purpose": "Baseline comparison for proposal evidence"
+    },
+    {
+      "model": "IsolationForest/OneClassSVM/Autoencoder",
+      "dataset": "anomaly_detection_training.csv",
+      "target": "AnomalyLabel_Seed for proxy evaluation; IsFraud for final evaluation",
+      "purpose": "Detect suspicious patterns without relying fully on labels"
+    },
+    {
+      "model": "GraphSAGE/GAT node classification",
+      "dataset": "gnn_edges.csv + gnn_nodes.csv",
+      "target": "FraudRelatedLabel or FraudRingLabel_Seed",
+      "purpose": "Money mule and fraud ring topology detection"
+    },
+    {
+      "model": "Geo risk classifier/regressor",
+      "dataset": "geo_threat_training.csv",
+      "target": "HighThreatRegionLabel_Seed or ThreatIntensityScore",
+      "purpose": "Indonesia threat map and compliance reporting"
+    }
+  ]
+}

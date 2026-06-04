@@ -134,10 +134,10 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 <div className="glass-panel p-5 rounded-3xl border-white/5 bg-white/5 group/profile">
                     <div className="flex items-center gap-4 mb-5">
                         <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-blue to-hyper-violet flex items-center justify-center text-white text-lg font-black shadow-lg">
-                            A
+                            EK
                         </div>
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-black text-white truncate leading-tight">Analis Fraud</p>
+                            <p className="text-sm font-black text-white truncate leading-tight">Eko Muhammad Rizki</p>
                             <p className="text-[10px] font-bold text-dark-500 truncate mt-1 tracking-tight">AKSES LEVEL 4</p>
                         </div>
                     </div>

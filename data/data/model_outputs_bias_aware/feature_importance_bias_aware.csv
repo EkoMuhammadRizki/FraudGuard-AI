@@ -1,0 +1,107 @@
+Feature,Importance
+Location_Jayapura,0.10712948
+ThreatIntelFlagInt,0.07878745
+Location_Bekasi,0.06338981
+TransactionAmount,0.059620112
+TransactionHour,0.059037723
+IsWeekend,0.055793766
+Location_Solo,0.050175566
+Province_Sumatera Selatan,0.050038207
+LoginAttempts,0.044309538
+IsNightTransaction,0.04333041
+Province_Papua Barat Daya,0.03890667
+AmountToBalanceRatio,0.032264907
+Location_Bandar Lampung,0.02697513
+TransactionDayOfWeek,0.02578667
+CustomerOccupation_Student,0.019110922
+Location_Bandung,0.01884031
+Province_Banten,0.018604396
+LogTransactionAmount,0.017714297
+BalanceAfterTransaction,0.015975025
+Province_Sulawesi Tenggara,0.013792193
+TransactionAmountZScore,0.013598304
+Location_Jakarta Pusat,0.011849274
+Location_Bengkulu,0.011533584
+Province_Bengkulu,0.008966072
+Province_Nusa Tenggara Barat,0.008914832
+Location_Tangerang Selatan,0.00886623
+Location_Sorong,0.008775388
+Province_Jawa Tengah,0.0075050355
+TransactionDuration,0.0066146404
+Location_Batam,0.0058144894
+RecipientTransactionCountTotal,0.005341109
+Location_Kendari,0.0048012203
+Province_Lampung,0.004765453
+RecipientUniqueSenders7d,0.004683259
+Location_Samarinda,0.0042104083
+RecipientUniqueSendersTotal,0.0036679115
+Province_Aceh,0.003465243
+AccountBalance,0.0032643885
+Channel_Branch,0.0031469383
+CustomerAge,0.0027326243
+Location_Semarang,0.0026692026
+Location_Depok,0.0024948833
+Province_Nusa Tenggara Timur,0.0016183247
+Province_Jawa Barat,0.0016136562
+HoursSincePreviousTransaction,0.0016087189
+IPUniqueAccounts7d,0.0016039428
+IPUniqueAccountsTotal,0.0015992449
+MerchantTransactionCountTotal,0.0015005822
+RecipientTxCount7d,0.0014412551
+Location_Jakarta Selatan,0.0012171393
+Location_Jakarta Utara,0.0011123446
+Channel_Online,0.0010734473
+Province_DKI Jakarta,0.0010288196
+Location_Pekanbaru,0.0010045666
+AccountTxCount24h,0.0009995857
+AccountAmountSum24h,0.00073350704
+Province_Kalimantan Timur,0.0006873417
+Location_Malang,0.0005760941
+AccountTxCount7d,0.0005269668
+CustomerOccupation_Engineer,0.00048923865
+Channel_ATM,0.00047371004
+CustomerOccupation_Retired,0.0004438382
+Location_Denpasar,0.00040690685
+Province_Bali,0.00038940448
+CustomerOccupation_Doctor,0.000303423
+DeviceUniqueAccountsTotal,0.00028481425
+Location_Banjarmasin,0.0
+Location_Banda Aceh,0.0
+Location_Ambon,0.0
+Location_Balikpapan,0.0
+TransactionType_Debit,0.0
+TransactionType_Credit,0.0
+DeviceUniqueAccounts7d,0.0
+Location_Makassar,0.0
+Location_Surakarta,0.0
+Location_Surabaya,0.0
+Location_Pontianak,0.0
+Location_Medan,0.0
+Location_Padang,0.0
+Location_Palangka Raya,0.0
+Location_Palembang,0.0
+Location_Palu,0.0
+Location_Manado,0.0
+Location_Mataram,0.0
+Location_Jakarta Barat,0.0
+Location_Bogor,0.0
+Location_Jambi,0.0
+Location_Jakarta Timur,0.0
+Location_Kupang,0.0
+Province_DI Yogyakarta,0.0
+Province_Kalimantan Tengah,0.0
+Province_Kalimantan Selatan,0.0
+Province_Kalimantan Barat,0.0
+Province_Jawa Timur,0.0
+Province_Jambi,0.0
+Location_Tangerang,0.0
+Location_Yogyakarta,0.0
+Province_Kepulauan Riau,0.0
+Province_Papua,0.0
+Province_Maluku,0.0
+Province_Sulawesi Selatan,0.0
+Province_Riau,0.0
+Province_Sulawesi Tengah,0.0
+Province_Sulawesi Utara,0.0
+Province_Sumatera Barat,0.0
+Province_Sumatera Utara,0.0

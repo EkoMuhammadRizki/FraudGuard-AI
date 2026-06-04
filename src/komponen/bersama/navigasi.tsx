@@ -41,13 +41,13 @@ export default function Navigasi() {
                             Kontak
                         </a>
                         <Link
-                            href="/login"
+                            href="/dasbor/ringkasan"
                             className="text-dark-300 hover:text-white transition-colors text-sm font-medium"
                         >
                             Masuk
                         </Link>
                         <Link
-                            href="/daftar"
+                            href="/dasbor/ringkasan"
                             className="px-5 py-2 rounded-xl bg-primary-blue hover:bg-primary-blue-hover text-white text-sm font-medium transition-colors"
                         >
                             Daftar
@@ -74,8 +74,8 @@ export default function Navigasi() {
                             <a href="#fitur" className="text-dark-300 hover:text-primary-blue transition-colors px-3 py-2 text-sm font-medium">Fitur</a>
                             <a href="#tentang" className="text-dark-300 hover:text-primary-blue transition-colors px-3 py-2 text-sm font-medium">Tentang</a>
                             <a href="#kontak" className="text-dark-300 hover:text-primary-blue transition-colors px-3 py-2 text-sm font-medium">Kontak</a>
-                            <Link href="/login" className="text-dark-300 hover:text-white transition-colors px-3 py-2 text-sm font-medium">Masuk</Link>
-                            <Link href="/daftar" className="mx-3 text-center px-4 py-2 rounded-xl bg-primary-blue text-white text-sm font-medium">Daftar</Link>
+                            <Link href="/dasbor/ringkasan" className="text-dark-300 hover:text-white transition-colors px-3 py-2 text-sm font-medium">Masuk</Link>
+                            <Link href="/dasbor/ringkasan" className="mx-3 text-center px-4 py-2 rounded-xl bg-primary-blue text-white text-sm font-medium">Daftar</Link>
                         </div>
                     </div>
                 )}

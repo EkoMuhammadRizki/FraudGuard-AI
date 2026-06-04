@@ -46,7 +46,7 @@ export default function InfoTooltip({ text }: InfoTooltipProps) {
                     : { left: pos.x, transform: "translateY(-50%)" }),
             }}
         >
-            <div className="w-[220px] sm:w-64 bg-dark-900 border border-white/10 rounded-2xl px-4 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.7)] backdrop-blur-xl">
+            <div className="w-[220px] sm:w-64 bg-dark-900 border border-white/10 rounded-md px-4 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.7)] backdrop-blur-xl">
                 {/* Arrow */}
                 {pos.flipLeft ? (
                     <div className="absolute right-0 top-1/2 translate-x-[5px] -translate-y-1/2 w-2 h-2 rotate-45 bg-dark-900 border-t border-r border-white/10" />

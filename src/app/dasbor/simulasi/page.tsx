@@ -6,7 +6,7 @@ import {
     Loader2, TerminalSquare, Send, RefreshCw, ChevronRight
 } from "lucide-react";
 
-// ─── Types ───────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────
 type Scenario = "normal" | "bot" | "syndicate";
 type PipelineStage = "idle" | "capture" | "tensor" | "kafka" | "fds" | "done";
 
@@ -15,8 +15,22 @@ interface TelemetryData {
     flightTimes: number[];
     mousePoints: { x: number; y: number }[];
     hesitations: number;
-    lastKeyTime: number;
+    lastKeyDownTime: number;  // waktu keydown terakhir (untuk flight)
+    lastKeyUpTime: number;    // waktu keyup terakhir (untuk flight antar-key)
     startTime: number;
+}
+
+interface FormData {
+    senderName: string;
+    receiverName: string;
+    account: string;
+    amount: string;
+    note: string;
+}
+
+interface FormErrors {
+    account?: string;
+    amount?: string;
 }
 
 // ─── Scenario Config ──────────────────────────────────────
@@ -67,13 +81,72 @@ const PIPELINE_STEPS: { stage: PipelineStage; label: string; detail: string; dur
     { stage: "done", label: "Vonis Dikeluarkan", detail: "", duration: 0 },
 ];
 
+// ─── Helpers ──────────────────────────────────────────────
+
+/** Hitung deviasi rata-rata jalur mouse dari garis lurus (Hausdorff-lite) */
+function computeMouseDeviation(points: { x: number; y: number }[]): number {
+    if (points.length < 3) return 0;
+    const start = points[0];
+    const end = points[points.length - 1];
+    const dx = end.x - start.x;
+    const dy = end.y - start.y;
+    const len = Math.sqrt(dx * dx + dy * dy);
+    if (len === 0) return 0;
+
+    // Jarak rata-rata setiap titik dari garis lurus start→end
+    const totalDist = points.slice(1, -1).reduce((sum, p) => {
+        const dist = Math.abs(dy * p.x - dx * p.y + end.x * start.y - end.y * start.x) / len;
+        return sum + dist;
+    }, 0);
+    const avgDist = totalDist / (points.length - 2);
+    // Normalkan terhadap panjang lintasan (persen)
+    return Math.min(Math.round((avgDist / (len || 1)) * 100), 99);
+}
+
+/**
+ * Rekening: hanya simpan digit murni (strip semua non-digit)
+ * Validasi: min 10 digit, max 16 digit
+ */
+function validateAccountDigits(digits: string): string | undefined {
+    if (!digits) return undefined;
+    if (digits.length < 10) return `Nomor rekening kurang — minimal 10 digit (${digits.length}/16)`;
+    return undefined;
+}
+
+/** Format digit rekening dengan spasi tiap 4 karakter untuk keterbacaan */
+function formatAccountDisplay(digits: string): string {
+    return digits.replace(/(\d{4})(?=\d)/g, "$1 ").trim();
+}
+
+/** Format angka ke Rupiah real-time (titik sebagai pemisah ribuan) */
+function formatRupiah(raw: string): string {
+    if (!raw) return "";
+    const num = parseInt(raw, 10);
+    if (isNaN(num)) return "";
+    return num.toLocaleString("id-ID");
+}
+
+/** Validasi nominal (dari raw digit) */
+function validateAmountRaw(raw: string): string | undefined {
+    if (!raw) return undefined;
+    const num = parseInt(raw, 10);
+    if (isNaN(num) || num < 10000) return "Nominal minimal Rp 10.000";
+    if (num > 1_000_000_000_000) return "Nominal melebihi batas transfer harian";
+    return undefined;
+}
+
 // ─── Component ────────────────────────────────────────────
 export default function SimulasiPage() {
     const [scenario, setScenario] = useState<Scenario>("normal");
-    const [form, setForm] = useState({ senderName: "", receiverName: "", account: "", amount: "", note: "" });
+    const [form, setForm] = useState<FormData>({ senderName: "", receiverName: "", account: "", amount: "", note: "" });
+    const [formErrors, setFormErrors] = useState<FormErrors>({});
+    // Raw state untuk field khusus
+    const [accountDigits, setAccountDigits] = useState<string>("");  // digit murni tanpa spasi
+    const [amountRaw, setAmountRaw] = useState<string>("");           // angka murni tanpa titik
+    const [amountDisplay, setAmountDisplay] = useState<string>("");   // tampilan terformat
     const [telemetry, setTelemetry] = useState<TelemetryData>({
         dwellTimes: [], flightTimes: [], mousePoints: [],
-        hesitations: 0, lastKeyTime: 0, startTime: 0,
+        hesitations: 0, lastKeyDownTime: 0, lastKeyUpTime: 0, startTime: 0,
     });
     const [pipelineStage, setPipelineStage] = useState<PipelineStage>("idle");
     const [riskScore, setRiskScore] = useState<number | null>(null);
@@ -81,100 +154,149 @@ export default function SimulasiPage() {
     const [completedSteps, setCompletedSteps] = useState<PipelineStage[]>([]);
     const [currentUserAgent, setCurrentUserAgent] = useState<string>("Detecting...");
     const [currentIp, setCurrentIp] = useState<string>("Detecting...");
-    const formRef = useRef<HTMLDivElement>(null);
-    const keyDownTime = useRef<number>(0);
+    const [viewportSize, setViewportSize] = useState({ w: 1280, h: 720 }); // default SSR-safe
 
+    // Refs untuk tracking tanpa re-render
+    const keyDownTimeRef = useRef<number>(0);
+    const lastKeyUpTimeRef = useRef<number>(0);
+
+    // ── Side Effects ──
     useEffect(() => {
-        if (typeof window !== "undefined") {
-            setCurrentUserAgent(window.navigator.userAgent);
-        }
+        // Aman diakses hanya di client
+        setCurrentUserAgent(window.navigator.userAgent);
+        setViewportSize({ w: window.innerWidth, h: window.innerHeight });
 
-        // Fetch user IP
+        const handleResize = () => setViewportSize({ w: window.innerWidth, h: window.innerHeight });
+        window.addEventListener("resize", handleResize);
+
+        // Fetch IP publik
         fetch("https://api.ipify.org?format=json")
             .then(res => res.json())
             .then(data => setCurrentIp(data.ip))
             .catch(() => setCurrentIp("192.168.1.xxx (Mock)"));
+
+        return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    // Mouse Tracker
+    // ── Event Handlers ──
+
     const handleMouseMove = useCallback((e: React.MouseEvent) => {
         setMousePos({ x: e.clientX, y: e.clientY });
         setTelemetry(prev => ({
             ...prev,
-            mousePoints: [...prev.mousePoints.slice(-20), { x: e.clientX, y: e.clientY }]
+            mousePoints: [...prev.mousePoints.slice(-30), { x: e.clientX, y: e.clientY }],
         }));
     }, []);
 
-    // Key dwell tracking
+    /**
+     * handleKeyDown:
+     * - Catat waktu tombol ditekan (untuk dwell time)
+     * - Catat hesitation: jika sejak keyup terakhir > 800ms (user berhenti mengetik)
+     */
     const handleKeyDown = useCallback(() => {
-        keyDownTime.current = performance.now();
         const now = performance.now();
+        keyDownTimeRef.current = now;
+
         setTelemetry(prev => {
-            const timeSinceLast = prev.lastKeyTime ? now - prev.lastKeyTime : 0;
-            const isHesitation = timeSinceLast > 800 && prev.lastKeyTime > 0;
+            const timeSinceLastKeyUp = lastKeyUpTimeRef.current > 0 ? now - lastKeyUpTimeRef.current : 0;
+            const isHesitation = timeSinceLastKeyUp > 800 && lastKeyUpTimeRef.current > 0;
             return {
                 ...prev,
                 startTime: prev.startTime || now,
-                lastKeyTime: now,
                 hesitations: prev.hesitations + (isHesitation ? 1 : 0),
             };
         });
     }, []);
 
+    /**
+     * handleKeyUp:
+     * - Dwell time = selisih antara keyup dan keydown untuk tombol yang sama
+     * - Flight time = selisih antara keyup saat ini dan keyup sebelumnya
+     *   (waktu antar-pelepasan tombol — lebih konsisten daripada keydown→keydown)
+     */
     const handleKeyUp = useCallback(() => {
-        const dwell = performance.now() - keyDownTime.current;
-        setTelemetry(prev => {
-            const flight = prev.lastKeyTime ? performance.now() - prev.lastKeyTime : 0;
-            return {
-                ...prev,
-                dwellTimes: [...prev.dwellTimes.slice(-10), Math.round(dwell)],
-                flightTimes: [...prev.flightTimes.slice(-10), Math.round(flight)],
-            };
-        });
+        const now = performance.now();
+        const dwell = now - keyDownTimeRef.current;
+        const flight = lastKeyUpTimeRef.current > 0 ? now - lastKeyUpTimeRef.current : 0;
+        lastKeyUpTimeRef.current = now;
+
+        setTelemetry(prev => ({
+            ...prev,
+            dwellTimes: [...prev.dwellTimes.slice(-15), Math.round(dwell)],
+            flightTimes: flight > 0 ? [...prev.flightTimes.slice(-15), Math.round(flight)] : prev.flightTimes,
+        }));
     }, []);
 
-    const handleFormChange = (field: string, value: string) => {
+    const handleFormChange = (field: keyof FormData, value: string) => {
         setForm(prev => ({ ...prev, [field]: value }));
     };
 
-    // Get computed telemetry values (override based on scenario)
+    /** Handler khusus field rekening — hanya terima digit, max 16 */
+    const handleAccountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const digits = e.target.value.replace(/\D/g, "").slice(0, 16);
+        setAccountDigits(digits);
+        const display = formatAccountDisplay(digits);
+        setForm(prev => ({ ...prev, account: digits }));   // simpan digit murni ke form
+        setFormErrors(prev => ({ ...prev, account: validateAccountDigits(digits) }));
+    };
+
+    /** Handler khusus field nominal — hanya terima digit, format Rupiah real-time */
+    const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const raw = e.target.value.replace(/\D/g, "");    // strip semua non-digit
+        setAmountRaw(raw);
+        setAmountDisplay(formatRupiah(raw));
+        setForm(prev => ({ ...prev, amount: raw }));       // simpan raw ke form
+        setFormErrors(prev => ({ ...prev, amount: validateAmountRaw(raw) }));
+    };
+
+    // ── Computed Telemetry (deterministik untuk bot/syndicate) ──
     const computedTelemetry = (() => {
         if (scenario === "bot") {
             return {
                 avgDwell: "8ms", avgFlight: "2ms",
                 mousePath: "Linear (0.0% deviation)",
-                hesitation: "0 events", confidence: "99.2%"
+                hesitation: "0 events", confidence: "99.2%",
+                deviation: 0,
             };
         }
         if (scenario === "syndicate") {
             return {
                 avgDwell: "142ms", avgFlight: "89ms",
                 mousePath: "Natural (18.3% deviation)",
-                hesitation: "2 events", confidence: "97.8%"
+                hesitation: "2 events", confidence: "97.8%",
+                deviation: 18,
             };
         }
+
+        // Normal: hitung dari telemetri nyata
         const avgDwell = telemetry.dwellTimes.length
             ? Math.round(telemetry.dwellTimes.reduce((a, b) => a + b, 0) / telemetry.dwellTimes.length)
             : 0;
         const avgFlight = telemetry.flightTimes.length
             ? Math.round(telemetry.flightTimes.reduce((a, b) => a + b, 0) / telemetry.flightTimes.length)
             : 0;
-        const pts = telemetry.mousePoints;
-        const deviation = pts.length > 2
-            ? Math.round(Math.random() * 30 + 15)
-            : 0;
+
+        // Deviasi mouse dihitung secara geometris (bukan random)
+        const deviation = computeMouseDeviation(telemetry.mousePoints);
+
         return {
             avgDwell: avgDwell ? `${avgDwell}ms` : "—",
             avgFlight: avgFlight ? `${avgFlight}ms` : "—",
-            mousePath: pts.length > 2 ? `Natural (${deviation}% deviation)` : "Awaiting input...",
+            mousePath: telemetry.mousePoints.length > 2
+                ? `Natural (${deviation}% deviation)`
+                : "Awaiting input...",
             hesitation: `${telemetry.hesitations} events`,
             confidence: "—",
+            deviation,
         };
     })();
 
-    // Run pipeline
+    // ── Pipeline Runner ──
     const runPipeline = async () => {
+        const hasErrors = Object.values(formErrors).some(Boolean);
+        if (hasErrors) return;
         if (!form.account || !form.amount || !form.senderName || !form.receiverName) return;
+
         setCompletedSteps([]);
         setPipelineStage("capture");
         const score = scenarioConfig[scenario].riskScore();
@@ -198,12 +320,29 @@ export default function SimulasiPage() {
         setRiskScore(null);
         setCompletedSteps([]);
         setForm({ senderName: "", receiverName: "", account: "", amount: "", note: "" });
-        setTelemetry({ dwellTimes: [], flightTimes: [], mousePoints: [], hesitations: 0, lastKeyTime: 0, startTime: 0 });
+        setFormErrors({});
+        setAccountDigits("");
+        setAmountRaw("");
+        setAmountDisplay("");
+        lastKeyUpTimeRef.current = 0;
+        setTelemetry({
+            dwellTimes: [], flightTimes: [], mousePoints: [],
+            hesitations: 0, lastKeyDownTime: 0, lastKeyUpTime: 0, startTime: 0,
+        });
     };
 
     const cfg = scenarioConfig[scenario];
     const isRunning = pipelineStage !== "idle" && pipelineStage !== "done";
     const isDone = pipelineStage === "done";
+    const canSubmit =
+        !isRunning &&
+        !isDone &&
+        !!form.senderName &&
+        !!form.receiverName &&
+        !!form.account &&
+        !!form.amount &&
+        !formErrors.account &&
+        !formErrors.amount;
 
     return (
         <div className="p-4 sm:p-6 md:p-10 space-y-8 min-h-screen" onMouseMove={handleMouseMove}>
@@ -247,7 +386,7 @@ export default function SimulasiPage() {
                         </div>
 
                         {/* Form */}
-                        <div ref={formRef} className="p-6 md:p-8 space-y-5" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
+                        <div className="p-6 md:p-8 space-y-5" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
                                     <label className="text-[10px] font-black text-dark-500 uppercase tracking-[0.2em]">Nama Pengirim</label>
@@ -272,31 +411,91 @@ export default function SimulasiPage() {
                                     />
                                 </div>
                             </div>
+
+                            {/* ── Rekening Tujuan ── */}
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-dark-500 uppercase tracking-[0.2em]">Rekening Tujuan</label>
-                                <input
-                                    type="text"
-                                    placeholder="cth: 098-000-112-9931"
-                                    value={form.account}
-                                    onChange={e => handleFormChange("account", e.target.value)}
-                                    disabled={isRunning || isDone}
-                                    className="w-full bg-dark-950/80 border border-white/8 rounded-xl px-4 py-3.5 text-sm font-mono text-white placeholder-dark-600 focus:outline-none focus:border-primary-blue/50 focus:bg-dark-950 transition disabled:opacity-40"
-                                />
-                            </div>
-                            <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-dark-500 uppercase tracking-[0.2em]">Nominal Transfer</label>
+                                <div className="flex items-center justify-between">
+                                    <label className="text-[10px] font-black text-dark-500 uppercase tracking-[0.2em]">Rekening Tujuan</label>
+                                    {/* Digit counter */}
+                                    <span className={`text-[10px] font-black font-mono tabular-nums ${
+                                        accountDigits.length === 0 ? "text-dark-600"
+                                        : accountDigits.length < 10 ? "text-amber-400"
+                                        : "text-status-success"
+                                    }`}>
+                                        {accountDigits.length}/16
+                                    </span>
+                                </div>
                                 <div className="relative">
-                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-black text-dark-400">IDR</span>
                                     <input
                                         type="text"
-                                        placeholder="25.000.000"
-                                        value={form.amount}
-                                        onChange={e => handleFormChange("amount", e.target.value)}
+                                        inputMode="numeric"
+                                        placeholder="Contoh: 1234 5678 9012"
+                                        value={formatAccountDisplay(accountDigits)}
+                                        onChange={handleAccountChange}
                                         disabled={isRunning || isDone}
-                                        className="w-full bg-dark-950/80 border border-white/8 rounded-xl pl-14 pr-4 py-3.5 text-sm font-mono text-white placeholder-dark-600 focus:outline-none focus:border-primary-blue/50 focus:bg-dark-950 transition disabled:opacity-40"
+                                        maxLength={19} /* 16 digit + 3 spasi */
+                                        className={`w-full bg-dark-950/80 border rounded-xl px-4 py-3.5 text-sm font-mono text-white placeholder-dark-600 focus:outline-none focus:bg-dark-950 transition disabled:opacity-40 ${
+                                            formErrors.account
+                                                ? "border-status-error/60 focus:border-status-error"
+                                                : accountDigits.length >= 10
+                                                ? "border-status-success/40 focus:border-status-success/60"
+                                                : "border-white/8 focus:border-primary-blue/50"
+                                        }`}
                                     />
                                 </div>
+                                {/* Helper text / error */}
+                                {formErrors.account ? (
+                                    <p className="text-[10px] text-status-error font-bold uppercase tracking-wide flex items-center gap-1">
+                                        <span>⚠</span> {formErrors.account}
+                                    </p>
+                                ) : (
+                                    <p className="text-[10px] text-dark-600 font-medium">
+                                        Masukkan 10–16 digit nomor rekening bank tujuan
+                                    </p>
+                                )}
                             </div>
+
+                            {/* ── Nominal Transfer ── */}
+                            <div className="space-y-1.5">
+                                <div className="flex items-center justify-between">
+                                    <label className="text-[10px] font-black text-dark-500 uppercase tracking-[0.2em]">Nominal Transfer</label>
+                                    {/* Preview terbilang singkat */}
+                                    {amountRaw && !formErrors.amount && (
+                                        <span className="text-[10px] font-black text-status-success font-mono">
+                                            Rp {formatRupiah(amountRaw)}
+                                        </span>
+                                    )}
+                                </div>
+                                <div className="relative">
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-black text-dark-400 pointer-events-none select-none">Rp</span>
+                                    <input
+                                        type="text"
+                                        inputMode="numeric"
+                                        placeholder="25.000.000"
+                                        value={amountDisplay}
+                                        onChange={handleAmountChange}
+                                        disabled={isRunning || isDone}
+                                        className={`w-full bg-dark-950/80 border rounded-xl pl-12 pr-4 py-3.5 text-sm font-mono text-white placeholder-dark-600 focus:outline-none focus:bg-dark-950 transition disabled:opacity-40 ${
+                                            formErrors.amount
+                                                ? "border-status-error/60 focus:border-status-error"
+                                                : amountRaw && parseInt(amountRaw) >= 10000
+                                                ? "border-status-success/40 focus:border-status-success/60"
+                                                : "border-white/8 focus:border-primary-blue/50"
+                                        }`}
+                                    />
+                                </div>
+                                {/* Helper / error */}
+                                {formErrors.amount ? (
+                                    <p className="text-[10px] text-status-error font-bold uppercase tracking-wide flex items-center gap-1">
+                                        <span>⚠</span> {formErrors.amount}
+                                    </p>
+                                ) : (
+                                    <p className="text-[10px] text-dark-600 font-medium">
+                                        Batas transfer: Rp 10.000 – Rp 1.000.000.000.000
+                                    </p>
+                                )}
+                            </div>
+
                             <div className="space-y-1.5">
                                 <label className="text-[10px] font-black text-dark-500 uppercase tracking-[0.2em]">Catatan Transaksi</label>
                                 <input
@@ -313,7 +512,7 @@ export default function SimulasiPage() {
                                 {!isDone ? (
                                     <button
                                         onClick={runPipeline}
-                                        disabled={isRunning || !form.account || !form.amount || !form.senderName || !form.receiverName}
+                                        disabled={!canSubmit}
                                         className="flex-1 flex items-center justify-center gap-3 py-4 rounded-2xl bg-primary-blue text-white text-sm font-black uppercase tracking-widest transition-all hover:bg-primary-blue-hover active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
                                     >
                                         {isRunning ? (
@@ -408,20 +607,22 @@ export default function SimulasiPage() {
                             ].map(row => (
                                 <div key={row.label} className="flex items-center justify-between px-5 py-3.5 group hover:bg-white/[0.02] transition-colors">
                                     <span className="text-[10px] font-black text-dark-500 uppercase tracking-widest">{row.label}</span>
-                                    <span className={`text-[11px] font-black text-right ${row.mono ? "font-mono text-neon-cyan" : "text-white"}`}>
+                                    <span className={`text-[11px] font-black text-right max-w-[55%] truncate ${row.mono ? "font-mono text-neon-cyan" : "text-white"}`}>
                                         {row.value}
                                     </span>
                                 </div>
                             ))}
                         </div>
 
-                        {/* Mouse path visualizer */}
+                        {/* Mouse path visualizer — menggunakan viewportSize dari state (SSR-safe) */}
                         <div className="mt-5 bg-dark-950/60 rounded-2xl border border-white/5 p-4 h-28 relative overflow-hidden">
                             <div className="absolute top-2 left-3 text-[9px] font-black text-dark-600 uppercase tracking-widest">Jejak Jalur Mouse</div>
                             <svg className="w-full h-full" viewBox="0 0 400 80">
                                 {telemetry.mousePoints.length > 1 && scenario === "normal" && (
                                     <polyline
-                                        points={telemetry.mousePoints.map(p => `${(p.x / window.innerWidth) * 400},${(p.y / window.innerHeight) * 80}`).join(" ")}
+                                        points={telemetry.mousePoints
+                                            .map(p => `${(p.x / viewportSize.w) * 400},${(p.y / viewportSize.h) * 80}`)
+                                            .join(" ")}
                                         fill="none" stroke="rgba(6,182,212,0.5)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
                                     />
                                 )}
@@ -430,7 +631,9 @@ export default function SimulasiPage() {
                                 )}
                                 {scenario === "syndicate" && telemetry.mousePoints.length > 1 && (
                                     <polyline
-                                        points={telemetry.mousePoints.map(p => `${(p.x / window.innerWidth) * 400},${(p.y / window.innerHeight) * 80}`).join(" ")}
+                                        points={telemetry.mousePoints
+                                            .map(p => `${(p.x / viewportSize.w) * 400},${(p.y / viewportSize.h) * 80}`)
+                                            .join(" ")}
                                         fill="none" stroke="rgba(251,191,36,0.5)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
                                     />
                                 )}
