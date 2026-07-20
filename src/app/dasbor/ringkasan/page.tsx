@@ -310,7 +310,7 @@ export default function RingkasanPage() {
                                 </div>
                                 <div className="flex items-center gap-2 mt-1">
                                     <span className="w-1.5 h-1.5 rounded-full bg-status-success" />
-                                    <span className="text-[10px] font-bold text-dark-500 uppercase tracking-wider">Protokol Dekripsi Langsung Aktif — Klik baris untuk analisis AI</span>
+                                    <span className="text-[10px] font-bold text-dark-500 uppercase tracking-wider">Protokol Dekripsi Langsung Aktif Klik baris untuk analisis AI</span>
                                 </div>
                             </div>
                         </div>
