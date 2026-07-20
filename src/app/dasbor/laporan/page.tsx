@@ -46,11 +46,11 @@ const CARD_CONFIG: Record<CardKey, { title: string; desc: string; tipe: string; 
 };
 
 const TIPE_BADGE_COLOR: Record<string, string> = {
-    "Evaluasi Model": "text-hyper-violet border-hyper-violet/20 bg-hyper-violet/10",
-    "Teknis": "text-neon-cyan border-neon-cyan/20 bg-neon-cyan/10",
-    "Graph": "text-primary-blue border-primary-blue/20 bg-primary-blue/10",
-    "Kepatuhan": "text-status-success border-status-success/20 bg-status-success/10",
-    "Operasional": "text-amber-warning border-amber-warning/20 bg-amber-warning/10",
+    "Evaluasi": "text-hyper-violet border-hyper-violet/20 bg-hyper-violet/10 whitespace-nowrap",
+    "Teknis": "text-neon-cyan border-neon-cyan/20 bg-neon-cyan/10 whitespace-nowrap",
+    "Graph": "text-primary-blue border-primary-blue/20 bg-primary-blue/10 whitespace-nowrap",
+    "Kepatuhan": "text-status-success border-status-success/20 bg-status-success/10 whitespace-nowrap",
+    "Operasional": "text-amber-warning border-amber-warning/20 bg-amber-warning/10 whitespace-nowrap",
 };
 
 export default function LaporanPage() {
@@ -79,7 +79,7 @@ export default function LaporanPage() {
 
     // ── State Modal Buat Laporan Baru ──
     const [showBuatModal, setShowBuatModal] = useState(false);
-    const [buatForm, setBuatForm] = useState({ nama: "", tipe: "Evaluasi Model", rentang: "24jam", format: "PDF" });
+    const [buatForm, setBuatForm] = useState({ nama: "", tipe: "Evaluasi", rentang: "24jam", format: "PDF" });
     const [buatSubmitting, setBuatSubmitting] = useState(false);
     const [buatDone, setBuatDone] = useState(false);
 
@@ -98,8 +98,8 @@ export default function LaporanPage() {
 
     // ── Data tabel (dapat dikembangkan runtime) ──
     const [laporanData, setLaporanData] = useState<LaporanItem[]>([
-        { id: 1, nama: `Laporan Evaluasi XGBoost Classifier (F1: ${(rawModelMetrics.binary_models.xgboost.test.f1_score * 100).toFixed(2)}%, FPR: ${(rawModelMetrics.binary_models.xgboost.test.false_positive_rate * 100).toFixed(3)}%)`, tipe: "Evaluasi Model", date: "2026-06-04", size: "2.4 MB" },
-        { id: 2, nama: `Laporan Baseline Random Forest (F1: ${(rawModelMetrics.binary_models.random_forest.test.f1_score * 100).toFixed(2)}%, PR-AUC: ${(rawModelMetrics.binary_models.random_forest.test.pr_auc * 100).toFixed(2)}%)`, tipe: "Evaluasi Model", date: "2026-06-04", size: "1.8 MB" },
+        { id: 1, nama: `Laporan Evaluasi XGBoost Classifier (F1: ${(rawModelMetrics.binary_models.xgboost.test.f1_score * 100).toFixed(2)}%, FPR: ${(rawModelMetrics.binary_models.xgboost.test.false_positive_rate * 100).toFixed(3)}%)`, tipe: "Evaluasi", date: "2026-06-04", size: "2.4 MB" },
+        { id: 2, nama: `Laporan Baseline Random Forest (F1: ${(rawModelMetrics.binary_models.random_forest.test.f1_score * 100).toFixed(2)}%, PR-AUC: ${(rawModelMetrics.binary_models.random_forest.test.pr_auc * 100).toFixed(2)}%)`, tipe: "Evaluasi", date: "2026-06-04", size: "1.8 MB" },
         { id: 3, nama: `Laporan Klasifikasi Multiclass LightGBM (Macro F1: ${(rawModelMetrics.multiclass_model.test.macro_f1 * 100).toFixed(2)}%)`, tipe: "Teknis", date: "2026-06-04", size: "3.2 MB" },
         { id: 4, nama: `Analisis Outlier Isolation Forest (F1: ${(rawModelMetrics.anomaly_model.f1_score * 100).toFixed(2)}%, Recall: ${(rawModelMetrics.anomaly_model.recall * 100).toFixed(2)}%)`, tipe: "Teknis", date: "2026-06-04", size: "1.5 MB" },
         { id: 5, nama: `Analisis Topologi Graph Node Baseline (F1: ${(rawModelMetrics.graph_baseline.f1_score * 100).toFixed(2)}%)`, tipe: "Graph", date: "2026-06-04", size: "4.1 MB" },
@@ -431,7 +431,7 @@ export default function LaporanPage() {
                                             onChange={e => setBuatForm(f => ({ ...f, tipe: e.target.value }))}
                                             className="w-full bg-dark-950/60 border border-white/5 focus:border-primary-blue/50 rounded-xl py-3.5 px-4 text-sm font-bold text-white transition-all outline-none appearance-none"
                                         >
-                                            <option value="Evaluasi Model">Evaluasi Model</option>
+                                            <option value="Evaluasi">Evaluasi</option>
                                             <option value="Teknis">Teknis</option>
                                             <option value="Graph">Graph</option>
                                             <option value="Kepatuhan">Kepatuhan</option>
