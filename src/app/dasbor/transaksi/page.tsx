@@ -276,7 +276,7 @@ export default function TransaksiPage() {
                     <table className="w-full border-separate border-spacing-y-3">
                         <thead>
                             <tr className="text-left text-[10px] font-black text-dark-500 uppercase tracking-[0.2em]">
-                                <th className="pb-4 pl-8">ID Node</th>
+                                <th className="pb-4 pl-8">ID Transaksi</th>
                                 <th className="pb-4">Waktu Eksekusi</th>
                                 <th className="pb-4">Identitas Sumber</th>
                                 <th className="pb-4">Identitas Penerima</th>
