@@ -87,6 +87,31 @@ export async function GET(request: Request) {
         const rs = calculateRiskScore(doc);
         const displayId = doc._id.toString().slice(-8).toUpperCase();
 
+        // Check for existing analyst action logs in MongoDB
+        const actionLog = await db.collection("investigation_logs").findOne({ txId: displayId });
+        let finalAction = rs.analystAction;
+        let finalVerdict = rs.modelVerdict;
+        let auditLog = null;
+
+        if (actionLog) {
+            auditLog = {
+                action: actionLog.action,
+                status: actionLog.status,
+                timestamp: new Date(actionLog.timestamp).toLocaleString("id-ID"),
+                reviewedBy: actionLog.reviewedBy
+            };
+            if (actionLog.status === "cleared") {
+                finalAction = "Lolos";
+                finalVerdict = "APPROVED";
+            } else if (actionLog.status === "flagged") {
+                finalAction = "Investigasi";
+                finalVerdict = "REVIEW";
+            } else if (actionLog.status === "blocked") {
+                finalAction = "Tahan";
+                finalVerdict = "BLOCKED";
+            }
+        }
+
         // 1. Build detail
         const detail = {
             id: displayId,
@@ -102,10 +127,10 @@ export async function GET(request: Request) {
             merchant: "Merch_" + doc.receiver_bank,
             riskScore: rs.riskScore,
             threshold: 0.38,
-            modelVerdict: rs.modelVerdict,
+            modelVerdict: finalVerdict,
             fraudType: rs.fraudType,
             anomalyScore: rs.anomalyScore,
-            analystAction: rs.analystAction
+            analystAction: finalAction
         };
 
         // 2. Build XAI features
@@ -143,7 +168,8 @@ export async function GET(request: Request) {
             detail,
             xaiFeatures,
             gnnNodes,
-            gnnEdges
+            gnnEdges,
+            auditLog
         });
     } catch (err: any) {
         console.error("Failed to get investigation details from MongoDB:", err);

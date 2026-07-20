@@ -326,6 +326,18 @@ function InvestigasiContent() {
                     console.error("MongoDB returned error:", data.error);
                 } else {
                     setRecord(data);
+                    // Load audited action logs from MongoDB
+                    if (data.auditLog) {
+                        setAnalystStatus(data.auditLog.status);
+                        setAuditLog({
+                            action: data.auditLog.action,
+                            timestamp: data.auditLog.timestamp,
+                            color: data.auditLog.status === "cleared" ? "#10B981" : data.auditLog.status === "flagged" ? "#F59E0B" : data.auditLog.status === "blocked" ? "#F43F5E" : "#6B7280"
+                        });
+                    } else {
+                        setAnalystStatus("pending");
+                        setAuditLog(null);
+                    }
                 }
             })
             .catch(err => console.error("Error loading investigation from MongoDB:", err))
@@ -364,16 +376,36 @@ function InvestigasiContent() {
 
     const executeAction = (action: AnalystStatus, label: string, color: string, callback?: () => void) => {
         setIsProcessing(true);
-        setTimeout(() => {
-            setAnalystStatus(action);
-            setAuditLog({
-                action: label,
-                timestamp: new Date().toLocaleString("id-ID", { dateStyle: "short", timeStyle: "medium" }),
-                color,
-            });
-            setIsProcessing(false);
-            if (callback) callback();
-        }, 1500);
+        
+        fetch("/api/dashboard/investigation/action", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                txId: detail.id,
+                status: action,
+                action: label
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                setAnalystStatus(action);
+                if (action === "pending") {
+                    setAuditLog(null);
+                } else {
+                    setAuditLog({
+                        action: label,
+                        timestamp: new Date().toLocaleString("id-ID", { dateStyle: "short", timeStyle: "medium" }),
+                        color,
+                    });
+                }
+                if (callback) callback();
+            } else {
+                console.error("Failed to persist action in MongoDB:", data.error);
+            }
+        })
+        .catch(err => console.error("Error persisting action:", err))
+        .finally(() => setIsProcessing(false));
     };
 
     const handleSetujui = () => {
@@ -382,7 +414,7 @@ function InvestigasiContent() {
             "cleared",
             "Disetujui Bersih oleh Analis",
             "#10B981",
-            () => tampilSukses("Transaksi Disetujui", `Transaksi ${detail.id} telah diverifikasi bersih dan diteruskan untuk pemrosesan normal. Tidak ada tindakan lanjutan diperlukan.`)
+            () => tampilSukses("Transaksi Disetujui", `Transaksi ${detail.id} telah diverifikasi bersih dan diteruskan untuk pemrosesan normal.`)
         );
     };
 
@@ -392,7 +424,7 @@ function InvestigasiContent() {
             "flagged",
             "Ditandai untuk Investigasi Senior",
             "#F59E0B",
-            () => tampilError("Ditandai Investigasi", `Transaksi ${detail.id} telah dikirim ke antrian investigasi senior. Tim akan melakukan verifikasi lanjutan dalam 1×24 jam.`)
+            () => tampilError("Ditandai Investigasi", `Transaksi ${detail.id} telah dikirim ke antrian investigasi senior.`)
         );
     };
 
@@ -407,13 +439,20 @@ function InvestigasiContent() {
             "blocked",
             "Diblokir & Akun Dibekukan",
             "#F43F5E",
-            () => tampilSukses("Blokir Berhasil", `Transaksi ${detail.id} telah dihentikan dan akun terkait (${detail.pengirim}) dibekukan sementara menunggu investigasi forensik lebih lanjut.`)
+            () => tampilSukses("Blokir Berhasil", `Transaksi ${detail.id} telah dihentikan dan akun terkait dibekukan.`)
         );
     };
 
     const handleReset = () => {
-        setAnalystStatus("pending");
-        setAuditLog(null);
+        executeAction(
+            "pending",
+            "Keputusan Direset oleh Analis",
+            "#6B7280",
+            () => {
+                setAnalystStatus("pending");
+                setAuditLog(null);
+            }
+        );
     };
 
     const getNodeColor = (type: string) => {
