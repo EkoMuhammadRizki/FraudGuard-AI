@@ -1,0 +1,42 @@
+[
+  {
+    "username": "eko@fraudguard",
+    "name": "Eko",
+    "password": "admin123", 
+    "role": "super_admin",
+    "is_deletable": false,
+    "created_at": {"$date": "2026-07-20T00:00:00Z"}
+  },
+  {
+    "username": "ihya@fraudguard",
+    "name": "Ihya",
+    "password": "admin123", 
+    "role": "super_admin",
+    "is_deletable": false,
+    "created_at": {"$date": "2026-07-20T00:00:00Z"}
+  },
+  {
+    "username": "ibin@fraudguard",
+    "name": "Ibin",
+    "password": "admin123", 
+    "role": "super_admin",
+    "is_deletable": false,
+    "created_at": {"$date": "2026-07-20T00:00:00Z"}
+  },
+  {
+    "username": "reza@fraudguard",
+    "name": "Reza",
+    "password": "admin123", 
+    "role": "super_admin",
+    "is_deletable": false,
+    "created_at": {"$date": "2026-07-20T00:00:00Z"}
+  },
+  {
+    "username": "juri@fraudguard",
+    "name": "Juri Penilai",
+    "password": "admin123", 
+    "role": "super_admin",
+    "is_deletable": false,
+    "created_at": {"$date": "2026-07-20T00:00:00Z"}
+  }
+]
