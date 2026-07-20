@@ -298,6 +298,8 @@ function InvestigasiEmptyState({ onSearch }: { onSearch: (id: string) => void })
 
 function InvestigasiContent() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const txid = searchParams.get("txid");
     const { modal, tampilSukses, tampilKonfirmasi, tampilError, tutupModal } = gunakanNotifikasi();
     const [selectedNode, setSelectedNode] = useState<string | null>(null);
     const [activeNodeModal, setActiveNodeModal] = useState<any>(null);
@@ -310,21 +312,14 @@ function InvestigasiContent() {
     const [auditLog, setAuditLog] = useState<{ action: string; timestamp: string; color: string } | null>(null);
     const [showBlockConfirm, setShowBlockConfirm] = useState(false);
 
-    const searchParams = useSearchParams();
-    const txid = searchParams.get("txid");
-
-    if (!txid) {
-        return <InvestigasiEmptyState onSearch={(id) => router.push(`/dasbor/investigasi?txid=${id}`)} />;
-    }
-
     const [record, setRecord] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     // Fetch investigation record details from MongoDB dynamically
     useEffect(() => {
+        if (!txid) return;
         setIsLoading(true);
-        const targetId = txid || "";
-        fetch(`/api/dashboard/investigation?id=${targetId}`)
+        fetch(`/api/dashboard/investigation?id=${txid}`)
             .then(res => res.json())
             .then(data => {
                 if (data.error) {
@@ -443,6 +438,10 @@ function InvestigasiContent() {
             return `Transaksi ${detail.id} dinilai bersih oleh model dengan tingkat risiko rendah ${detail.riskScore}% (di bawah threshold 38%). Pola perilaku input terminal, durasi transaksi, dan geolokasi berada pada batas wajar. Tindakan analis otomatis: Lolos.`;
         }
     };
+
+    if (!txid) {
+        return <InvestigasiEmptyState onSearch={(id) => router.push(`/dasbor/investigasi?txid=${id}`)} />;
+    }
 
     return (
         <>
