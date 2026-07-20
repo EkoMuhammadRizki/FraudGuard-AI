@@ -494,14 +494,14 @@ function InvestigasiContent() {
                         <p className="text-dark-400 font-bold flex items-center gap-2 uppercase tracking-widest text-[10px]">
                             <span className={`w-1.5 h-1.5 rounded-full animate-pulse shrink-0 ${
                                 analystStatus === "blocked" ? "bg-status-error" :
-                                analystStatus === "flagged" ? "bg-amber-warning" :
+                                analystStatus === "flagged" ? "bg-status-warning" :
                                 analystStatus === "cleared" ? "bg-status-success" :
                                 "bg-status-error/50"
                             }`} />
                             Investigasi mendalam: <span className="text-white">{detail.id}</span>
                             {analystStatus === "pending" && <span className={detail.riskScore >= 38 ? "text-status-error" : "text-status-success"}>{detail.riskScore >= 38 ? "ANOMALI TERDETEKSI" : "BERSIH"}</span>}
                             {analystStatus === "cleared" && <span className="text-status-success font-black">▶ DISETUJUI BERSIH</span>}
-                            {analystStatus === "flagged" && <span className="text-amber-warning font-black">▶ INVESTIGASI SENIOR</span>}
+                            {analystStatus === "flagged" && <span className="text-status-warning font-black">▶ INVESTIGASI SENIOR</span>}
                             {analystStatus === "blocked" && <span className="text-status-error font-black">▶ DIBLOKIR & DIBEKUKAN</span>}
                         </p>
                     </div>
@@ -527,10 +527,10 @@ function InvestigasiContent() {
                             disabled={analystStatus !== "pending" || isProcessing}
                             className={`group px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all active:scale-[0.98] shadow-sm border ${
                                 analystStatus === "flagged"
-                                    ? "bg-amber-warning text-dark-950 border-amber-warning cursor-default"
+                                    ? "bg-status-warning text-dark-950 border-status-warning cursor-default"
                                     : analystStatus !== "pending" || isProcessing
                                     ? "bg-dark-900 text-dark-600 border-dark-700 cursor-not-allowed opacity-40"
-                                    : "bg-amber-warning/10 hover:bg-amber-warning/20 text-amber-warning border-amber-warning/20"
+                                    : "bg-status-warning/10 hover:bg-status-warning/20 text-status-warning border-status-warning/20"
                             }`}
                         >
                             {analystStatus === "flagged" ? "⚑ Ditandai" : "⚑ Tandai Investigasi"}
