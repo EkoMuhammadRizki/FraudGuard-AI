@@ -319,7 +319,7 @@ export default function LaporanPage() {
                             <thead>
                                 <tr className="text-left text-[10px] font-black text-dark-500 uppercase tracking-[0.2em]">
                                     <th className="pb-4 pl-8">Nama Protokol</th>
-                                    <th className="pb-4">Klasifikasi</th>
+                                    <th className="pb-4 pr-8">Klasifikasi</th>
                                     <th className="pb-4">Waktu Pembuatan</th>
                                     <th className="pb-4">Volume Data</th>
                                     <th className="pb-4 text-right pr-8">Aksi</th>
@@ -336,7 +336,7 @@ export default function LaporanPage() {
                                                 <span className="text-sm font-black text-white tracking-tight uppercase italic leading-snug">{lap.nama}</span>
                                             </div>
                                         </td>
-                                        <td className="py-5 bg-white/[0.02] group-hover/row:bg-white/[0.04] border-y border-white/5">
+                                        <td className="py-5 bg-white/[0.02] group-hover/row:bg-white/[0.04] border-y border-white/5 pr-8">
                                             <span className={`inline-flex px-3 py-1 rounded-lg border text-[10px] font-black uppercase tracking-widest ${TIPE_BADGE_COLOR[lap.tipe] ?? "text-dark-300 border-white/5 bg-dark-900"}`}>
                                                 {lap.tipe}
                                             </span>
