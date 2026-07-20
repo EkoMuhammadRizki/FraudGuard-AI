@@ -10,7 +10,8 @@ import {
     LogOut,
     X,
     ShieldAlert,
-    FlaskConical
+    FlaskConical,
+    Smartphone
 } from "lucide-react";
 import Logo from "./logo";
 
@@ -39,6 +40,11 @@ const menuItems = [
         label: "Simulasi",
         href: "/dasbor/simulasi",
         icon: <FlaskConical className="w-5 h-5" strokeWidth={2} />,
+    },
+    {
+        label: "Simulasi SDK",
+        href: "/dasbor/simulasi-sdk",
+        icon: <Smartphone className="w-5 h-5" strokeWidth={2} />,
     },
 ];
 interface SidebarProps {

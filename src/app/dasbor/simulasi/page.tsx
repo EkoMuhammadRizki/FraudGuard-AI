@@ -5,10 +5,31 @@ import {
     Zap, Activity, MapPin, Cpu, AlertTriangle, ArrowRight,
     Loader2, TerminalSquare, Send, RefreshCw, ChevronRight
 } from "lucide-react";
+import ModelStatusBadge from "@/komponen/ui/model-status-badge";
 
 // ─── Types ────────────────────────────────────────────────
 type Scenario = "normal" | "bot" | "syndicate";
 type PipelineStage = "idle" | "capture" | "tensor" | "kafka" | "fds" | "done";
+
+/** Hasil prediksi dari Python ML API */
+interface MLResult {
+    transaction_id: string;
+    final_decision: "BLOCKED" | "APPROVED";
+    is_fraud: boolean;
+    risk_score: number;
+    threshold_used: number;
+    fraud_type: string;
+    model_scores: {
+        xgboost: number;
+        lightgbm_max: number;
+        lightgbm_fraud_sum: number;
+        graph_gnn: number;
+        ensemble_final: number;
+    };
+    processing_time_ms: number;
+    /** true = hasil dari ML nyata, false = fallback demo mode */
+    is_live: boolean;
+}
 
 interface TelemetryData {
     dwellTimes: number[];
@@ -135,6 +156,26 @@ function validateAmountRaw(raw: string): string | undefined {
     return undefined;
 }
 
+/** Parse raw User Agent string to a clean browser name + OS */
+function getCleanUserAgent(ua: string): string {
+    const lowercase = ua.toLowerCase();
+    let os = "Unknown OS";
+    if (lowercase.includes("windows")) os = "Windows";
+    else if (lowercase.includes("macintosh") || lowercase.includes("mac os")) os = "macOS";
+    else if (lowercase.includes("linux")) os = "Linux";
+    else if (lowercase.includes("android")) os = "Android";
+    else if (lowercase.includes("iphone") || lowercase.includes("ipad")) os = "iOS";
+
+    let browser = "Unknown Browser";
+    if (lowercase.includes("edg/")) browser = "Microsoft Edge";
+    else if (lowercase.includes("opr/") || lowercase.includes("opera")) browser = "Opera";
+    else if (lowercase.includes("chrome")) browser = "Chrome";
+    else if (lowercase.includes("firefox")) browser = "Firefox";
+    else if (lowercase.includes("safari")) browser = "Safari";
+
+    return `${browser} (${os})`;
+}
+
 // ─── Component ────────────────────────────────────────────
 export default function SimulasiPage() {
     const [scenario, setScenario] = useState<Scenario>("normal");
@@ -154,7 +195,11 @@ export default function SimulasiPage() {
     const [completedSteps, setCompletedSteps] = useState<PipelineStage[]>([]);
     const [currentUserAgent, setCurrentUserAgent] = useState<string>("Detecting...");
     const [currentIp, setCurrentIp] = useState<string>("Detecting...");
+    const [geoLocation, setGeoLocation] = useState<string>("Detecting...");
     const [viewportSize, setViewportSize] = useState({ w: 1280, h: 720 }); // default SSR-safe
+
+    // ── ML Result State ──
+    const [mlResult, setMlResult] = useState<MLResult | null>(null);
 
     // Refs untuk tracking tanpa re-render
     const keyDownTimeRef = useRef<number>(0);
@@ -163,17 +208,36 @@ export default function SimulasiPage() {
     // ── Side Effects ──
     useEffect(() => {
         // Aman diakses hanya di client
-        setCurrentUserAgent(window.navigator.userAgent);
+        if (typeof window !== "undefined") {
+            const ua = window.navigator.userAgent;
+            setCurrentUserAgent(getCleanUserAgent(ua));
+        }
         setViewportSize({ w: window.innerWidth, h: window.innerHeight });
 
         const handleResize = () => setViewportSize({ w: window.innerWidth, h: window.innerHeight });
         window.addEventListener("resize", handleResize);
 
-        // Fetch IP publik
-        fetch("https://api.ipify.org?format=json")
+        // Fetch IP & Geolocation asli dari ipapi.co
+        fetch("https://ipapi.co/json/")
             .then(res => res.json())
-            .then(data => setCurrentIp(data.ip))
-            .catch(() => setCurrentIp("192.168.1.xxx (Mock)"));
+            .then(data => {
+                if (data.ip) setCurrentIp(data.ip);
+                if (data.latitude && data.longitude) {
+                    setGeoLocation(`LAT: ${data.latitude.toFixed(4)} | LONG: ${data.longitude.toFixed(4)} (${data.city || 'Unknown'}, ${data.region_code || ''})`);
+                } else {
+                    setGeoLocation("LAT: -6.2088 | LONG: 106.8456 (Jakarta, Fallback)");
+                }
+            })
+            .catch(() => {
+                // Fallback jika ipapi.co diblokir adblocker
+                fetch("https://api.ipify.org?format=json")
+                    .then(res => res.json())
+                    .then(data => {
+                        setCurrentIp(data.ip);
+                    })
+                    .catch(() => setCurrentIp("192.168.1.xxx (Mock)"));
+                setGeoLocation("LAT: -6.2088 | LONG: 106.8456 (Jakarta, Fallback)");
+            });
 
         return () => window.removeEventListener("resize", handleResize);
     }, []);
@@ -228,7 +292,12 @@ export default function SimulasiPage() {
     }, []);
 
     const handleFormChange = (field: keyof FormData, value: string) => {
-        setForm(prev => ({ ...prev, [field]: value }));
+        let cleanedValue = value;
+        if (field === "senderName" || field === "receiverName") {
+            // Hanya izinkan huruf, spasi, titik, koma, tanda hubung, dan kutip tunggal
+            cleanedValue = value.replace(/[^a-zA-Z\s.,'-]/g, "");
+        }
+        setForm(prev => ({ ...prev, [field]: cleanedValue }));
     };
 
     /** Handler khusus field rekening — hanya terima digit, max 16 */
@@ -249,26 +318,8 @@ export default function SimulasiPage() {
         setFormErrors(prev => ({ ...prev, amount: validateAmountRaw(raw) }));
     };
 
-    // ── Computed Telemetry (deterministik untuk bot/syndicate) ──
+    // ── Computed Telemetry (real-time user telemetry) ──
     const computedTelemetry = (() => {
-        if (scenario === "bot") {
-            return {
-                avgDwell: "8ms", avgFlight: "2ms",
-                mousePath: "Linear (0.0% deviation)",
-                hesitation: "0 events", confidence: "99.2%",
-                deviation: 0,
-            };
-        }
-        if (scenario === "syndicate") {
-            return {
-                avgDwell: "142ms", avgFlight: "89ms",
-                mousePath: "Natural (18.3% deviation)",
-                hesitation: "2 events", confidence: "97.8%",
-                deviation: 18,
-            };
-        }
-
-        // Normal: hitung dari telemetri nyata
         const avgDwell = telemetry.dwellTimes.length
             ? Math.round(telemetry.dwellTimes.reduce((a, b) => a + b, 0) / telemetry.dwellTimes.length)
             : 0;
@@ -298,26 +349,102 @@ export default function SimulasiPage() {
         if (!form.account || !form.amount || !form.senderName || !form.receiverName) return;
 
         setCompletedSteps([]);
+        setMlResult(null);
         setPipelineStage("capture");
-        const score = scenarioConfig[scenario].riskScore();
-        setRiskScore(score);
 
+        // ── Jalankan animasi pipeline step-by-step ──
         for (const step of PIPELINE_STEPS) {
-            if (step.stage === "done") {
-                await new Promise(r => setTimeout(r, 400));
-                setCompletedSteps(prev => [...prev, step.stage]);
-                setPipelineStage("done");
-                break;
-            }
+            if (step.stage === "done") break;
             setPipelineStage(step.stage);
             await new Promise(r => setTimeout(r, step.duration));
             setCompletedSteps(prev => [...prev, step.stage]);
         }
+
+        // ── Panggil ML API (berjalan paralel saat animasi selesai) ──
+        let finalResult: MLResult;
+        try {
+            // Tentukan payment_format & bank berdasarkan skenario
+            const paymentMap: Record<Scenario, string> = {
+                normal: "Wire",
+                bot: "ACH",
+                syndicate: "SWIFT",
+            };
+            const bankMap: Record<Scenario, string> = {
+                normal: "BCA",
+                bot: "Mandiri",
+                syndicate: "HSBC",
+            };
+            // Sinyal jaringan yang lebih kuat untuk skenario bot/syndicate
+            const graphSignals: Record<Scenario, { sender_degree: number; receiver_indegree: number; fan_out_ratio: number; fan_in_ratio: number; time_since_last_tx: number }> = {
+                normal:    { sender_degree: 5,  receiver_indegree: 3,  fan_out_ratio: 0.15, fan_in_ratio: 0.10, time_since_last_tx: 3600 },
+                bot:       { sender_degree: 1,  receiver_indegree: 2,  fan_out_ratio: 0.05, fan_in_ratio: 0.08, time_since_last_tx: 2   },
+                syndicate: { sender_degree: 45, receiver_indegree: 60, fan_out_ratio: 0.85, fan_in_ratio: 0.90, time_since_last_tx: 120 },
+            };
+
+            const payload = {
+                timestamp: new Date().toISOString(),
+                sender_account: form.account,
+                receiver_account: form.account.split("").reverse().join(""),
+                amount_paid: parseFloat(form.amount),
+                amount_received: parseFloat(form.amount) * (scenario === "syndicate" ? 0.97 : 1.0),
+                payment_format: paymentMap[scenario],
+                currency: "IDR",
+                sender_bank: bankMap[scenario],
+                receiver_bank: scenario === "syndicate" ? "Deutsche Bank" : bankMap[scenario],
+                sender_account_age_days: scenario === "bot" ? 3 : scenario === "syndicate" ? 45 : 730,
+                is_new_receiver_for_sender: scenario === "normal" ? 0 : 1,
+                daily_tx_count: scenario === "bot" ? 98 : scenario === "syndicate" ? 25 : 2,
+                ...graphSignals[scenario],
+            };
+
+            const res = await fetch("/api/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+
+            if (!res.ok && res.status === 503) {
+                throw new Error("ml_offline");
+            }
+
+            const data = await res.json();
+
+            if (data.error === "ml_offline") throw new Error("ml_offline");
+
+            finalResult = { ...data, is_live: true };
+        } catch {
+            // ── Fallback: Demo Mode (Python API offline) ──
+            const score = scenarioConfig[scenario].riskScore();
+            finalResult = {
+                transaction_id: "DEMO-" + Math.random().toString(36).slice(2, 8).toUpperCase(),
+                final_decision: scenario === "normal" ? "APPROVED" : "BLOCKED",
+                is_fraud: scenario !== "normal",
+                risk_score: score,
+                threshold_used: 33.7,
+                fraud_type: scenario === "syndicate" ? "Money Mule" : scenario === "bot" ? "Account Takeover" : "Legitimate",
+                model_scores: {
+                    xgboost: score * 0.9 + Math.random() * 5,
+                    lightgbm_max: score * 0.85 + Math.random() * 5,
+                    lightgbm_fraud_sum: score * 0.88 + Math.random() * 5,
+                    graph_gnn: score * 0.82 + Math.random() * 5,
+                    ensemble_final: score,
+                },
+                processing_time_ms: 0,
+                is_live: false,
+            };
+        }
+
+        setMlResult(finalResult);
+        setRiskScore(Math.round(finalResult.risk_score));
+        await new Promise(r => setTimeout(r, 400));
+        setCompletedSteps(prev => [...prev, "done"]);
+        setPipelineStage("done");
     };
 
     const resetSimulation = () => {
         setPipelineStage("idle");
         setRiskScore(null);
+        setMlResult(null);
         setCompletedSteps([]);
         setForm({ senderName: "", receiverName: "", account: "", amount: "", note: "" });
         setFormErrors({});
@@ -347,7 +474,7 @@ export default function SimulasiPage() {
     return (
         <div className="p-4 sm:p-6 md:p-10 space-y-8 min-h-screen" onMouseMove={handleMouseMove}>
             {/* Header */}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                 <div className="flex items-center gap-3">
                     <div className="p-2.5 bg-hyper-violet/10 rounded-xl border border-hyper-violet/20">
                         <Activity className="w-5 h-5 text-hyper-violet" strokeWidth={2.5} />
@@ -360,6 +487,10 @@ export default function SimulasiPage() {
                             Mesin Simulasi Deteksi Fraud Berbasis Perilaku
                         </p>
                     </div>
+                </div>
+                {/* ML Engine Status */}
+                <div className="flex-shrink-0">
+                    <ModelStatusBadge showDetails pollInterval={30000} />
                 </div>
             </div>
 
@@ -595,18 +726,30 @@ export default function SimulasiPage() {
                         </div>
 
                         {/* Telemetry rows */}
-                        <div className="bg-dark-950/60 rounded-2xl border border-white/5 divide-y divide-white/5 overflow-hidden">
+                        <div className="bg-dark-950/60 rounded-2xl border border-white/5 divide-y divide-white/5 relative">
                             {[
-                                { label: "Key Dwell Time (avg)", value: computedTelemetry.avgDwell, mono: true },
-                                { label: "Flight Time (avg)", value: computedTelemetry.avgFlight, mono: true },
-                                { label: "Mouse Path", value: computedTelemetry.mousePath, mono: false },
-                                { label: "Hesitation Events", value: computedTelemetry.hesitation, mono: true },
-                                { label: "User Agent", value: currentUserAgent, mono: true },
-                                { label: "Alamat IP", value: currentIp, mono: true },
-                                { label: "Lokasi Geografis", value: "LAT: -6.2088 | LONG: 106.8456", mono: true },
-                            ].map(row => (
-                                <div key={row.label} className="flex items-center justify-between px-5 py-3.5 group hover:bg-white/[0.02] transition-colors">
-                                    <span className="text-[10px] font-black text-dark-500 uppercase tracking-widest">{row.label}</span>
+                                { label: "Key Dwell Time (avg)", value: computedTelemetry.avgDwell, mono: true, desc: "Rata-rata durasi penekanan satu tombol keyboard (dari keydown ke keyup). Bot biasanya mengetik sangat cepat dengan dwell time seragam (<15ms), sedangkan manusia bervariasi (50-150ms)." },
+                                { label: "Flight Time (avg)", value: computedTelemetry.avgFlight, mono: true, desc: "Rata-rata waktu jeda perpindahan antar tombol keyboard. Pola transisi penulisan yang terlalu konsisten atau terlalu cepat mengindikasikan otomatisasi skrip (bot)." },
+                                { label: "Mouse Path", value: computedTelemetry.mousePath, mono: false, desc: "Analisis kelengkungan dan deviasi jalur gerakan kursor mouse. Manusia bergerak dengan kurva natural bergetar (deviasi tinggi), sedangkan bot bergerak lurus kaku atau instan (deviasi 0%)." },
+                                { label: "Hesitation Events", value: computedTelemetry.hesitation, mono: true, desc: "Jumlah kejadian ketika user berhenti mengetik sejenak (>800ms) untuk berpikir. Manusia sering ragu-ragu saat mengisi data sensitif, sementara bot tidak pernah menunjukkan keraguan." },
+                                { label: "User Agent", value: currentUserAgent, mono: true, desc: "Identitas browser, sistem operasi, dan mesin rendering perangkat yang digunakan untuk mengakses platform ini." },
+                                { label: "Alamat IP", value: currentIp, mono: true, desc: "Alamat protokol internet publik dari koneksi internet perangkat Anda. Digunakan oleh mesin fraud untuk memeriksa reputasi jaringan & lokasi proxy." },
+                                { label: "Lokasi Geografis", value: geoLocation, mono: true, desc: "Estimasi koordinat garis lintang (latitude) dan garis bujur (longitude) serta nama kota/wilayah Anda berdasarkan lookup IP publik." },
+                            ].map((row, idx, arr) => (
+                                <div key={row.label} className={`flex items-center justify-between px-5 py-3.5 group/row hover:bg-white/[0.02] transition-colors relative ${
+                                    idx === 0 ? "rounded-t-2xl" : idx === arr.length - 1 ? "rounded-b-2xl" : ""
+                                }`}>
+                                    <div className="flex items-center gap-1.5 relative group/tooltip">
+                                        <span className="text-[10px] font-black text-dark-500 uppercase tracking-widest cursor-help border-b border-dashed border-dark-600/40 pb-0.5 hover:text-dark-300 transition-colors">
+                                            {row.label}
+                                        </span>
+                                        {/* Tooltip Content */}
+                                        <div className="absolute left-0 bottom-full mb-2.5 hidden group-hover/tooltip:block w-72 bg-[#0c152b] border border-white/10 rounded-2xl p-4 text-[11px] text-dark-300 shadow-2xl z-[1000] leading-relaxed">
+                                            <div className="absolute top-full left-6 -mt-1 w-2.5 h-2.5 bg-[#0c152b] border-r border-b border-white/10 rotate-45" />
+                                            <div className="font-bold text-neon-cyan uppercase tracking-wider mb-1.5 text-[10px]">{row.label}</div>
+                                            {row.desc}
+                                        </div>
+                                    </div>
                                     <span className={`text-[11px] font-black text-right max-w-[55%] truncate ${row.mono ? "font-mono text-neon-cyan" : "text-white"}`}>
                                         {row.value}
                                     </span>
@@ -618,24 +761,23 @@ export default function SimulasiPage() {
                         <div className="mt-5 bg-dark-950/60 rounded-2xl border border-white/5 p-4 h-28 relative overflow-hidden">
                             <div className="absolute top-2 left-3 text-[9px] font-black text-dark-600 uppercase tracking-widest">Jejak Jalur Mouse</div>
                             <svg className="w-full h-full" viewBox="0 0 400 80">
-                                {telemetry.mousePoints.length > 1 && scenario === "normal" && (
+                                {telemetry.mousePoints.length > 1 ? (
                                     <polyline
                                         points={telemetry.mousePoints
                                             .map(p => `${(p.x / viewportSize.w) * 400},${(p.y / viewportSize.h) * 80}`)
                                             .join(" ")}
-                                        fill="none" stroke="rgba(6,182,212,0.5)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+                                        fill="none" 
+                                        stroke={scenario === "bot" ? "rgba(239,68,68,0.6)" : scenario === "syndicate" ? "rgba(251,191,36,0.6)" : "rgba(6,182,212,0.6)"} 
+                                        strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
                                     />
-                                )}
-                                {scenario === "bot" && (
-                                    <line x1="20" y1="40" x2="380" y2="40" stroke="rgba(239,68,68,0.6)" strokeWidth="1.5" strokeDasharray="4 4" />
-                                )}
-                                {scenario === "syndicate" && telemetry.mousePoints.length > 1 && (
-                                    <polyline
-                                        points={telemetry.mousePoints
-                                            .map(p => `${(p.x / viewportSize.w) * 400},${(p.y / viewportSize.h) * 80}`)
-                                            .join(" ")}
-                                        fill="none" stroke="rgba(251,191,36,0.5)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
-                                    />
+                                ) : (
+                                    scenario === "bot" ? (
+                                        <line x1="20" y1="40" x2="380" y2="40" stroke="rgba(239,68,68,0.6)" strokeWidth="1.5" strokeDasharray="4 4" />
+                                    ) : (
+                                        <text x="200" y="45" textAnchor="middle" fill="rgba(255,255,255,0.15)" className="text-[9px] font-black uppercase tracking-widest select-none">
+                                            Gerakkan mouse untuk merekam telemetri
+                                        </text>
+                                    )
                                 )}
                             </svg>
                         </div>
@@ -678,19 +820,82 @@ export default function SimulasiPage() {
 
                                 {/* Vonis */}
                                 {isDone && riskScore !== null && (
-                                    <div className={`mt-4 rounded-2xl border p-6 text-center transition-all ${cfg.border} ${cfg.bg} ${cfg.glow}`}>
-                                        <div className="text-[10px] font-black text-dark-400 uppercase tracking-[0.3em] mb-3">Vonis FDS</div>
-                                        <div className="flex items-center justify-center gap-3 mb-3">
-                                            {cfg.verdict === "DIBLOKIR"
-                                                ? <ShieldX className="w-10 h-10 text-status-error" strokeWidth={2} />
-                                                : <ShieldCheck className="w-10 h-10 text-status-success" strokeWidth={2} />
-                                            }
-                                            <div className={`text-4xl font-black uppercase tracking-tight ${cfg.verdictColor}`}>{cfg.verdict}</div>
+                                    <div className={`mt-4 rounded-2xl border p-6 transition-all ${cfg.border} ${cfg.bg} ${cfg.glow} space-y-4`}>
+
+                                        {/* Header Vonis */}
+                                        <div className="text-center">
+                                            <div className="text-[10px] font-black text-dark-400 uppercase tracking-[0.3em] mb-3">
+                                                Vonis FDS
+                                                {mlResult && (
+                                                    <span className={`ml-2 px-2 py-0.5 rounded-full text-[9px] ${
+                                                        mlResult.is_live
+                                                            ? "bg-status-success/10 text-status-success border border-status-success/20"
+                                                            : "bg-amber-400/10 text-amber-400 border border-amber-400/20"
+                                                    }`}>
+                                                        {mlResult.is_live ? "⚡ LIVE ML" : "🎭 DEMO MODE"}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <div className="flex items-center justify-center gap-3 mb-2">
+                                                {(mlResult?.final_decision ?? cfg.verdict) === "BLOCKED" || cfg.verdict === "DIBLOKIR"
+                                                    ? <ShieldX className="w-10 h-10 text-status-error" strokeWidth={2} />
+                                                    : <ShieldCheck className="w-10 h-10 text-status-success" strokeWidth={2} />
+                                                }
+                                                <div className={`text-4xl font-black uppercase tracking-tight ${cfg.verdictColor}`}>
+                                                    {mlResult ? (mlResult.final_decision === "BLOCKED" ? "DIBLOKIR" : "TERVERIFIKASI") : cfg.verdict}
+                                                </div>
+                                            </div>
+                                            {mlResult?.fraud_type && mlResult.fraud_type !== "Legitimate" && (
+                                                <div className="text-[10px] font-black text-status-error uppercase tracking-widest mt-1">
+                                                    Jenis: {mlResult.fraud_type}
+                                                </div>
+                                            )}
+                                            <div className="flex items-center justify-center gap-2 mt-2">
+                                                <AlertTriangle className="w-3.5 h-3.5 text-dark-500" />
+                                                <span className="text-[11px] text-dark-400 font-black uppercase tracking-widest">
+                                                    Skor Risiko: <span className={cfg.verdictColor}>{riskScore}/100</span>
+                                                    {mlResult && <span className="text-dark-600 ml-1">(Threshold: {mlResult.threshold_used})</span>}
+                                                </span>
+                                            </div>
                                         </div>
-                                        <div className="flex items-center justify-center gap-2 mt-2">
-                                            <AlertTriangle className="w-3.5 h-3.5 text-dark-500" />
-                                            <span className="text-[11px] text-dark-400 font-black uppercase tracking-widest">Skor Risiko: <span className={cfg.verdictColor}>{riskScore}/100</span></span>
-                                        </div>
+
+                                        {/* Model Breakdown Scores */}
+                                        {mlResult?.model_scores && (
+                                            <div className="bg-dark-950/60 rounded-xl border border-white/5 p-4">
+                                                <div className="text-[9px] font-black text-dark-500 uppercase tracking-[0.25em] mb-3">Breakdown Skor per Model</div>
+                                                <div className="space-y-2">
+                                                    {([
+                                                        { key: "xgboost",            label: "XGBoost",           color: "bg-blue-500" },
+                                                        { key: "lightgbm_fraud_sum", label: "LightGBM (Fraud)",  color: "bg-purple-500" },
+                                                        { key: "graph_gnn",          label: "Graph / GNN",       color: "bg-neon-cyan" },
+                                                        { key: "ensemble_final",     label: "Ensemble Final",    color: "bg-hyper-violet" },
+                                                    ] as const).map(({ key, label, color }) => {
+                                                        const score = mlResult.model_scores[key];
+                                                        return (
+                                                            <div key={key} className="flex items-center gap-3">
+                                                                <span className="text-[10px] text-dark-400 font-mono w-32 flex-shrink-0">{label}</span>
+                                                                <div className="flex-1 h-1.5 bg-dark-800 rounded-full overflow-hidden">
+                                                                    <div
+                                                                        className={`h-full ${color} rounded-full transition-all duration-700`}
+                                                                        style={{ width: `${Math.min(score, 100)}%` }}
+                                                                    />
+                                                                </div>
+                                                                <span className={`text-[11px] font-black font-mono w-12 text-right ${
+                                                                    score >= mlResult.threshold_used ? "text-status-error" : "text-status-success"
+                                                                }`}>
+                                                                    {score.toFixed(1)}%
+                                                                </span>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                                {mlResult.processing_time_ms > 0 && (
+                                                    <div className="mt-3 text-[9px] text-dark-600 font-mono text-right">
+                                                        Inferensi: {mlResult.processing_time_ms}ms
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Network, BrainCircuit, Fingerprint, ArrowRight } from "lucide-react";
+import { Network, BrainCircuit, Fingerprint, ArrowRight, Cpu, Layers } from "lucide-react";
 
 export default function Fitur() {
     const [modalType, setModalType] = useState<string | null>(null);
@@ -11,6 +11,18 @@ export default function Fitur() {
             icon: <Network className="w-6 h-6" strokeWidth={2} />,
             title: "Graph Neural Network (GNN)",
             description: "Menganalisis topologi jaringan transaksi untuk mengidentifikasi pola fraud tersembunyi dengan akurasi tinggi.",
+        },
+        {
+            id: "lightgbm",
+            icon: <Cpu className="w-6 h-6" strokeWidth={2} />,
+            title: "LightGBM Classifier",
+            description: "Klasifikasi multikelas instan untuk mendeteksi tipe penipuan spesifik (seperti pencucian uang atau pengambilalihan akun).",
+        },
+        {
+            id: "ensemble",
+            icon: <Layers className="w-6 h-6" strokeWidth={2} />,
+            title: "Ensemble Final Stacker",
+            description: "Meta-learner Logistic Regression yang menggabungkan prediksi XGBoost, LightGBM, dan GNN untuk keputusan final kokoh.",
         },
         {
             id: "xai",
@@ -40,7 +52,7 @@ export default function Fitur() {
                 </div>
 
                 {/* Feature Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {fiturList.map((fitur, index) => (
                         <div
                             key={fitur.title}
@@ -118,6 +130,8 @@ export default function Fitur() {
                         <div className="flex items-start gap-5 mb-8">
                             <div className="w-14 h-14 rounded-2xl bg-dark-700 border border-white/5 flex items-center justify-center text-primary-blue shadow-lg shrink-0">
                                 {modalType === "gnn" && <Network className="w-8 h-8" />}
+                                {modalType === "lightgbm" && <Cpu className="w-8 h-8" />}
+                                {modalType === "ensemble" && <Layers className="w-8 h-8" />}
                                 {modalType === "xai" && <BrainCircuit className="w-8 h-8" />}
                                 {modalType === "biometrics" && <Fingerprint className="w-8 h-8" />}
                             </div>
@@ -125,6 +139,8 @@ export default function Fitur() {
                                 <span className="text-[10px] font-bold text-neon-cyan uppercase tracking-[0.2em]">SISTEM INFRASTRUKTUR</span>
                                 <h3 className="text-2xl font-black text-white mt-1 leading-tight">
                                     {modalType === "gnn" && "Graph Neural Network (GNN)"}
+                                    {modalType === "lightgbm" && "LightGBM Multiclass Classifier"}
+                                    {modalType === "ensemble" && "Ensemble Final Stacker (Meta-Learner)"}
                                     {modalType === "xai" && "Explainable AI (XAI)"}
                                     {modalType === "biometrics" && "Biometrik Lanjutan"}
                                 </h3>
@@ -173,6 +189,74 @@ export default function Fitur() {
                                     </svg>
                                     <div className="text-[10px] font-mono font-bold text-neon-cyan tracking-wider uppercase animate-pulse">
                                         MENGANALISIS TOPOLOGI RELASI AKUN...
+                                    </div>
+                                </div>
+                            )}
+
+                            {modalType === "lightgbm" && (
+                                <div className="w-full h-full flex flex-col items-center justify-center space-y-4">
+                                    <svg className="w-full max-w-sm h-36" viewBox="0 0 260 140">
+                                        <g stroke="rgba(139, 92, 246, 0.4)" strokeWidth="1">
+                                            <line x1="20" y1="70" x2="80" y2="40" />
+                                            <line x1="20" y1="70" x2="80" y2="100" />
+                                            <line x1="80" y1="40" x2="130" y2="25" />
+                                            <line x1="80" y1="40" x2="130" y2="55" />
+                                            <line x1="80" y1="100" x2="130" y2="85" />
+                                            <line x1="80" y1="100" x2="130" y2="115" />
+                                        </g>
+                                        <circle cx="20" cy="70" r="5" fill="#3B82F6" />
+                                        <text x="15" y="85" fill="#94A3B8" fontSize="7" fontFamily="monospace">INPUT</text>
+                                        
+                                        <circle cx="80" cy="40" r="6" fill="#8B5CF6" />
+                                        <circle cx="80" cy="100" r="6" fill="#8B5CF6" />
+                                        
+                                        <rect x="130" y="18" width="80" height="12" rx="3" fill="#EF4444" opacity="0.8" />
+                                        <text x="135" y="27" fill="#FFF" fontSize="6" fontFamily="monospace">Account Takeover</text>
+                                        
+                                        <rect x="130" y="48" width="80" height="12" rx="3" fill="#FBBF24" opacity="0.8" />
+                                        <text x="135" y="57" fill="#FFF" fontSize="6" fontFamily="monospace">Money Mule</text>
+
+                                        <rect x="130" y="78" width="80" height="12" rx="3" fill="#10B981" opacity="0.8" />
+                                        <text x="135" y="87" fill="#FFF" fontSize="6" fontFamily="monospace">Legitimate</text>
+
+                                        <rect x="130" y="108" width="80" height="12" rx="3" fill="#06B6D4" opacity="0.8" />
+                                        <text x="135" y="117" fill="#FFF" fontSize="6" fontFamily="monospace">Identity Theft</text>
+                                    </svg>
+                                    <div className="text-[10px] font-mono font-bold text-neon-cyan tracking-wider uppercase animate-pulse">
+                                        KLASIFIKASI ANCAMAN MULTIKELAS AKTIF...
+                                    </div>
+                                </div>
+                            )}
+
+                            {modalType === "ensemble" && (
+                                <div className="w-full h-full flex flex-col items-center justify-center space-y-4">
+                                    <svg className="w-full max-w-sm h-36" viewBox="0 0 260 140">
+                                        <rect x="10" y="15" width="60" height="20" rx="4" fill="rgba(59, 130, 246, 0.2)" stroke="#3B82F6" strokeWidth="1" />
+                                        <text x="15" y="28" fill="#3B82F6" fontSize="7" fontWeight="bold">XGBoost (82%)</text>
+                                        
+                                        <rect x="10" y="55" width="60" height="20" rx="4" fill="rgba(167, 139, 250, 0.2)" stroke="#A78BFA" strokeWidth="1" />
+                                        <text x="12" y="68" fill="#A78BFA" fontSize="7" fontWeight="bold">LightGBM (99%)</text>
+
+                                        <rect x="10" y="95" width="60" height="20" rx="4" fill="rgba(6, 182, 212, 0.2)" stroke="#06B6D4" strokeWidth="1" />
+                                        <text x="18" y="108" fill="#06B6D4" fontSize="7" fontWeight="bold">GNN ML (85%)</text>
+
+                                        <g stroke="rgba(167, 139, 250, 0.5)" strokeWidth="1.5">
+                                            <line x1="70" y1="25" x2="130" y2="65" />
+                                            <line x1="70" y1="65" x2="130" y2="65" />
+                                            <line x1="70" y1="105" x2="130" y2="65" />
+                                        </g>
+
+                                        <rect x="130" y="50" width="70" height="30" rx="6" fill="#8B5CF6" />
+                                        <text x="135" y="65" fill="#FFF" fontSize="7" fontWeight="bold">META-LEARNER</text>
+                                        <text x="135" y="75" fill="#C4B5FD" fontSize="5" fontFamily="monospace">Logistic Reg.</text>
+
+                                        <line x1="200" y1="65" x2="230" y2="65" stroke="#EF4444" strokeWidth="2" strokeDasharray="3 3" />
+                                        
+                                        <circle cx="235" cy="65" r="8" fill="#EF4444" />
+                                        <text x="228" y="83" fill="#EF4444" fontSize="6" fontWeight="bold">BLOCKED</text>
+                                    </svg>
+                                    <div className="text-[10px] font-mono font-bold text-neon-cyan tracking-wider uppercase animate-pulse">
+                                        INTEGRASI META-LEARNER STACKING SELESAI...
                                     </div>
                                 </div>
                             )}
@@ -252,6 +336,38 @@ export default function Fitur() {
                                         <li>Algoritma: GraphSAGE + Relational Graph Convolutional Networks (R-GCN)</li>
                                         <li>Skalabilitas: Analisis subgraph hingga 5-Hop transfer relasi</li>
                                         <li>Manfaat: Pemblokiran seketika pada sindikat penipuan & pencucian uang</li>
+                                    </ul>
+                                </>
+                            )}
+
+                            {modalType === "lightgbm" && (
+                                <>
+                                    <p>
+                                        <strong>LightGBM Multiclass Classifier</strong> melangkah lebih jauh dari sekadar mendeteksi apakah sebuah transaksi mencurigakan atau tidak. Model ini mengkategorikan secara tepat jenis taktik fraud yang sedang dicoba berdasarkan sinyal numerik dan kategorikal.
+                                    </p>
+                                    <p>
+                                        Dengan kecepatan pelatihan dan inferensi yang super cepat (Light Gradient Boosting Machine), model ini menganalisis 43 parameter fitur transaksi secara instan untuk melacak tanda-tanda spesifik dari serangan *Account Takeover* (Pengambilalihan Akun), *Money Mule* (Akun Rekening Keledai), *Aggregation Fraud*, hingga *Identity Theft* (Pencurian Identitas).
+                                    </p>
+                                    <ul className="list-disc pl-5 space-y-2 font-mono text-[11px] text-neon-cyan">
+                                        <li>Algoritma: Light Gradient Boosting Machine (Multiclass)</li>
+                                        <li>Kategori: 5 Target Kelas Penipuan Finansial</li>
+                                        <li>Manfaat: Penanganan insiden penipuan otomatis yang disesuaikan secara real-time</li>
+                                    </ul>
+                                </>
+                            )}
+
+                            {modalType === "ensemble" && (
+                                <>
+                                    <p>
+                                        <strong>Ensemble Final Stacker (Meta-Learner)</strong> adalah koordinator keputusan dari arsitektur multi-model FraudGuard-AI. Menyadari bahwa setiap model memiliki kekuatan uniknya masing-masing, Meta-Learner menyeimbangkan semua keputusan model secara adil.
+                                    </p>
+                                    <p>
+                                        Skor probabilitas dari model **XGBoost (Binary)**, **LightGBM (Multiclass)**, dan **Graph Neural Network (GNN)** disatukan sebagai array input fitur baru, lalu dianalisis oleh algoritma **Logistic Regression** meta-level. Ini menghilangkan bias model tunggal dan memastikan false-positive ditekan hingga titik terendah.
+                                    </p>
+                                    <ul className="list-disc pl-5 space-y-2 font-mono text-[11px] text-neon-cyan">
+                                        <li>Metodologi: Stacking Classifier Meta-Learning</li>
+                                        <li>Base Models: XGBoost Binary + LightGBM Multiclass + Relational Graph GNN</li>
+                                        <li>Manfaat: Stabilitas dan konsistensi deteksi fraud di bawah anomali drift data</li>
                                     </ul>
                                 </>
                             )}

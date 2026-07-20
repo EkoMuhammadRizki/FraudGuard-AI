@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { formatCurrency, getRiskColor, getRiskBgColor } from "@/pustaka/utilitas";
 import { Activity, Siren, CheckCircle, Target, Zap, Cpu, ShieldAlert, ShieldCheck, ArrowRight, AlertTriangle, X } from "lucide-react";
 import InfoTooltip from "@/komponen/ui/info-tooltip";
+import ModelStatusBadge from "@/komponen/ui/model-status-badge";
 import {
     AreaChart,
     Area,
@@ -137,7 +138,7 @@ export default function RingkasanPage() {
         <>
             <div className="space-y-10 min-w-0 overflow-hidden animate-fade-in pb-12">
                 {/* ── HEADER ── */}
-                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+                <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
                     <div className="space-y-2">
                         <h1 className="text-3xl md:text-5xl font-black text-white tracking-tighter uppercase leading-[1.1]">Ringkasan <span className="text-primary-blue block sm:inline">Operasional</span></h1>
                         <p className="text-dark-400 font-bold flex items-center gap-2 uppercase tracking-widest text-[10px]">
@@ -145,16 +146,20 @@ export default function RingkasanPage() {
                             Pemantauan infrastruktur: <span className="text-white">Aktif</span>
                         </p>
                     </div>
-                    <div className="flex items-center justify-between sm:justify-start gap-4 sm:gap-6 glass-panel px-4 py-2.5 rounded-xl border-white/5 bg-white/5">
-                        <div className="flex items-center gap-2.5">
-                            <span className="relative flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-status-success opacity-75" />
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-status-success" />
-                            </span>
-                            <span className="text-status-success font-black text-xs uppercase tracking-widest">Sinyal Langsung</span>
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                        {/* ML Engine Status */}
+                        <ModelStatusBadge showDetails pollInterval={60000} />
+                        <div className="flex items-center justify-between sm:justify-start gap-4 sm:gap-6 glass-panel px-4 py-2.5 rounded-xl border-white/5 bg-white/5">
+                            <div className="flex items-center gap-2.5">
+                                <span className="relative flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-status-success opacity-75" />
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-status-success" />
+                                </span>
+                                <span className="text-status-success font-black text-xs uppercase tracking-widest">Sinyal Langsung</span>
+                            </div>
+                            <div className="w-[1px] h-4 bg-white/10" />
+                            <span className="text-dark-400 text-[10px] font-black uppercase tracking-tighter">Diperbarui: <span className="text-white">Sekarang</span></span>
                         </div>
-                        <div className="w-[1px] h-4 bg-white/10" />
-                        <span className="text-dark-400 text-[10px] font-black uppercase tracking-tighter">Diperbarui: <span className="text-white">Sekarang</span></span>
                     </div>
                 </div>
 

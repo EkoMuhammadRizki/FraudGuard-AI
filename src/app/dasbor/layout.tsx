@@ -102,7 +102,7 @@ export default function DasborLayout({
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     // Modal orchestration states
-    const [showSumberData, setShowSumberData] = useState(true);
+    const [showSumberData, setShowSumberData] = useState(false);
     const [showPanduan, setShowPanduan] = useState(false);
 
     // ── Search state ──
@@ -135,7 +135,6 @@ export default function DasborLayout({
             .slice(0, 8);
     }, [searchQuery]);
 
-    // ── Click outside handlers ──
     useEffect(() => {
         function handleClickOutside(e: MouseEvent) {
             if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
@@ -147,6 +146,14 @@ export default function DasborLayout({
         }
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    // ── Cek onboarding session ──
+    useEffect(() => {
+        const hasSeen = sessionStorage.getItem("has_seen_disclaimer");
+        if (!hasSeen) {
+            setShowSumberData(true);
+        }
     }, []);
 
     // ── Keyboard shortcut: Ctrl+K to focus search ──
@@ -224,12 +231,16 @@ export default function DasborLayout({
                 onClose={() => {
                     setShowSumberData(false);
                     setShowPanduan(true);
+                    sessionStorage.setItem("has_seen_disclaimer", "true");
                 }} 
             />
 
             <ModalPanduan 
                 isOpen={showPanduan} 
-                onClose={() => setShowPanduan(false)} 
+                onClose={() => {
+                    setShowPanduan(false);
+                    sessionStorage.setItem("has_seen_disclaimer", "true");
+                }} 
             />
 
             <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />

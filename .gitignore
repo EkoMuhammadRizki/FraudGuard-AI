@@ -41,3 +41,9 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+
+# large model binaries and raw extractions
+Model-20260719T144720Z-1-001/
+drive-cara koneksi model-20260719T152225Z-1-001/
+python-api/models/
+*.pkl
