@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Calendar, Brain, ShieldCheck, Search, FileText, Download, X, Settings, Plus, Check, Clock, RefreshCw, AlertTriangle } from "lucide-react";
 import InfoTooltip from "@/komponen/ui/info-tooltip";
 import { dashboardSummary, rawModelMetrics } from "@/pustaka/data-fraudguard";
