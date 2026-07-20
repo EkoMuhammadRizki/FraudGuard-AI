@@ -1,10 +1,10 @@
 "use client";
 import { useState, useEffect, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { formatCurrency } from "@/pustaka/utilitas";
 import { gunakanNotifikasi } from "@/fungsi/gunakanNotifikasi";
 import AlertKustom from "@/komponen/feedback/alert-kustom";
-import { Cpu, ShieldAlert, ShieldCheck, X, Link2, Coins, Server, Laptop, MapPin, Briefcase, AlertTriangle } from "lucide-react";
+import { Cpu, ShieldAlert, ShieldCheck, X, Link2, Coins, Server, Laptop, MapPin, Briefcase, AlertTriangle, Search, ArrowRight, RefreshCw } from "lucide-react";
 import InfoTooltip from "@/komponen/ui/info-tooltip";
 import { investigationDetails, transactionFeed } from "@/pustaka/data-fraudguard";
 
@@ -156,7 +156,148 @@ const getNodeExplanation = (node: any, detail: any, gnnEdges: any[], gnnNodes: a
     return { typeLabel, explanation, behaviorTitle, connections, suspectReason, fundFlowDescription, xaiFactors };
 };
 
+function InvestigasiEmptyState({ onSearch }: { onSearch: (id: string) => void }) {
+    const [input, setInput] = useState("");
+    const [recentAlerts, setRecentAlerts] = useState<any[]>([]);
+    const [loadingRecent, setLoadingRecent] = useState(true);
+
+    useEffect(() => {
+        fetch("/api/dashboard/transactions")
+            .then(res => res.json())
+            .then(data => {
+                if (data.transactions) {
+                    const criticals = data.transactions
+                        .filter((t: any) => t.risiko === "kritis" || t.risiko === "tinggi")
+                        .slice(0, 5);
+                    setRecentAlerts(criticals);
+                }
+            })
+            .catch(err => console.error("Error loading critical queue:", err))
+            .finally(() => setLoadingRecent(false));
+    }, []);
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (input.trim()) {
+            onSearch(input.trim());
+        }
+    };
+
+    return (
+        <div className="space-y-10 min-w-0 overflow-hidden animate-fade-in pb-12">
+            <div className="space-y-2">
+                <h1 className="text-3xl md:text-5xl font-black text-white tracking-tighter uppercase leading-[1.1] italic">
+                    Forensic <span className="text-primary-blue">Investigation</span>
+                </h1>
+                <p className="text-dark-400 font-bold flex items-center gap-2 uppercase tracking-widest text-[10px]">
+                    <span className="w-1.5 h-1.5 bg-neon-cyan/50 rounded-full shrink-0" />
+                    Pusat Analisis Relasional Node GNN & XAI
+                </p>
+            </div>
+
+            <div className="glass-panel p-8 md:p-12 rounded-[2.5rem] relative overflow-hidden group">
+                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary-blue to-transparent opacity-20" />
+                <div className="max-w-2xl mx-auto text-center space-y-6">
+                    <div className="w-16 h-16 rounded-2xl bg-primary-blue/10 border border-primary-blue/20 flex items-center justify-center mx-auto text-primary-blue group-hover:scale-105 transition-transform duration-500">
+                        <Search className="w-8 h-8" />
+                    </div>
+                    <div className="space-y-2">
+                        <h2 className="text-2xl font-black text-white tracking-tight uppercase">Mulai Analisis Forensik</h2>
+                        <p className="text-xs text-dark-400 font-bold max-w-md mx-auto leading-relaxed">
+                            Masukkan ID Transaksi untuk memetakan topologi jaringan GNN dan melihat kontribusi fitur XAI dari database MongoDB.
+                        </p>
+                    </div>
+                    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 pt-2">
+                        <input
+                            type="text"
+                            placeholder="Masukkan ID Transaksi (cth: 5B14F8AA)..."
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            className="flex-1 bg-dark-950/60 border border-white/10 hover:border-white/20 focus:border-primary-blue rounded-xl px-5 py-4 text-sm font-mono text-white placeholder-dark-600 focus:outline-none transition-all"
+                        />
+                        <button
+                            type="submit"
+                            className="px-8 py-4 rounded-xl bg-primary-blue text-white font-black text-xs uppercase tracking-widest hover:bg-primary-blue-hover transition-all active:scale-[0.98] cursor-pointer shrink-0"
+                        >
+                            Mulai Analisis
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div className="glass-panel p-6 md:p-10 rounded-[2.5rem] relative overflow-hidden">
+                <h3 className="text-lg font-black text-white uppercase tracking-tight mb-6">
+                    Antrean Peninjauan Kasus Kritis (MongoDB)
+                </h3>
+                {loadingRecent ? (
+                    <div className="py-12 flex justify-center items-center">
+                        <RefreshCw className="w-6 h-6 text-primary-blue animate-spin" />
+                    </div>
+                ) : recentAlerts.length === 0 ? (
+                    <div className="py-12 text-center text-xs font-black text-dark-500 uppercase tracking-widest">
+                        Tidak ada antrean investigasi kritis aktif saat ini.
+                    </div>
+                ) : (
+                    <div className="overflow-x-auto custom-scrollbar">
+                        <table className="w-full border-separate border-spacing-y-3">
+                            <thead>
+                                <tr className="text-left text-xs font-black text-dark-500 uppercase tracking-[0.2em]">
+                                    <th className="pb-3 pl-6">ID Transaksi</th>
+                                    <th className="pb-3">Waktu</th>
+                                    <th className="pb-3">Pengirim</th>
+                                    <th className="pb-3">Penerima</th>
+                                    <th className="pb-3 text-right">Volume</th>
+                                    <th className="pb-3 text-center">Risiko</th>
+                                    <th className="pb-3 text-center pr-6">Tindakan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {recentAlerts.map((txn: any) => (
+                                    <tr
+                                        key={txn.id}
+                                        onClick={() => onSearch(txn.id)}
+                                        className="group/row cursor-pointer transition-all hover:scale-[1.002]"
+                                    >
+                                        <td className="py-4 pl-6 bg-white/[0.02] group-hover/row:bg-white/[0.05] border-y border-l border-white/5 rounded-l-xl">
+                                            <span className="text-xs font-black font-mono text-neon-cyan tracking-tight group-hover/row:glow-cyan transition-all">
+                                                {txn.id}
+                                            </span>
+                                        </td>
+                                        <td className="py-4 bg-white/[0.02] group-hover/row:bg-white/[0.05] border-y border-white/5 text-[10px] font-bold text-dark-400 font-mono tracking-tighter uppercase">
+                                            {txn.waktu}
+                                        </td>
+                                        <td className="py-4 bg-white/[0.02] group-hover/row:bg-white/[0.05] border-y border-white/5 text-xs font-black text-white truncate max-w-[120px] uppercase">
+                                            {txn.pengirim}
+                                        </td>
+                                        <td className="py-4 bg-white/[0.02] group-hover/row:bg-white/[0.05] border-y border-white/5 text-xs font-black text-white truncate max-w-[120px] uppercase">
+                                            {txn.penerima}
+                                        </td>
+                                        <td className="py-4 bg-white/[0.02] group-hover/row:bg-white/[0.05] border-y border-white/5 text-xs font-black text-white text-right font-mono tracking-tighter">
+                                            {formatCurrency(txn.jumlah)}
+                                        </td>
+                                        <td className="py-4 bg-white/[0.02] group-hover/row:bg-white/[0.05] border-y border-white/5 text-center">
+                                            <span className="inline-flex px-2.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider bg-status-error/10 text-status-error border border-status-error/20">
+                                                {txn.risiko.toUpperCase()}
+                                            </span>
+                                        </td>
+                                        <td className="py-4 pr-6 bg-white/[0.02] group-hover/row:bg-white/[0.05] border-y border-r border-white/5 rounded-r-xl text-center">
+                                            <span className="inline-flex items-center gap-1 text-[10px] font-black text-primary-blue group-hover/row:text-white uppercase tracking-wider transition-colors">
+                                                Investigasi <ArrowRight className="w-3 h-3 group-hover/row:translate-x-0.5 transition-transform" />
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
 function InvestigasiContent() {
+    const router = useRouter();
     const { modal, tampilSukses, tampilKonfirmasi, tampilError, tutupModal } = gunakanNotifikasi();
     const [selectedNode, setSelectedNode] = useState<string | null>(null);
     const [activeNodeModal, setActiveNodeModal] = useState<any>(null);
@@ -171,6 +312,10 @@ function InvestigasiContent() {
 
     const searchParams = useSearchParams();
     const txid = searchParams.get("txid");
+
+    if (!txid) {
+        return <InvestigasiEmptyState onSearch={(id) => router.push(`/dasbor/investigasi?txid=${id}`)} />;
+    }
 
     const [record, setRecord] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
