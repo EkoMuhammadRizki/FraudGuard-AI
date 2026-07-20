@@ -54,6 +54,20 @@ const TIPE_BADGE_COLOR: Record<string, string> = {
 };
 
 export default function LaporanPage() {
+    // MongoDB connection states for dynamic reports
+    const [stats, setStats] = useState<any>(null);
+    const [transactions, setTransactions] = useState<any[]>([]);
+
+    useEffect(() => {
+        fetch("/api/dashboard/stats")
+            .then(res => res.json())
+            .then(data => {
+                if (data.stats) setStats(data.stats);
+                if (data.transactions) setTransactions(data.transactions);
+            })
+            .catch(err => console.error("Error loading stats for reports:", err));
+    }, []);
+
     // ── State Tabel ──
     const [searchQuery, setSearchQuery] = useState("");
     const [downloading, setDownloading] = useState<number | null>(null);
@@ -117,7 +131,7 @@ export default function LaporanPage() {
         setGenerateStatus(prev => ({ ...prev, [key]: "generating" }));
         setTimeout(() => {
             // Generate the actual PDF
-            if (key === "feed") generateFeedAncamanPdf();
+            if (key === "feed") generateFeedAncamanPdf(stats, transactions);
             else if (key === "gnn") generateAuditGnnPdf();
             else if (key === "kepatuhan") generateKepatuhanPdf();
 

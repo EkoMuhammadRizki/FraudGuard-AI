@@ -63,11 +63,45 @@ export default function TransaksiPage() {
     const dropdownRef = useRef<HTMLDivElement>(null);
     const itemsPerPage = 15;
 
+    // MongoDB connection states
+    const [allTransactions, setAllTransactions] = useState<any[]>([]);
+    const [selectedRecord, setSelectedRecord] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState(true);
+
+    // Fetch transactions from MongoDB on mount
+    useEffect(() => {
+        setIsLoading(true);
+        fetch("/api/dashboard/transactions")
+            .then(res => res.json())
+            .then(data => {
+                if (data.transactions) {
+                    setAllTransactions(data.transactions);
+                }
+            })
+            .catch(err => console.error("Error loading transactions from MongoDB:", err))
+            .finally(() => setIsLoading(false));
+    }, []);
+
+    // Fetch investigation record details for selected transaction on-demand
+    useEffect(() => {
+        if (selectedTxn) {
+            setSelectedRecord(null);
+            fetch(`/api/dashboard/investigation?id=${selectedTxn.id}`)
+                .then(res => res.json())
+                .then(data => {
+                    setSelectedRecord(data);
+                })
+                .catch(err => console.error("Error loading investigation details:", err));
+        } else {
+            setSelectedRecord(null);
+        }
+    }, [selectedTxn]);
+
     useEffect(() => {
         setCurrentPage(1);
     }, [searchTerm, filterRisk]);
 
-    // Menangkap prefill pencarian dari global search
+    // Prefill search from global dashboard search
     useEffect(() => {
         if (typeof window !== "undefined") {
             const prefill = sessionStorage.getItem("fg_search_prefill");
@@ -78,7 +112,7 @@ export default function TransaksiPage() {
         }
     }, []);
 
-    // Menangani tombol ESC untuk menutup modal
+    // Close modal on ESC key
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Escape") setSelectedTxn(null);
@@ -87,7 +121,7 @@ export default function TransaksiPage() {
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, []);
 
-    // Menangani klik di luar dropdown untuk menutup menu
+    // Handle click outside risk dropdown
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -121,7 +155,7 @@ export default function TransaksiPage() {
         }
     };
 
-    const filteredData = transactionFeed.filter((txn) => {
+    const filteredData = allTransactions.filter((txn) => {
         const matchesSearch =
             txn.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
             txn.pengirim.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -143,9 +177,6 @@ export default function TransaksiPage() {
     const handleNextPage = () => {
         if (currentPage < totalPages) setCurrentPage(currentPage + 1);
     };
-
-    // Ambil data detail investigasi untuk modal XAI
-    const selectedRecord = selectedTxn ? investigationDetails[selectedTxn.id] : null;
 
     return (
         <>

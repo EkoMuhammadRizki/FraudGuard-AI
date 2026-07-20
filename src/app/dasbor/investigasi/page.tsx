@@ -172,16 +172,30 @@ function InvestigasiContent() {
     const searchParams = useSearchParams();
     const txid = searchParams.get("txid");
 
-    // Default to the first critical transaction in the feed if txid not found
-    const defaultTx = transactionFeed.find(t => t.risiko === "kritis" || t.risiko === "tinggi") || transactionFeed[0];
-    const selectedTxId = txid || (defaultTx ? defaultTx.id : "");
+    const [record, setRecord] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const record = investigationDetails[selectedTxId];
+    // Fetch investigation record details from MongoDB dynamically
+    useEffect(() => {
+        setIsLoading(true);
+        const targetId = txid || "";
+        fetch(`/api/dashboard/investigation?id=${targetId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    console.error("MongoDB returned error:", data.error);
+                } else {
+                    setRecord(data);
+                }
+            })
+            .catch(err => console.error("Error loading investigation from MongoDB:", err))
+            .finally(() => setIsLoading(false));
+    }, [txid]);
 
     const detail = record ? record.detail : {
-        id: selectedTxId,
-        pengirim: "N/A",
-        penerima: "N/A",
+        id: txid || "TBD",
+        pengirim: "Mengambil data...",
+        penerima: "Mengambil data...",
         jumlah: 0,
         waktu: "—",
         metode: "—",
@@ -192,7 +206,7 @@ function InvestigasiContent() {
         merchant: "—",
         riskScore: 0,
         threshold: 38,
-        modelVerdict: "Cleared",
+        modelVerdict: "APPROVED",
         fraudType: "Legitimate",
         anomalyScore: 0,
         analystAction: "Lolos"

@@ -88,28 +88,31 @@ function kvRow(doc: jsPDF, y: number, label: string, value: string): number {
 // ══════════════════════════════════════════════════
 // 1. Feed Ancaman Harian PDF
 // ══════════════════════════════════════════════════
-export function generateFeedAncamanPdf() {
+export function generateFeedAncamanPdf(stats?: any, transactions?: any[]) {
     const doc = new jsPDF();
     addHeader(doc, "Feed Ancaman Harian", "Ringkasan otomatis 24 jam - anomali jaringan kritis dan node sumber yang diblokir");
 
+    const usedStats = stats || dashboardSummary;
+    const usedFeed = transactions || transactionFeed;
+
     let y = 52;
     y = sectionTitle(doc, y, "RINGKASAN STATISTIK OPERASIONAL");
-    y = kvRow(doc, y, "Total Transaksi Dataset:", dashboardSummary.totalTransactions.toLocaleString("id-ID"));
-    y = kvRow(doc, y, "Fraud Terdeteksi:", dashboardSummary.fraudLabels.toLocaleString("id-ID") + " label");
-    y = kvRow(doc, y, "Fraud Alerts:", dashboardSummary.fraudAlerts.toLocaleString("id-ID") + " alert");
-    y = kvRow(doc, y, "F1-Score (XGBoost):", pct(dashboardSummary.f1Score, 1));
-    y = kvRow(doc, y, "False Positive Rate:", pct(dashboardSummary.falsePositiveRate, 3));
-    y = kvRow(doc, y, "PR-AUC:", pct(dashboardSummary.prAuc, 1));
-    y = kvRow(doc, y, "Threshold Terpilih:", String(dashboardSummary.selectedThreshold));
-    y = kvRow(doc, y, "Framing:", dashboardSummary.framing);
+    y = kvRow(doc, y, "Total Transaksi Dataset:", usedStats.totalTransactions.toLocaleString("id-ID"));
+    y = kvRow(doc, y, "Fraud Terdeteksi:", usedStats.fraudLabels.toLocaleString("id-ID") + " label");
+    y = kvRow(doc, y, "Fraud Alerts:", usedStats.fraudAlerts.toLocaleString("id-ID") + " alert");
+    y = kvRow(doc, y, "F1-Score (XGBoost):", pct(usedStats.f1Score, 1));
+    y = kvRow(doc, y, "False Positive Rate:", pct(usedStats.falsePositiveRate, 3));
+    y = kvRow(doc, y, "PR-AUC:", pct(usedStats.prAuc, 1));
+    y = kvRow(doc, y, "Threshold Terpilih:", String(usedStats.selectedThreshold));
+    y = kvRow(doc, y, "Framing:", usedStats.framing || "Production");
 
     y += 6;
     y = sectionTitle(doc, y, "FEED TRANSAKSI ANCAMAN KRITIS (TOP 15)");
 
-    const kritisData = transactionFeed
-        .filter(t => t.risiko === "kritis" || t.risiko === "tinggi")
+    const kritisData = usedFeed
+        .filter((t: any) => t.risiko === "kritis" || t.risiko === "tinggi")
         .slice(0, 15)
-        .map(t => [
+        .map((t: any) => [
             t.id,
             t.waktu,
             t.pengirim,
@@ -137,7 +140,7 @@ export function generateFeedAncamanPdf() {
     if (y < 240) {
         y = sectionTitle(doc, y, "DISTRIBUSI TIPE FRAUD");
         const fraudTypes: Record<string, number> = {};
-        transactionFeed.forEach(t => {
+        usedFeed.forEach((t: any) => {
             if (t.riskScore >= 38) {
                 fraudTypes[t.fraudType] = (fraudTypes[t.fraudType] || 0) + 1;
             }

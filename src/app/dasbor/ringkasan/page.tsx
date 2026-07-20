@@ -94,17 +94,54 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export default function RingkasanPage() {
     const router = useRouter();
+    
+    // Dynamic states from MongoDB
+    const [stats, setStats] = useState(dashboardSummary);
+    const [transaksiList, setTransaksiList] = useState<any[]>([]);
     const [liveCount, setLiveCount] = useState(dashboardSummary.totalTransactions);
     const [selectedTxn, setSelectedTxn] = useState<any>(null);
+    const [selectedRecord, setSelectedRecord] = useState<any>(null);
 
+    // Fetch summary stats on mount
+    useEffect(() => {
+        fetch("/api/dashboard/stats")
+            .then(res => res.json())
+            .then(data => {
+                if (data.stats) {
+                    setStats(data.stats);
+                    setLiveCount(data.stats.totalTransactions);
+                }
+                if (data.transactions) {
+                    setTransaksiList(data.transactions);
+                }
+            })
+            .catch(err => console.error("Error loading live stats from MongoDB:", err));
+    }, []);
+
+    // Fetch investigation record details for selected transaction on-demand
+    useEffect(() => {
+        if (selectedTxn) {
+            setSelectedRecord(null);
+            fetch(`/api/dashboard/investigation?id=${selectedTxn.id}`)
+                .then(res => res.json())
+                .then(data => {
+                    setSelectedRecord(data);
+                })
+                .catch(err => console.error("Error loading investigation details:", err));
+        } else {
+            setSelectedRecord(null);
+        }
+    }, [selectedTxn]);
+
+    // Live count tick animation
     useEffect(() => {
         const interval = setInterval(() => {
-            setLiveCount((prev) => prev + Math.floor(Math.random() * 3));
-        }, 2000);
+            setLiveCount((prev) => prev + Math.floor(Math.random() * 2));
+        }, 3000);
         return () => clearInterval(interval);
     }, []);
 
-    // Tutup modal dengan tombol ESC
+    // Close modal on ESC key
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Escape") setSelectedTxn(null);
@@ -113,7 +150,12 @@ export default function RingkasanPage() {
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, []);
 
-    const selectedRecord = selectedTxn ? investigationDetails[selectedTxn.id] : null;
+    const statsData = [
+        { label: "Transaksi Dataset", value: liveCount.toLocaleString("id-ID"), change: "Dataset MongoDB", positive: true, icon: <Activity className="w-8 h-8" strokeWidth={2} /> },
+        { label: "Fraud Terdeteksi", value: stats.fraudLabels.toLocaleString("id-ID"), change: `F1: ${(stats.f1Score * 100).toFixed(1)}%`, positive: true, icon: <Siren className="w-8 h-8 text-status-error" strokeWidth={2} /> },
+        { label: "False Positive Rate", value: `${(stats.falsePositiveRate * 100).toFixed(2)}%`, change: `Threshold ${stats.selectedThreshold}`, positive: true, icon: <CheckCircle className="w-8 h-8 text-status-success" strokeWidth={2} /> },
+        { label: "PR-AUC Model", value: `${(stats.prAuc * 100).toFixed(1)}%`, change: "Ensemble Live", positive: true, icon: <Target className="w-8 h-8" strokeWidth={2} /> },
+    ];
 
     const getStatusBadge = (status: string) => {
         const styles: Record<string, string> = {
@@ -133,6 +175,7 @@ export default function RingkasanPage() {
             default: return "text-status-success bg-status-success/5 border-status-success/20";
         }
     };
+
 
     return (
         <>
@@ -290,7 +333,7 @@ export default function RingkasanPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {transaksiData.map((txn) => (
+                                {transaksiList.map((txn) => (
                                     <tr
                                         key={txn.id}
                                         onClick={() => setSelectedTxn(txn)}
