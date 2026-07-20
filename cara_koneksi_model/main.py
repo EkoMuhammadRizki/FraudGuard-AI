@@ -9,8 +9,7 @@ import inference
 
 app = FastAPI(title="FraudGuard-AI Inference API", version="2.0")
 
-# MongoDB Configuration
-MONGO_URI = "mongodb+srv://fraudguard:AmankanFraud123@clusterfraud.cw2s6z.mongodb.net/?authSource=admin&appName=ClusterFraud"
+MONGO_URI = "mongodb://fraudguard:AmankanFraud123@clusterfraud-shard-00-00.cw2s6z.mongodb.net:27017,clusterfraud-shard-00-01.cw2s6z.mongodb.net:27017,clusterfraud-shard-00-02.cw2s6z.mongodb.net:27017/fraud_detection?ssl=true&replicaSet=atlas-c6o9bq-shard-0&authSource=admin&appName=ClusterFraud"
 DB_NAME = "fraud_detection"
 db_client = None
 db = None
