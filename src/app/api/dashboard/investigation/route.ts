@@ -68,16 +68,16 @@ export async function GET(request: Request) {
 
         // Try to match the 8-char hex suffix in MongoDB _id
         if (txId && txId.length === 8) {
-            const allDocs = await db.collection("dataset_transaksi").find({}).toArray();
+            const allDocs = await db.collection("transactions").find({}).toArray();
             doc = allDocs.find(d => d._id.toString().slice(-8).toUpperCase() === txId);
         }
 
         // Fallback: If not found or no ID provided, get the single laundering document or the first transaction
         if (!doc) {
-            doc = await db.collection("dataset_transaksi").findOne({ is_laundering: 1 });
+            doc = await db.collection("transactions").findOne({ is_laundering: 1 });
         }
         if (!doc) {
-            doc = await db.collection("dataset_transaksi").findOne({});
+            doc = await db.collection("transactions").findOne({});
         }
 
         if (!doc) {

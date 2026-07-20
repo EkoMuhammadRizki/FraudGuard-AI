@@ -78,7 +78,7 @@ export async function GET(request: Request) {
         }
 
         // Pull top 150 transactions from dataset
-        const datasetDocs = await db.collection("dataset_transaksi")
+        const datasetDocs = await db.collection("transactions")
             .find(dbQuery)
             .sort({ timestamp: -1 })
             .limit(150)

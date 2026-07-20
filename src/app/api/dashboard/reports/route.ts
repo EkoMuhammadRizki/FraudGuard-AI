@@ -6,12 +6,12 @@ export async function GET() {
         const { db } = await connectToDatabase();
 
         // 1. Aggregate by payment format
-        const paymentFormats = await db.collection("dataset_transaksi").aggregate([
+        const paymentFormats = await db.collection("transactions").aggregate([
             { $group: { _id: "$payment_format", count: { $sum: 1 } } }
         ]).toArray();
 
         // 2. Aggregate by location/region
-        const locations = await db.collection("dataset_transaksi").aggregate([
+        const locations = await db.collection("transactions").aggregate([
             { $group: { _id: "$location", count: { $sum: 1 }, fraudCount: { $sum: "$is_laundering" } } },
             { $sort: { count: -1 } },
             { $limit: 10 }

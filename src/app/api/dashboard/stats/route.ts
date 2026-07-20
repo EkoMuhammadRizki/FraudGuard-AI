@@ -6,8 +6,8 @@ export async function GET() {
         const { db } = await connectToDatabase();
 
         // 1. Get total dataset counts
-        const totalTransactions = await db.collection("dataset_transaksi").countDocuments({});
-        const fraudLabels = await db.collection("dataset_transaksi").countDocuments({ is_laundering: 1 });
+        const totalTransactions = await db.collection("transactions").countDocuments({});
+        const fraudLabels = await db.collection("transactions").countDocuments({ is_laundering: 1 });
 
         // 2. Fetch live predictions (if any) from simulation runs
         const livePreds = await db.collection("model_predictions").find({}).sort({ prediction_timestamp: -1 }).limit(10).toArray();
@@ -26,7 +26,7 @@ export async function GET() {
         };
 
         // 3. Fetch latest 7 transactions to show in Ringkasan page (mix of live predictions & dataset)
-        const recentDatasetDocs = await db.collection("dataset_transaksi").find({}).sort({ timestamp: -1 }).limit(15).toArray();
+        const recentDatasetDocs = await db.collection("transactions").find({}).sort({ timestamp: -1 }).limit(15).toArray();
 
         // Map documents to TransactionFeedItem schema
         const mappedTransactions = [
