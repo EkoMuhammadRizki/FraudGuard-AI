@@ -31,7 +31,7 @@ export default function AiChatWidget() {
         {
             id: "msg-welcome",
             sender: "bot",
-            text: "Halo Analis! Saya **REMI**, asisten inteligensi siber FDS Bank Indonesia. Ada yang bisa saya bantu terkait analisis transaksi, deteksi anomali biometrik, atau integrasi Mobile SDK?",
+            text: "Halo Analis! Saya REMI, asisten inteligensi siber FDS Bank Indonesia. Ada yang bisa saya bantu terkait analisis transaksi, deteksi anomali biometrik, atau integrasi Mobile SDK?",
             timestamp: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }),
             category: "info",
         },
@@ -57,21 +57,21 @@ export default function AiChatWidget() {
 
         if (q.includes("ato") || q.includes("account takeover") || q.includes("skor risiko")) {
             return {
-                text: "Skor risiko **Account Takeover (ATO)** diukur dari gabungan 3 sinyal utama:\n\n1. **XGBoost (Binary ML)**: Menilai deviasi nominal dari kebiasaan transaksi 30 hari terakhir.\n2. **Behavioral Telemetry (SDK)**: Menilai ketikan yang terlalu cepat (bot script) atau sangat hesitant/ragu-ragu (dituntun penipu).\n3. **Threat Intel IP/Device**: Menilai reputasi alamat IP dan perangkat pengirim.\n\nJika skor > 33.74%, sistem merekomendasikan **Pembekuan Sementara & Verifikasi OTP Biometrik**.",
+                text: "Skor risiko Account Takeover (ATO) diukur dari gabungan 3 sinyal utama:\n\n1. XGBoost (Binary ML): Menilai deviasi nominal dari kebiasaan transaksi 30 hari terakhir.\n2. Behavioral Telemetry (SDK): Menilai ketikan yang terlalu cepat (bot script) atau sangat hesitant/ragu-ragu (dituntun penipu).\n3. Threat Intel IP/Device: Menilai reputasi alamat IP dan perangkat pengirim.\n\nJika skor > 33.74%, sistem merekomendasikan Pembekuan Sementara & Verifikasi OTP Biometrik.",
                 category: "warning"
             };
         }
 
         if (q.includes("gnn") || q.includes("graph") || q.includes("sindikat") || q.includes("pencucian")) {
             return {
-                text: "Graph Neural Network (GNN) memetakan hubungan antar-rekening sebagai **Simpul (Node)** dan transaksi sebagai **Sisi (Edge)**.\n\nGNN mendeteksi 2 pola utama:\n• **High Fan-Out (Penyebaran)**: 1 rekening pengirim mentransfer uang ke puluhan rekening baru dalam waktu singkat.\n• **Aggregation/Mule Ring**: Rekening-rekening penampung yang saling mentransfer kembali ke 1 rekening utama (hub).",
+                text: "Graph Neural Network (GNN) memetakan hubungan antar-rekening sebagai Simpul (Node) dan transaksi sebagai Sisi (Edge).\n\nGNN mendeteksi 2 pola utama:\n• High Fan-Out (Penyebaran): 1 rekening pengirim mentransfer uang ke puluhan rekening baru dalam waktu singkat.\n• Aggregation/Mule Ring: Rekening-rekening penampung yang saling mentransfer kembali ke 1 rekening utama (hub).",
                 category: "info"
             };
         }
 
         if (q.includes("anydesk") || q.includes("sdk") || q.includes("remote") || q.includes("layar")) {
             return {
-                text: "FraudGuard Mobile SDK (v2.4.1) menggunakan **Native Accessibility Service Hook & MediaProjection Monitor** pada OS Android/iOS untuk mendeteksi paket aktif AnyDesk, TeamViewer, atau QuickSupport.\n\nKetika AnyDesk terdeteksi aktif saat nasabah membuka m-banking, SDK langsung mengirimkan flag `remoteDesktopActive: true` ke FDS Engine untuk memblokir transaksi instan.",
+                text: "FraudGuard Mobile SDK (v2.4.1) menggunakan Native Accessibility Service Hook & MediaProjection Monitor pada OS Android/iOS untuk mendeteksi paket aktif AnyDesk, TeamViewer, atau QuickSupport.\n\nKetika AnyDesk terdeteksi aktif saat nasabah membuka m-banking, SDK langsung mengirimkan flag remoteDesktopActive: true ke FDS Engine untuk memblokir transaksi instan.",
                 category: "code",
                 codeSnippet: `// Sinyal Telemetri SDK ke Backend BI
 {
@@ -86,20 +86,20 @@ export default function AiChatWidget() {
 
         if (q.includes("kritis") || q.includes("tindakan") || q.includes("rekomendasi") || q.includes("analis")) {
             return {
-                text: "Untuk transaksi berstatus **KRITIS (Risk Score > 85%)**, standar operasional analis fraud (Best Practice) adalah:\n\n1. 🔴 **Hentikan & Blokir sementara** dana di rekening penerima.\n2. 📞 **Konfirmasi Langsung (Call-out)** ke nasabah pengirim untuk memverifikasi apakah ia sedang dituntun penipu.\n3. 📝 **Tandai Investigasi**: Klik tombol *Tandai Investigasi* di dasbor untuk mengunci kasus dan mencatat catatan analisis.",
+                text: "Untuk transaksi berstatus KRITIS (Risk Score > 85%), standar operasional analis fraud (Best Practice) adalah:\n\n1. Hentikan & Blokir sementara dana di rekening penerima.\n2. Konfirmasi Langsung (Call-out) ke nasabah pengirim untuk memverifikasi apakah ia sedang dituntun penipu.\n3. Tandai Investigasi: Klik tombol Tandai Investigasi di dasbor untuk mengunci kasus dan mencatat catatan analisis.",
                 category: "warning"
             };
         }
 
         if (q.includes("halo") || q.includes("hai") || q.includes("pagi") || q.includes("siang") || q.includes("malam")) {
             return {
-                text: "Halo! Saya **REMI AI Agent**. Silakan tanyakan hal seputar analisis data transaksi, grafik GNN, sinyal biometrik SDK, atau panduan operasional analis fraud.",
+                text: "Halo! Saya REMI AI Agent. Silakan tanyakan hal seputar analisis data transaksi, grafik GNN, sinyal biometrik SDK, atau panduan operasional analis fraud.",
                 category: "info"
             };
         }
 
         return {
-            text: `Terima kasih atas pertanyaannya! Berdasarkan basis pengetahuan FDS Amankan Fraud BI:\n\nSistem mengidentifikasi topik terkait **"${userPrompt}"**.\n\nAnda dapat mengecek detail laporan di menu **Investigasi** atau memanfaatkan tab **Simulasi SDK** untuk menguji kasus ini secara live. (Model AI kustom Anda siap disambungkan ke endpoint backend bila pelatihan model tambahan selesai).`,
+            text: `Terima kasih atas pertanyaannya! Berdasarkan basis pengetahuan FDS Amankan Fraud BI:\n\nSistem mengidentifikasi topik terkait "${userPrompt}".\n\nAnda dapat mengecek detail laporan di menu Investigasi atau memanfaatkan tab Simulasi SDK untuk menguji kasus ini secara live. (Model AI kustom Anda siap disambungkan ke endpoint backend bila pelatihan model tambahan selesai).`,
             category: "info"
         };
     };
@@ -214,7 +214,7 @@ export default function AiChatWidget() {
                                             >
                                                 {/* Text rendering dengan line breaks */}
                                                 <div className="whitespace-pre-wrap font-sans">
-                                                    {msg.text.split("\n").map((line, i) => (
+                                                    {msg.text.replace(/\*\*/g, "").split("\n").map((line, i) => (
                                                         <p key={i} className={i > 0 ? "mt-1.5" : ""}>{line}</p>
                                                     ))}
                                                 </div>
