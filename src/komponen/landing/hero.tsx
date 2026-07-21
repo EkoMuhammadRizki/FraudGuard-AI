@@ -121,76 +121,132 @@ export default function Hero() {
                         </div>
                     </div>
 
-                    {/* Right: Premium Mockup */}
+                    {/* Right: Realistic Banking FDS Command Center Terminal Mockup */}
                     <div className={`lg:col-span-5 relative group transition-all duration-1000 delay-500 ease-[cubic-bezier(0.22,1,0.36,1)] transform ${
                         isAnimated ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-95 pointer-events-none"
                     }`}>
                         <div className={isAnimated ? "animate-float" : ""}>
-                            <div className="absolute -inset-1 bg-gradient-to-r from-hyper-violet to-neon-cyan rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
-                            <div className="relative glass-panel rounded-3xl p-8 shadow-2xl overflow-hidden">
-                                {/* Animated nodes and connections overlay */}
-                                <div className="absolute inset-0 opacity-20 pointer-events-none">
-                                    <svg width="100%" height="100%" viewBox="0 0 400 400">
-                                        <circle cx="50" cy="50" r="2" fill="white" className="animate-pulse" />
-                                        <circle cx="350" cy="150" r="2" fill="white" className="animate-pulse" />
-                                        <circle cx="100" cy="300" r="2" fill="white" className="animate-pulse" />
-                                        <path d="M50 50 L350 150 L100 300 Z" fill="none" stroke="white" strokeWidth="0.5" strokeDasharray="5,5" />
-                                    </svg>
-                                </div>
+                            {/* Glowing Background Glow */}
+                            <div className="absolute -inset-1 bg-gradient-to-r from-neon-cyan via-primary-blue to-hyper-violet rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition duration-1000"></div>
 
-                                <div className="flex justify-between items-center mb-10 border-b border-white/10 pb-6">
-                                    <div>
-                                        <div className="text-xs font-bold text-dark-500 uppercase tracking-widest mb-1">Protection Layer</div>
-                                        <div className="text-2xl font-black flex items-center gap-3 glow-cyan">
-                                            <div className="w-3 h-3 rounded-full bg-neon-cyan shadow-[0_0_10px_#06B6D4]"></div> Active
-                                        </div>
+                            {/* Window Frame */}
+                            <div className="relative bg-dark-950/95 border border-white/15 rounded-3xl shadow-[0_25px_70px_rgba(0,0,0,0.85)] backdrop-blur-2xl overflow-hidden font-sans">
+                                
+                                {/* Window Top Header */}
+                                <div className="bg-dark-900/90 border-b border-white/10 px-5 py-3.5 flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-3 h-3 rounded-full bg-status-error/80" />
+                                        <div className="w-3 h-3 rounded-full bg-amber-warning/80" />
+                                        <div className="w-3 h-3 rounded-full bg-status-success/80" />
+                                        <span className="text-[10px] font-mono font-bold text-dark-400 ml-2 tracking-wider hidden sm:inline">
+                                            amankan-fraud.bi.go.id // FDS Command Center
+                                        </span>
                                     </div>
-                                    <div className="text-right">
-                                        <div className="text-xs font-bold text-dark-500 uppercase tracking-widest mb-1">Threat Score</div>
-                                        <div className="text-3xl font-black text-status-success font-mono transition-all duration-300">
-                                            {threatScore.toFixed(3)}%
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-6">
-                                    <div className="space-y-2">
-                                        <div className="flex justify-between text-xs font-bold text-dark-400">
-                                            <span>SYN-DETECTION</span>
-                                            <span className="text-neon-cyan font-mono transition-all duration-300">{synValue}% OPTIMIZED</span>
-                                        </div>
-                                        <div className="h-2.5 w-full bg-dark-950 rounded-full border border-white/5 overflow-hidden">
-                                            <div 
-                                                className="h-full bg-gradient-to-r from-primary-blue to-neon-cyan transition-all duration-700 ease-out shadow-[0_0_10px_rgba(6,182,212,0.3)]"
-                                                style={{ width: `${synValue}%` }}
-                                            ></div>
-                                        </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <div className="flex justify-between text-xs font-bold text-dark-400">
-                                            <span>LATENCY RESPONSE</span>
-                                            <span className="text-hyper-violet font-mono transition-all duration-300">{latencyValue}MS</span>
-                                        </div>
-                                        <div className="h-2.5 w-full bg-dark-950 rounded-full border border-white/5 overflow-hidden">
-                                            <div 
-                                                className="h-full bg-gradient-to-r from-primary-blue to-hyper-violet transition-all duration-700 ease-out"
-                                                style={{ width: `${latencyValue * 3}%` }}
-                                            ></div>
-                                        </div>
+                                    <div className="flex items-center gap-2">
+                                        <span className="relative flex h-2 w-2">
+                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-status-success opacity-75"></span>
+                                            <span className="relative inline-flex rounded-full h-2 w-2 bg-status-success"></span>
+                                        </span>
+                                        <span className="text-[9px] font-mono font-black text-status-success uppercase tracking-widest">MongoDB Atlas Connected</span>
                                     </div>
                                 </div>
 
-                                <div className="mt-10 pt-6 border-t border-white/10 grid grid-cols-2 gap-4">
-                                    <div className="text-center">
-                                        <div className="text-xl font-black text-white font-mono transition-all duration-300">
-                                            {formatGlobalEvents(globalEvents)}+
+                                {/* Terminal Main Content */}
+                                <div className="p-5 md:p-6 space-y-5">
+                                    
+                                    {/* System Status Metrics */}
+                                    <div className="grid grid-cols-3 gap-3 bg-dark-900/60 p-3 rounded-2xl border border-white/5 font-mono">
+                                        <div>
+                                            <div className="text-[9px] text-dark-400 uppercase tracking-widest font-bold">Risk Threshold</div>
+                                            <div className="text-sm font-black text-neon-cyan mt-0.5">33.74%</div>
                                         </div>
-                                        <div className="text-[10px] font-bold text-dark-500 uppercase tracking-widest mt-1">Global Events</div>
+                                        <div>
+                                            <div className="text-[9px] text-dark-400 uppercase tracking-widest font-bold">Latency</div>
+                                            <div className="text-sm font-black text-status-success mt-0.5">&lt; 28 ms</div>
+                                        </div>
+                                        <div>
+                                            <div className="text-[9px] text-dark-400 uppercase tracking-widest font-bold">Model Stack</div>
+                                            <div className="text-sm font-black text-hyper-violet mt-0.5">5 Models Active</div>
+                                        </div>
                                     </div>
-                                    <div className="text-center border-l border-white/10">
-                                        <div className="text-2xl font-black text-white">99.9%</div>
-                                        <div className="text-[10px] font-bold text-dark-500 uppercase tracking-widest mt-1">SLA Uptime</div>
+
+                                    {/* Live Transaction Feed Table Mockup */}
+                                    <div className="space-y-2.5">
+                                        <div className="flex items-center justify-between text-[10px] font-mono font-bold text-dark-400 uppercase tracking-wider px-1">
+                                            <span>Feed Transaksi Real-time</span>
+                                            <span className="text-neon-cyan animate-pulse">● Live Engine</span>
+                                        </div>
+
+                                        <div className="space-y-2 font-mono text-[11px]">
+                                            {/* Row 1: Approved Transfer */}
+                                            <div className="p-3 rounded-xl bg-status-success/5 border border-status-success/20 flex items-center justify-between hover:bg-status-success/10 transition-all">
+                                                <div className="space-y-0.5">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="font-bold text-white">102938475612</span>
+                                                        <span className="text-dark-500">→</span>
+                                                        <span className="text-dark-300">81D858360</span>
+                                                    </div>
+                                                    <div className="text-[10px] text-dark-400">Rp 500.000 · Transfer M-Banking</div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <span className="px-2 py-0.5 rounded bg-status-success/20 text-status-success font-black text-[9px] uppercase tracking-wider block">
+                                                        APPROVED
+                                                    </span>
+                                                    <span className="text-[9px] text-dark-400 font-bold mt-0.5 block">Risk: 0.01%</span>
+                                                </div>
+                                            </div>
+
+                                            {/* Row 2: Blocked Money Mule Fraud */}
+                                            <div className="p-3 rounded-xl bg-status-error/10 border border-status-error/30 flex items-center justify-between hover:bg-status-error/15 transition-all">
+                                                <div className="space-y-0.5">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="font-bold text-white">880123456789</span>
+                                                        <span className="text-dark-500">→</span>
+                                                        <span className="text-status-error font-bold">7EODFI16R</span>
+                                                    </div>
+                                                    <div className="text-[10px] text-status-error font-bold">Rp 150.000.000 · Money Mule Syndicate</div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <span className="px-2 py-0.5 rounded bg-status-error text-white font-black text-[9px] uppercase tracking-wider block animate-pulse">
+                                                        BLOCKED
+                                                    </span>
+                                                    <span className="text-[9px] text-status-error font-bold mt-0.5 block">Risk: 99.83%</span>
+                                                </div>
+                                            </div>
+
+                                            {/* Row 3: Telemetry ATO Warning */}
+                                            <div className="p-3 rounded-xl bg-amber-warning/10 border border-amber-warning/20 flex items-center justify-between hover:bg-amber-warning/15 transition-all">
+                                                <div className="space-y-0.5">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="font-bold text-white">522040690011</span>
+                                                        <span className="text-dark-500">→</span>
+                                                        <span className="text-dark-300">OP37OPVPY</span>
+                                                    </div>
+                                                    <div className="text-[10px] text-amber-warning font-bold">Mobile SDK: AnyDesk & Rooted Device</div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <span className="px-2 py-0.5 rounded bg-amber-warning/20 text-amber-warning font-black text-[9px] uppercase tracking-wider block">
+                                                        FLAGGED
+                                                    </span>
+                                                    <span className="text-[9px] text-amber-warning font-bold mt-0.5 block">Risk: 88.40%</span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
+
+                                    {/* Bottom AI Assistant Status */}
+                                    <div className="p-3 rounded-xl bg-dark-900 border border-white/10 flex items-center justify-between">
+                                        <div className="flex items-center gap-2.5">
+                                            <div className="w-2 h-2 rounded-full bg-neon-cyan animate-pulse" />
+                                            <span className="text-[10px] font-mono font-bold text-white uppercase tracking-wider">
+                                                REMI AI Assistant Active
+                                            </span>
+                                        </div>
+                                        <span className="text-[9px] font-mono font-bold text-neon-cyan uppercase tracking-widest">
+                                            v1.0 Agent Ready
+                                        </span>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
