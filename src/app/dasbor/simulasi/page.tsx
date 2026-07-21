@@ -852,7 +852,9 @@ export default function SimulasiPage() {
                                             <div className="flex items-center justify-center gap-2 mt-2">
                                                 <AlertTriangle className="w-3.5 h-3.5 text-dark-500" />
                                                 <span className="text-[11px] text-dark-400 font-black uppercase tracking-widest">
-                                                    Skor Risiko: <span className={cfg.verdictColor}>{riskScore}/100</span>
+                                                    Skor Risiko: <span className={cfg.verdictColor}>
+                                                        {mlResult ? (mlResult.risk_score > 0 && mlResult.risk_score < 1 ? mlResult.risk_score.toFixed(2) : Math.round(mlResult.risk_score)) : riskScore}/100
+                                                    </span>
                                                     {mlResult && <span className="text-dark-600 ml-1">(Threshold: {mlResult.threshold_used})</span>}
                                                 </span>
                                             </div>
@@ -867,9 +869,10 @@ export default function SimulasiPage() {
                                                         { key: "xgboost",            label: "XGBoost",           color: "bg-blue-500" },
                                                         { key: "lightgbm_fraud_sum", label: "LightGBM (Fraud)",  color: "bg-purple-500" },
                                                         { key: "graph_gnn",          label: "Graph / GNN",       color: "bg-neon-cyan" },
+                                                        { key: "sdk_behavioral",     label: "SDK Behavioral ML", color: "bg-emerald-400" },
                                                         { key: "ensemble_final",     label: "Ensemble Final",    color: "bg-hyper-violet" },
                                                     ] as const).map(({ key, label, color }) => {
-                                                        const score = mlResult.model_scores[key];
+                                                        const score = mlResult.model_scores[key] ?? 0;
                                                         return (
                                                             <div key={key} className="flex items-center gap-3">
                                                                 <span className="text-[10px] text-dark-400 font-mono w-32 flex-shrink-0">{label}</span>
