@@ -14,7 +14,7 @@ export default function HalamanLanding() {
       const observerOptions = {
         root: null,
         rootMargin: "0px",
-        threshold: 0.15,
+        threshold: 0.05,
       };
 
       observer = new IntersectionObserver((entries) => {
@@ -27,27 +27,17 @@ export default function HalamanLanding() {
       }, observerOptions);
 
       revealElements = document.querySelectorAll(".reveal-on-scroll");
-      revealElements.forEach((el) => observer?.observe(el));
+      revealElements.forEach((el) => {
+        observer?.observe(el);
+        el.classList.add("revealed");
+      });
     };
 
-    if ((window as any).__splashScreenFinished) {
-      initObserver();
-    } else {
-      const handleFinished = () => {
-        initObserver();
-      };
-      window.addEventListener("splashScreenFinished", handleFinished);
-      return () => {
-        window.removeEventListener("splashScreenFinished", handleFinished);
-        if (observer) {
-          revealElements.forEach((el) => observer?.unobserve(el));
-        }
-      };
-    }
+    initObserver();
 
     return () => {
       if (observer) {
-        revealElements.forEach((el) => observer?.unobserve(el));
+        revealElements?.forEach((el) => observer?.unobserve(el));
       }
     };
   }, []);

@@ -10,13 +10,7 @@ export default function Hero() {
     const [globalEvents, setGlobalEvents] = useState(4821590400);
 
     useEffect(() => {
-        if ((window as any).__splashScreenFinished) {
-            setIsAnimated(true);
-        } else {
-            const handleFinished = () => setIsAnimated(true);
-            window.addEventListener("splashScreenFinished", handleFinished);
-            return () => window.removeEventListener("splashScreenFinished", handleFinished);
-        }
+        setIsAnimated(true);
     }, []);
 
     useEffect(() => {

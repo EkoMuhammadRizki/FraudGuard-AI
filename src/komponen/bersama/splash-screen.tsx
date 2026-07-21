@@ -20,6 +20,8 @@ export default function SplashScreen() {
         }
 
         if (typeof window !== "undefined" && (sessionStorage.getItem("splash_screen_shown") || (window as any).__splashScreenFinished)) {
+            (window as any).__splashScreenFinished = true;
+            window.dispatchEvent(new Event("splashScreenFinished"));
             setVisible(false);
             setMounted(false);
             return;
