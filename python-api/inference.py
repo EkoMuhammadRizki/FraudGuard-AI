@@ -431,6 +431,8 @@ def predict_transaction(tx_dict: dict) -> dict:
     )
 
     return {
+        "transaction_id": tx_dict.get("transaction_id", "TXN-" + os.urandom(4).hex().upper()),
+        "final_decision": "BLOCKED" if is_fraud else "APPROVED",
         "is_fraud": is_fraud,
         "risk_score": round(final_proba * 100, 2),
         "threshold_used": round(threshold * 100, 2),
