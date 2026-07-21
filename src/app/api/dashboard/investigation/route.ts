@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/pustaka/mongodb";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 function calculateRiskScore(doc: any) {
     if (doc.is_laundering === 1) {
         return {
