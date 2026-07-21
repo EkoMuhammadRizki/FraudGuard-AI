@@ -164,7 +164,7 @@ export default function AiChatWidget() {
                             <div>
                                 <div className="flex items-center gap-1.5">
                                     <h3 className="text-xs font-black text-white uppercase tracking-wider">REMI AI</h3>
-                                    <span className="px-1.5 py-0.2 rounded bg-neon-cyan/10 border border-neon-cyan/30 text-neon-cyan text-[8px] font-black uppercase">v2.4 Agent</span>
+                                    <span className="px-1.5 py-0.2 rounded bg-neon-cyan/10 border border-neon-cyan/30 text-neon-cyan text-[8px] font-black uppercase">v1.0 Agent</span>
                                 </div>
                                 <p className="text-[10px] text-dark-400 font-bold tracking-tight">Asisten Cerdas Analis Fraud BI</p>
                             </div>
