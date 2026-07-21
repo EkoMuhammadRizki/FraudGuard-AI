@@ -31,7 +31,7 @@ export default function AiChatWidget() {
         {
             id: "msg-welcome",
             sender: "bot",
-            text: "Halo Analis! Saya **Amankan Fraud AI Assistant**, asisten inteligensi siber FDS Bank Indonesia. Ada yang bisa saya bantu terkait analisis transaksi, deteksi anomali biometrik, atau integrasi Mobile SDK?",
+            text: "Halo Analis! Saya **REMI**, asisten inteligensi siber FDS Bank Indonesia. Ada yang bisa saya bantu terkait analisis transaksi, deteksi anomali biometrik, atau integrasi Mobile SDK?",
             timestamp: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }),
             category: "info",
         },
@@ -93,7 +93,7 @@ export default function AiChatWidget() {
 
         if (q.includes("halo") || q.includes("hai") || q.includes("pagi") || q.includes("siang") || q.includes("malam")) {
             return {
-                text: "Halo! Saya **Amankan Fraud AI Agent**. Silakan tanyakan hal seputar analisis data transaksi, grafik GNN, sinyal biometrik SDK, atau panduan operasional analis fraud.",
+                text: "Halo! Saya **REMI AI Agent**. Silakan tanyakan hal seputar analisis data transaksi, grafik GNN, sinyal biometrik SDK, atau panduan operasional analis fraud.",
                 category: "info"
             };
         }
@@ -163,7 +163,7 @@ export default function AiChatWidget() {
 
                             <div>
                                 <div className="flex items-center gap-1.5">
-                                    <h3 className="text-xs font-black text-white uppercase tracking-wider">Amankan Fraud AI</h3>
+                                    <h3 className="text-xs font-black text-white uppercase tracking-wider">REMI AI</h3>
                                     <span className="px-1.5 py-0.2 rounded bg-neon-cyan/10 border border-neon-cyan/30 text-neon-cyan text-[8px] font-black uppercase">v2.4 Agent</span>
                                 </div>
                                 <p className="text-[10px] text-dark-400 font-bold tracking-tight">Asisten Cerdas Analis Fraud BI</p>
@@ -274,7 +274,7 @@ export default function AiChatWidget() {
                                     type="text"
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
-                                    placeholder="Tanyakan sesuatu pada AI Amankan Fraud..."
+                                    placeholder="Tanyakan sesuatu pada REMI AI..."
                                     className="flex-1 bg-dark-950 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-dark-500 outline-none focus:border-neon-cyan/50 transition-all font-medium"
                                 />
                                 <button
@@ -297,7 +297,7 @@ export default function AiChatWidget() {
                     setIsMinimized(false);
                 }}
                 className="pointer-events-auto group relative flex items-center justify-center p-0.5 rounded-full bg-gradient-to-br from-neon-cyan via-primary-blue to-hyper-violet shadow-[0_0_30px_rgba(6,182,212,0.4)] hover:shadow-[0_0_40px_rgba(6,182,212,0.7)] transition-all duration-300 active:scale-90"
-                title="Tanya AI Amankan Fraud"
+                title="Tanya REMI AI"
             >
                 {/* Glowing Radar Pulse Effect */}
                 <div className="absolute inset-0 rounded-full bg-neon-cyan/30 animate-ping opacity-75 pointer-events-none" />
