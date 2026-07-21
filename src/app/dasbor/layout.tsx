@@ -2,6 +2,7 @@
 import Sidebar from "@/komponen/bersama/sidebar";
 import ModalSumberData from "@/komponen/dasbor/modal-sumber-data";
 import ModalPanduan from "@/komponen/dasbor/modal-panduan";
+import AiChatWidget from "@/komponen/bersama/ai-chat-widget";
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { Menu, Search, Bell, X, ArrowRight, AlertTriangle, ShieldAlert, ShieldCheck, Clock, CheckCheck, Trash2 } from "lucide-react";
 import { transactionFeed } from "@/pustaka/data-fraudguard";
@@ -512,6 +513,9 @@ export default function DasborLayout({
                     {children}
                 </main>
             </div>
+            
+            {/* Floating AI Agent Chatbot Widget for Analysts */}
+            <AiChatWidget />
         </div>
     );
 }
