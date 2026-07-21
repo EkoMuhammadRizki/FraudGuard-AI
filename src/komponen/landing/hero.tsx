@@ -100,12 +100,6 @@ export default function Hero() {
                             >
                                 Mulai Integrasi Sekarang
                             </Link>
-                            <Link
-                                href="/dasbor/ringkasan"
-                                className="w-full sm:w-auto px-8 py-4 rounded-xl glass-panel text-white font-bold text-base transition-all hover:bg-white/5 text-center active:scale-[0.98]"
-                            >
-                                Lihat Live Demo
-                            </Link>
                         </div>
                         
                         {/* Social Proof Placeholder */}
