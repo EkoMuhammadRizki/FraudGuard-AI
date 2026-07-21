@@ -58,6 +58,10 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     const [showLogoutModal, setShowLogoutModal] = useState(false);
 
     const handleLogout = () => {
+        if (typeof window !== "undefined") {
+            sessionStorage.setItem("splash_screen_shown", "true");
+            (window as any).__splashScreenFinished = true;
+        }
         localStorage.removeItem("telah_baca_peringatan_ai");
         setShowLogoutModal(false);
         onClose();

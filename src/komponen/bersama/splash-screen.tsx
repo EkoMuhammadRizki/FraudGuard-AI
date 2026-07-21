@@ -13,9 +13,18 @@ export default function SplashScreen() {
     const [mounted, setMounted] = useState(true);
 
     useEffect(() => {
+        // Jika sedang di dashboard atau splash screen sudah pernah berjalan di sesi ini, langsung lewati
         if (isDashboard) {
+            setMounted(false);
             return;
         }
+
+        if (typeof window !== "undefined" && (sessionStorage.getItem("splash_screen_shown") || (window as any).__splashScreenFinished)) {
+            setVisible(false);
+            setMounted(false);
+            return;
+        }
+
         // Prevent scroll when loading
         document.body.style.overflow = "hidden";
 
@@ -28,6 +37,9 @@ export default function SplashScreen() {
                     setTimeout(() => {
                         setVisible(false);
                         (window as any).__splashScreenFinished = true;
+                        if (typeof window !== "undefined") {
+                            sessionStorage.setItem("splash_screen_shown", "true");
+                        }
                         window.dispatchEvent(new Event("splashScreenFinished"));
                         // Re-enable scroll
                         document.body.style.overflow = "unset";
@@ -55,7 +67,7 @@ export default function SplashScreen() {
             clearInterval(interval);
             document.body.style.overflow = "unset";
         };
-    }, []);
+    }, [pathname, isDashboard]);
 
     if (isDashboard || !mounted) return null;
 
