@@ -107,7 +107,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   <span className="text-[10px] font-black text-dark-500 uppercase tracking-[0.2em]">Operasi Utama</span>
                 </div>
                 {menuItems.map((item) => {
-                    const isActive = pathname === item.href || pathname.startsWith(item.href.split("#")[0]);
+                    const cleanHref = item.href.split("#")[0];
+                    const isActive = pathname === item.href || pathname === cleanHref || pathname.startsWith(cleanHref + "/");
                     return (
                         <Link
                             key={item.href}
