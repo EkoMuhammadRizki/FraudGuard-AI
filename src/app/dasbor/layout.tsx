@@ -149,12 +149,9 @@ export default function DasborLayout({
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    // ── Cek onboarding session ──
+    // ── Tampilkan modal disclaimer & sumber data setiap kali masuk dasbor ──
     useEffect(() => {
-        const hasSeen = sessionStorage.getItem("has_seen_disclaimer");
-        if (!hasSeen) {
-            setShowSumberData(true);
-        }
+        setShowSumberData(true);
     }, []);
 
     // ── Keyboard shortcut: Ctrl+K to focus search ──
@@ -232,7 +229,6 @@ export default function DasborLayout({
                 onClose={() => {
                     setShowSumberData(false);
                     setShowPanduan(true);
-                    sessionStorage.setItem("has_seen_disclaimer", "true");
                 }} 
             />
 
@@ -240,7 +236,6 @@ export default function DasborLayout({
                 isOpen={showPanduan} 
                 onClose={() => {
                     setShowPanduan(false);
-                    sessionStorage.setItem("has_seen_disclaimer", "true");
                 }} 
             />
 
