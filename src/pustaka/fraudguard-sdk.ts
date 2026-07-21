@@ -81,6 +81,7 @@ export interface SDKEvaluationResult {
         lightgbmMax: number;
         lightgbmFraudSum: number;
         graphGnn: number;
+        sdkBehavioral?: number;
         ensembleFinal: number;
     };
     processingTimeMs: number;
@@ -625,12 +626,23 @@ export class FraudGuardSDK {
             fan_out_ratio: overrides?.fanOutRatio ?? 0.12,
             fan_in_ratio: overrides?.fanInRatio ?? 0.08,
             time_since_last_tx: overrides?.timeSinceLastTx ?? 3600,
+            behavioral_data: {
+                dwell_avg: telemetry.avgDwellMs || (preset?.telemetry.avgDwellMs ?? 95.0),
+                flight_avg: telemetry.avgFlightMs || (preset?.telemetry.avgFlightMs ?? 120.0),
+                traj_avg: this.deviceIntegrity.remoteDesktopActive ? 0.0 : 15.0,
+                cpm: this.deviceIntegrity.remoteDesktopActive ? 1200.0 : 250.0,
+                error_rate: (telemetry.hesitationScore / 100.0) * 0.2,
+                touch_pressure: this.deviceIntegrity.remoteDesktopActive ? 0.9 : 0.5,
+                tilt_axis_x: this.deviceIntegrity.remoteDesktopActive ? 0.0 : 0.1,
+                tilt_axis_y: this.deviceIntegrity.remoteDesktopActive ? 0.0 : 0.2,
+                scroll_y: 0.0
+            }
         };
 
         this.log("Secure Token X-FraudGuard-Token generated successfully.", "success");
         this.log(`Sending to ${this.config.bankName} Core Banking Gateway...`, "info");
         this.log("Core Banking forwarding token to FraudGuard FDS Engine.", "info");
-        this.log("FDS Engine: Running parallel classification (XGBoost + LightGBM + Graph GNN)...", "info");
+        this.log("FDS Engine: Running parallel classification (XGBoost + LightGBM + Graph GNN + SDK Behavioral)...", "info");
 
         try {
             const res = await fetch(this.config.endpoint, {
@@ -653,6 +665,7 @@ export class FraudGuardSDK {
                     lightgbmMax: data.model_scores?.lightgbm_max ?? 0,
                     lightgbmFraudSum: data.model_scores?.lightgbm_fraud_sum ?? 0,
                     graphGnn: data.model_scores?.graph_gnn ?? 0,
+                    sdkBehavioral: data.model_scores?.sdk_behavioral ?? 0,
                     ensembleFinal: data.model_scores?.ensemble_final ?? 0,
                 },
                 processingTimeMs: data.processing_time_ms,

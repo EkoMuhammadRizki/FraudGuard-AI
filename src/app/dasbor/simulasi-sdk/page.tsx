@@ -626,7 +626,7 @@ export default function SimulasiSDKPage() {
                                         </div>
 
                                         <div className="bg-dark-950/40 rounded-xl p-4 border border-white/5 space-y-2.5">
-                                            <div className="text-[8px] font-black text-dark-500 uppercase tracking-widest">Ensemble Decision Scores</div>
+                                            <div className="text-[8px] font-black text-dark-500 uppercase tracking-widest">Ensemble Decision Scores (Live ML Models)</div>
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div className="flex justify-between items-center text-[10px] font-mono">
                                                     <span className="text-dark-400">XGBoost Binary:</span>
@@ -641,7 +641,11 @@ export default function SimulasiSDKPage() {
                                                     <span className="text-white font-bold">{Math.round(mlResult.modelScores.graphGnn)}%</span>
                                                 </div>
                                                 <div className="flex justify-between items-center text-[10px] font-mono">
-                                                    <span className="text-dark-400">Meta-Learner Stacker:</span>
+                                                    <span className="text-neon-cyan font-bold">SDK Behavioral ML:</span>
+                                                    <span className="text-neon-cyan font-bold">{Math.round(mlResult.modelScores.sdkBehavioral ?? 0)}%</span>
+                                                </div>
+                                                <div className="flex justify-between items-center text-[10px] font-mono col-span-2 pt-1 border-t border-white/5">
+                                                    <span className="text-dark-300 font-bold">Meta-Learner Stacker Final:</span>
                                                     <span className="text-white font-bold">{Math.round(mlResult.modelScores.ensembleFinal)}%</span>
                                                 </div>
                                             </div>

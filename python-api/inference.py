@@ -15,6 +15,7 @@ graph_model = None
 meta_learner = None
 meta_config = None
 dataset_meta = None
+sdk_behavioral_model = None
 
 # Track mana model yang berhasil di-load
 _model_status: dict = {
@@ -22,6 +23,7 @@ _model_status: dict = {
     "lightgbm": False,
     "graph_ml": False,
     "meta_learner": False,
+    "sdk_behavioral": False,
 }
 
 MODELS_DIR = os.path.join(os.path.dirname(__file__), "models")
@@ -29,7 +31,7 @@ MODELS_DIR = os.path.join(os.path.dirname(__file__), "models")
 
 # --- Model Loading ---
 def load_models():
-    global xgb_model, lgb_model, graph_model, meta_learner, meta_config, dataset_meta, _model_status
+    global xgb_model, lgb_model, graph_model, meta_learner, meta_config, dataset_meta, sdk_behavioral_model, _model_status
 
     print("[FraudGuard] Loading model metadata...")
     with open(os.path.join(MODELS_DIR, "dataset_metadata.json"), "r") as f:
@@ -82,8 +84,18 @@ def load_models():
     except Exception as e:
         print(f"[FraudGuard] FAIL Meta-Learner: {type(e).__name__}")
 
+    # Behavioral SDK Model (LightGBM tuned by teammate)
+    print("[FraudGuard] Loading Behavioral SDK Model (Mobile Telemetry)...")
+    try:
+        with open(os.path.join(MODELS_DIR, "sdk_behavioral_model.pkl"), "rb") as f:
+            sdk_behavioral_model = pickle.load(f)
+        _model_status["sdk_behavioral"] = True
+        print("[FraudGuard] OK Behavioral SDK Model loaded")
+    except Exception as e:
+        print(f"[FraudGuard] FAIL Behavioral SDK Model: {type(e).__name__}")
+
     loaded_count = sum(_model_status.values())
-    print(f"[FraudGuard] {loaded_count}/4 models loaded!")
+    print(f"[FraudGuard] {loaded_count}/5 models loaded!")
     if _model_status["xgboost"]:
         print(f"[FraudGuard]   Ensemble threshold: {meta_config['threshold']:.4f}")
         print(f"[FraudGuard]   F1-Score: {meta_config['f1_score']:.4f}")
@@ -270,12 +282,43 @@ def build_feature_vector(tx: dict) -> pd.DataFrame:
     return pd.DataFrame([{col: row.get(col, 0.0) for col in feature_cols}])
 
 
+# --- Behavioral ML Prediction (SDK Model) ---
+def predict_behavior(behavior_data: dict) -> dict:
+    """
+    Prediksi behavioral bot / anomaly dari Mobile SDK menggunakan sdk_behavioral_model.pkl
+    """
+    if sdk_behavioral_model is None:
+        return {"is_bot": False, "bot_score": 0.0}
+
+    features = [
+        'dwell_avg', 'flight_avg', 'traj_avg',
+        'cpm', 'error_rate', 'touch_pressure',
+        'tilt_axis_x', 'tilt_axis_y', 'scroll_y'
+    ]
+
+    X_array = np.array([[float(behavior_data.get(f, 0.0)) for f in features]])
+
+    import warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        bot_proba = float(sdk_behavioral_model.predict_proba(X_array)[:, 1][0])
+
+    threshold = float(meta_config.get("threshold", 0.3374)) if meta_config else 0.3374
+    is_bot = bool(bot_proba >= threshold)
+
+    return {
+        "is_bot": is_bot,
+        "bot_score": round(bot_proba * 100, 2)
+    }
+
+
 # --- Prediction ---
 def predict_transaction(tx_dict: dict) -> dict:
     """
     Ensemble inference dengan graceful fallback:
     - LightGBM/Graph ML -> interpolasi dari XGBoost jika diblokir App Control
     - Meta-Learner -> weighted average jika tidak tersedia
+    - Behavioral SDK Model -> evaluasi telemetri biometrik mobile SDK
     """
     if not is_loaded():
         raise RuntimeError("Models not loaded. Call load_models() first.")
@@ -337,7 +380,15 @@ def predict_transaction(tx_dict: dict) -> dict:
         except Exception:
             pass  # keep interpolated fallback
 
-    # 4. Final Ensemble
+    # 4. Behavioral SDK Model Evaluator
+    behavioral_score = 0.0
+    is_bot = False
+    if "behavioral_data" in tx_dict and tx_dict["behavioral_data"]:
+        b_res = predict_behavior(tx_dict["behavioral_data"])
+        behavioral_score = b_res["bot_score"]
+        is_bot = b_res["is_bot"]
+
+    # 5. Final Ensemble
     threshold = float(meta_config.get("threshold", 0.5))
 
     if meta_learner is not None:
@@ -366,6 +417,12 @@ def predict_transaction(tx_dict: dict) -> dict:
             w_graph * graph_proba
         ) / total_w
 
+    # Fuse behavioral bot score into final ensemble decision if behavioral anomaly detected
+    if is_bot or behavioral_score > 33.7:
+        final_proba = max(final_proba, behavioral_score / 100.0)
+        if predicted_fraud_type == "Legitimate":
+            predicted_fraud_type = "Behavioral Telemetry Anomaly (Bot/Remote Access)"
+
     is_fraud = bool(final_proba >= threshold)
 
     fraud_type_label = (
@@ -383,7 +440,9 @@ def predict_transaction(tx_dict: dict) -> dict:
             "lightgbm_max": round(lgb_proba_max * 100, 2),
             "lightgbm_fraud_sum": round(lgb_proba_fraud_sum * 100, 2),
             "graph_gnn": round(graph_proba * 100, 2),
+            "sdk_behavioral": round(behavioral_score, 2),
             "ensemble_final": round(final_proba * 100, 2),
         },
         "models_active": _model_status,
     }
+

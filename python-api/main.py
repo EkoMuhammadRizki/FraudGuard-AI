@@ -59,6 +59,9 @@ class TransactionRequest(BaseModel):
     sender_degree: Optional[float] = Field(None, description="Jumlah koneksi unik pengirim (graph degree)")
     receiver_indegree: Optional[float] = Field(None, description="Jumlah pengirim unik ke penerima (graph indegree)")
 
+    # Data Telemetri Behavioral dari Mobile SDK
+    behavioral_data: Optional[dict] = Field(None, description="Data telemetri biometrik mobile SDK (dwell_avg, flight_avg, dll.)")
+
 
 class PredictionResponse(BaseModel):
     transaction_id: str
