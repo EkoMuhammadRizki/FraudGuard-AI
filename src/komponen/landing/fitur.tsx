@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Network, BrainCircuit, Fingerprint, ArrowRight, Cpu, Layers } from "lucide-react";
+import { Network, BrainCircuit, Fingerprint, ArrowRight, Cpu, Layers, Bot } from "lucide-react";
 
 export default function Fitur() {
     const [modalType, setModalType] = useState<string | null>(null);
@@ -35,6 +35,12 @@ export default function Fitur() {
             icon: <Fingerprint className="w-6 h-6" strokeWidth={2} />,
             title: "Biometrik Lanjutan",
             description: "Lapis keamanan ekstra dengan pengenalan wajah, deteksi sidik jari, dan profiling kebiasaan pengguna secara mulus.",
+        },
+        {
+            id: "bot",
+            icon: <Bot className="w-6 h-6" strokeWidth={2} />,
+            title: "REMI AI Chatbot Assistant",
+            description: "Asisten cerdas melayang berbasis AI untuk membantu analis membedah indikator risiko, panduan investigasi, dan SDK biometrik secara real-time.",
         },
     ];
 
@@ -134,6 +140,7 @@ export default function Fitur() {
                                 {modalType === "ensemble" && <Layers className="w-8 h-8" />}
                                 {modalType === "xai" && <BrainCircuit className="w-8 h-8" />}
                                 {modalType === "biometrics" && <Fingerprint className="w-8 h-8" />}
+                                {modalType === "bot" && <Bot className="w-8 h-8 text-neon-cyan" />}
                             </div>
                             <div>
                                 <span className="text-[10px] font-bold text-neon-cyan uppercase tracking-[0.2em]">SISTEM INFRASTRUKTUR</span>
@@ -143,6 +150,7 @@ export default function Fitur() {
                                     {modalType === "ensemble" && "Ensemble Final Stacker (Meta-Learner)"}
                                     {modalType === "xai" && "Explainable AI (XAI)"}
                                     {modalType === "biometrics" && "Biometrik Lanjutan"}
+                                    {modalType === "bot" && "REMI AI Chatbot Assistant"}
                                 </h3>
                             </div>
                         </div>
@@ -320,6 +328,23 @@ export default function Fitur() {
                                     </div>
                                 </div>
                             )}
+
+                            {modalType === "bot" && (
+                                <div className="w-full h-full flex flex-col items-center justify-center space-y-4 relative py-4">
+                                    <div className="relative w-20 h-20 flex items-center justify-center bg-dark-800 rounded-3xl border border-neon-cyan/30 shadow-[0_0_25px_rgba(6,182,212,0.3)]">
+                                        <Bot className="w-10 h-10 text-neon-cyan animate-pulse" />
+                                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-status-success rounded-full border-2 border-dark-950 shadow-sm" />
+                                    </div>
+                                    <div className="text-center">
+                                        <div className="text-[10px] font-mono font-bold text-neon-cyan tracking-wider uppercase animate-pulse">
+                                            REMI AI AGENT ONLINE & SIAP MEMBANTU ANALIS...
+                                        </div>
+                                        <div className="text-[8px] font-mono text-dark-500 uppercase mt-1">
+                                            Penjelasan Skor Risk | Panduan GNN & Biometrik | Respon Instan
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Technical Description Text */}
@@ -400,6 +425,22 @@ export default function Fitur() {
                                         <li>Parameter: Kecepatan keystroke, arah usapan, & rasio sentuhan jari</li>
                                         <li>Proteksi Bot: Deteksi seketika serangan simulator makro dan bot otomatis</li>
                                         <li>Manfaat: Menolak akses berbahaya tanpa merusak kenyamanan pengguna asli</li>
+                                    </ul>
+                                </>
+                            )}
+
+                            {modalType === "bot" && (
+                                <>
+                                    <p>
+                                        <strong>REMI AI Chatbot Assistant</strong> adalah asisten inteligensi siber interaktif yang terintegrasi melayang di seluruh dasbor operasional FraudGuard-AI.
+                                    </p>
+                                    <p>
+                                        REMI dirancang untuk memandu analis finansial dan tim investigasi dalam membedah alasan keputusan model ML, memahami topologi graf GNN, dan mendapatkan rekomendasi langkah mitigasi insiden secara langsung tanpa harus meninggalkan halaman kerja.
+                                    </p>
+                                    <ul className="list-disc pl-5 space-y-2 font-mono text-[11px] text-neon-cyan">
+                                        <li>Kemampuan: Tanya-jawab real-time seputar indikator fraud, skor ATO, dan telemetri SDK</li>
+                                        <li>Integrasi: Widget melayang responsive dengan deteksi klik luar (auto-close)</li>
+                                        <li>Manfaat: Mempercepat waktu respon investigasi analis (MTTR) hingga 65%</li>
                                     </ul>
                                 </>
                             )}
