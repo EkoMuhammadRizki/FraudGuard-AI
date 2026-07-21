@@ -125,18 +125,18 @@ function computeMouseDeviation(points: { x: number; y: number }[]): number {
 }
 
 /**
- * Rekening: dukung karakter alfanumerik (huruf & angka) dari dataset IBM AML
- * Validasi: min 6 karakter, max 16 karakter
+ * Rekening: murni angka/digit (0-9) sesuai standar perbankan nasional
+ * Validasi: min 8 digit, max 16 digit
  */
 function validateAccountDigits(digits: string): string | undefined {
     if (!digits) return undefined;
-    if (digits.length < 6) return `Nomor rekening kurang — minimal 6 karakter (${digits.length}/16)`;
+    if (digits.length < 8) return `Nomor rekening kurang — minimal 8 digit (${digits.length}/16)`;
     return undefined;
 }
 
-/** Format digit/karakter rekening dengan spasi tiap 4 karakter untuk keterbacaan */
+/** Format digit rekening dengan spasi tiap 4 digit untuk keterbacaan */
 function formatAccountDisplay(digits: string): string {
-    return digits.replace(/([a-zA-Z0-9]{4})(?=[a-zA-Z0-9])/g, "$1 ").trim();
+    return digits.replace(/(\d{4})(?=\d)/g, "$1 ").trim();
 }
 
 /** Format angka ke Rupiah real-time (titik sebagai pemisah ribuan) */
@@ -300,11 +300,11 @@ export default function SimulasiPage() {
         setForm(prev => ({ ...prev, [field]: cleanedValue }));
     };
 
-    /** Handler khusus field rekening — terima huruf & digit alfanumerik, max 16 */
+    /** Handler khusus field rekening — murni digit angka (0-9), max 16 */
     const handleAccountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const digits = e.target.value.replace(/[^a-zA-Z0-9]/g, "").slice(0, 16).toUpperCase();
+        const digits = e.target.value.replace(/\D/g, "").slice(0, 16);
         setAccountDigits(digits);
-        setForm(prev => ({ ...prev, account: digits }));   // simpan alfanumerik murni ke form
+        setForm(prev => ({ ...prev, account: digits }));   // simpan digit murni ke form
         setFormErrors(prev => ({ ...prev, account: validateAccountDigits(digits) }));
     };
 
@@ -549,7 +549,7 @@ export default function SimulasiPage() {
                                     {/* Digit counter */}
                                     <span className={`text-[10px] font-black font-mono tabular-nums ${
                                         accountDigits.length === 0 ? "text-dark-600"
-                                        : accountDigits.length < 6 ? "text-amber-400"
+                                        : accountDigits.length < 8 ? "text-amber-400"
                                         : "text-status-success"
                                     }`}>
                                         {accountDigits.length}/16
@@ -558,8 +558,8 @@ export default function SimulasiPage() {
                                 <div className="relative">
                                     <input
                                         type="text"
-                                        inputMode="text"
-                                        placeholder="Contoh: 81D858360 atau 1234 5678"
+                                        inputMode="numeric"
+                                        placeholder="Contoh: 8185 8360 12 atau 1029 3847 56"
                                         value={formatAccountDisplay(accountDigits)}
                                         onChange={handleAccountChange}
                                         disabled={isRunning || isDone}
@@ -567,7 +567,7 @@ export default function SimulasiPage() {
                                         className={`w-full bg-dark-950/80 border rounded-xl px-4 py-3.5 text-sm font-mono text-white placeholder-dark-600 focus:outline-none focus:bg-dark-950 transition disabled:opacity-40 ${
                                             formErrors.account
                                                 ? "border-status-error/60 focus:border-status-error"
-                                                : accountDigits.length >= 6
+                                                : accountDigits.length >= 8
                                                 ? "border-status-success/40 focus:border-status-success/60"
                                                 : "border-white/8 focus:border-primary-blue/50"
                                         }`}
