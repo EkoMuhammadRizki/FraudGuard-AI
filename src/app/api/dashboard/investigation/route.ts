@@ -118,8 +118,8 @@ export async function GET(request: Request) {
         // 1. Build detail
         const detail = {
             id: displayId,
-            pengirim: doc.sender_entity_name || `ACC:${doc.sender_account}`,
-            penerima: `ACC:${doc.receiver_account}`,
+            pengirim: doc.sender_entity_name || doc.sender_account,
+            penerima: doc.receiver_account,
             jumlah: doc.amount_paid * 15000,
             waktu: new Date(doc.timestamp).toLocaleString("id-ID"),
             metode: doc.payment_format || "Credit Card",

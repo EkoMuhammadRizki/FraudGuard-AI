@@ -105,8 +105,8 @@ export async function GET(request: Request) {
                 return {
                     id: doc._id.toString().slice(-8).toUpperCase(),
                     waktu: new Date(doc.timestamp).toLocaleDateString("id-ID") + " " + new Date(doc.timestamp).toLocaleTimeString("id-ID"),
-                    pengirim: doc.sender_entity_name || `ACC:${doc.sender_account}`,
-                    penerima: `ACC:${doc.receiver_account}`,
+                    pengirim: doc.sender_entity_name || doc.sender_account,
+                    penerima: doc.receiver_account,
                     jumlah: doc.amount_paid * 15000, // IDR Equivalent
                     risiko: rs.risiko,
                     riskScore: rs.riskScore,

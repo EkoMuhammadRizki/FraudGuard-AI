@@ -50,8 +50,8 @@ export async function GET() {
                 return {
                     id: doc._id.toString().slice(-8).toUpperCase(),
                     waktu: new Date(doc.timestamp).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }),
-                    pengirim: doc.sender_entity_name || `ACC:${doc.sender_account}`,
-                    penerima: `ACC:${doc.receiver_account}`,
+                    pengirim: doc.sender_entity_name || doc.sender_account,
+                    penerima: doc.receiver_account,
                     jumlah: doc.amount_paid * 15000, // Convert USD to IDR equivalent
                     risiko: isFraud ? "kritis" : "rendah",
                     riskScore: isFraud ? 95 : 12,
