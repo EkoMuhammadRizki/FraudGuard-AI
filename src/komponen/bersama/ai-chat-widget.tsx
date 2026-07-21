@@ -39,10 +39,30 @@ export default function AiChatWidget() {
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
+    const widgetRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
+
+    // Auto-close ketika mengklik di luar area pop-up REMI AI
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent | TouchEvent) {
+            if (widgetRef.current && !widgetRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        }
+
+        if (isOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+            document.addEventListener("touchstart", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+            document.removeEventListener("touchstart", handleClickOutside);
+        };
+    }, [isOpen]);
 
     useEffect(() => {
         if (isOpen && !isMinimized) {
@@ -136,7 +156,7 @@ export default function AiChatWidget() {
     };
 
     return (
-        <div className="fixed bottom-6 right-6 z-[999] flex flex-col items-end pointer-events-none">
+        <div ref={widgetRef} className="fixed bottom-6 right-6 z-[999] flex flex-col items-end pointer-events-none">
 
             {/* ─── CHAT MODAL WINDOW ─── */}
             {isOpen && (
