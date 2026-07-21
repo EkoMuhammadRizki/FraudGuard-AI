@@ -133,13 +133,12 @@ export default function RingkasanPage() {
         }
     }, [selectedTxn]);
 
-    // Live count tick animation
+    // Keep liveCount synced with stats.totalTransactions directly from MongoDB Atlas
     useEffect(() => {
-        const interval = setInterval(() => {
-            setLiveCount((prev) => prev + Math.floor(Math.random() * 2));
-        }, 3000);
-        return () => clearInterval(interval);
-    }, []);
+        if (stats?.totalTransactions) {
+            setLiveCount(stats.totalTransactions);
+        }
+    }, [stats.totalTransactions]);
 
     // Close modal on ESC key
     useEffect(() => {

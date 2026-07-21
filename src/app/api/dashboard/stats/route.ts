@@ -17,11 +17,11 @@ export async function GET() {
         const liveAlerts = await db.collection("alerts").countDocuments({});
 
         // Calculate counts
-        // Standard FDS statistics configuration (F1-score, FPR, threshold)
+        // Calculate counts directly from MongoDB Atlas collection
         const stats = {
-            totalTransactions: totalTransactions + livePreds.length,
-            fraudLabels: fraudLabels + livePreds.filter(p => p.predicted_class === 1).length,
-            fraudAlerts: 426 + liveAlerts, // Base historical + live alerts count
+            totalTransactions: totalTransactions,
+            fraudLabels: fraudLabels,
+            fraudAlerts: fraudLabels,
             falsePositiveRate: 0.0054,
             f1Score: 0.814,
             prAuc: 0.960,
