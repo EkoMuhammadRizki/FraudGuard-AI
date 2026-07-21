@@ -24,77 +24,77 @@ export default function ModalSumberData({ isOpen, onClose }: ModalSumberDataProp
                 {/* Body Content */}
                 <div className="p-8 md:p-10 space-y-6 max-h-[85vh] overflow-y-auto custom-scrollbar">
                     
-                    {/* Badge PERINGATAN */}
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-status-error/15 text-status-error text-[10px] font-black tracking-widest uppercase">
-                        <AlertTriangle className="w-3.5 h-3.5" />
-                        Peringatan
+                    {/* Badge INTEGRASI DATASET */}
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-neon-cyan/15 text-neon-cyan text-[10px] font-black tracking-widest uppercase border border-neon-cyan/30">
+                        <Database className="w-3.5 h-3.5" />
+                        Live MongoDB Atlas & Ensemble ML
                     </div>
 
                     {/* Title */}
                     <h2 className="text-2xl md:text-3xl font-black text-white leading-tight tracking-tight uppercase">
-                        Data pada website ini merupakan hasil klasifikasi AI
+                        Integrasi Real-time Database MongoDB & Engine AI
                     </h2>
 
                     {/* Description Paragraphs */}
                     <div className="space-y-4 text-xs font-bold text-dark-300 leading-relaxed font-sans">
                         <p>
-                            Isi data pada website ini merupakan hasil klasifikasi dari AI, khususnya Large Language Model, dan dapat keliru.
+                            Sistem dasbor ini terhubung secara langsung dengan database <span className="text-neon-cyan font-bold">MongoDB Atlas</span> (50.000 data transaksi riil industri perbankan) dan diproses oleh <span className="text-white font-bold">Live Machine Learning Inference Engine</span>.
                         </p>
                         <p>
-                            Harap gunakan data di website ini hanya sebagai acuan dan bantuan semata untuk mendukung pemantauan publik.
+                            Setiap transaksi dievaluasi secara otomatis oleh <span className="text-white font-bold">Ensemble 5 Model AI</span> (XGBoost, LightGBM Multiclass, Graph GNN, Meta-Learner Stacker, dan Mobile Telemetry SDK Model) dengan threshold operasional <span className="text-neon-cyan font-bold">33.74%</span>.
                         </p>
                         <p>
                             Lihat{" "}
                             <button
                                 type="button"
                                 onClick={() => setShowTransparency(!showTransparency)}
-                                className="text-amber-warning hover:text-amber-400 font-extrabold underline underline-offset-2 inline-flex items-center gap-1 transition-colors cursor-pointer"
+                                className="text-neon-cyan hover:text-cyan-300 font-extrabold underline underline-offset-2 inline-flex items-center gap-1 transition-colors cursor-pointer"
                             >
-                                Transparansi Algoritma
+                                Architecture & Detail Model
                                 {showTransparency ? (
                                     <ChevronUp className="w-3.5 h-3.5" />
                                 ) : (
                                     <ChevronDown className="w-3.5 h-3.5" />
                                 )}
                             </button>{" "}
-                            untuk detail model dan prompt kami agar Anda dapat memahami bagaimana klasifikasi dilakukan.
+                            untuk melihat spesifikasi 5 model ML dan sumber koleksi MongoDB Atlas.
                         </p>
                     </div>
 
                     {/* Collapsible Algorithm Transparency Info */}
                     {showTransparency && (
-                        <div className="mt-4 p-5 rounded-2xl bg-dark-950/60 border border-white/5 space-y-4 animate-fade-in text-[11px] font-medium leading-relaxed text-dark-300">
+                        <div className="mt-4 p-5 rounded-2xl bg-dark-950/60 border border-white/10 space-y-4 animate-fade-in text-[11px] font-medium leading-relaxed text-dark-300">
                             
-                            {/* Model Info */}
+                            {/* Database Info */}
                             <div className="space-y-1">
                                 <div className="flex items-center gap-2 text-neon-cyan font-bold uppercase tracking-wider">
-                                    <Cpu className="w-3.5 h-3.5" />
-                                    <span>Model & Algoritma</span>
+                                    <Database className="w-3.5 h-3.5" />
+                                    <span>Database MongoDB Atlas</span>
                                 </div>
                                 <p className="text-dark-400 pl-5">
-                                    Sistem menggunakan ensemble model <span className="text-white font-bold">XGBoost (MVP)</span> untuk klasifikasi transaksi numerik cepat dan <span className="text-white font-bold">Large Language Model (Gemini 1.5 Pro)</span> untuk analisis penjelasan perilaku transaksi terdekripsi (XAI).
+                                    Koleksi <span className="text-white font-bold">transactions</span> dalam database <span className="text-white font-bold">fraud_detection</span> menyimpan 50.000 dokumen histori transaksi keuangan riil perbankan.
                                 </p>
                             </div>
 
-                            {/* Prompt Info */}
+                            {/* Model Info */}
                             <div className="space-y-1">
                                 <div className="flex items-center gap-2 text-hyper-violet font-bold uppercase tracking-wider">
-                                    <Terminal className="w-3.5 h-3.5" />
-                                    <span>Integrasi Prompt</span>
+                                    <Cpu className="w-3.5 h-3.5" />
+                                    <span>Pipeline 5 Model Machine Learning</span>
                                 </div>
                                 <p className="text-dark-400 pl-5">
-                                    Prompt AI mengekstrak pola anomali dari metadata sesi (IP, geolokasi, durasi transaksi, nominal outlier) untuk menilai bobot kontribusi risiko secara dinamis dan menyajikannya secara transparan.
+                                    Menggabungkan <span className="text-white font-bold">XGBoost Binary</span> (deteksi deviasi nominal), <span className="text-white font-bold">LightGBM Multiclass</span> (klasifikasi tipe fraud), <span className="text-white font-bold">Graph GNN</span> (topologi jaringan), <span className="text-white font-bold">Meta-Learner Stacker</span>, dan <span className="text-white font-bold">SDK Behavioral ML</span> (telemetri ketikan/perangkat).
                                 </p>
                             </div>
 
-                            {/* Data Streams */}
+                            {/* Telemetry Info */}
                             <div className="space-y-1">
                                 <div className="flex items-center gap-2 text-status-success font-bold uppercase tracking-wider">
-                                    <Database className="w-3.5 h-3.5" />
-                                    <span>Sumber Data Website</span>
+                                    <Terminal className="w-3.5 h-3.5" />
+                                    <span>Mobile Telemetry SDK</span>
                                 </div>
                                 <p className="text-dark-400 pl-5">
-                                    Seluruh data transaksi dan visualisasi peta berasal dari integrasi live database simulator MVP yang memetakan histori transaksi blacklisted nodes dan ancaman siber regional secara real-time.
+                                    Mendeteksi 9 parameter biometrik perilaku (dwell time, flight time, error rate, touch pressure, tilt axis) serta proteksi langsung terhadap aplikasi remote desktop AnyDesk dan perangkat rooted.
                                 </p>
                             </div>
                         </div>
@@ -103,7 +103,7 @@ export default function ModalSumberData({ isOpen, onClose }: ModalSumberDataProp
                     {/* Saya Mengerti Action Button */}
                     <button
                         onClick={onClose}
-                        className="w-full mt-6 py-4 rounded-xl bg-gradient-to-r from-amber-600 to-amber-400 hover:from-amber-500 hover:to-amber-300 text-dark-950 font-black text-sm uppercase tracking-widest transition-all hover:shadow-lg hover:shadow-amber-500/10 active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
+                        className="w-full mt-6 py-4 rounded-xl bg-gradient-to-r from-neon-cyan via-primary-blue to-hyper-violet hover:opacity-90 text-dark-950 font-black text-sm uppercase tracking-widest transition-all hover:shadow-lg hover:shadow-neon-cyan/20 active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
                     >
                         <Check className="w-4 h-4" strokeWidth={3} />
                         Saya Mengerti
