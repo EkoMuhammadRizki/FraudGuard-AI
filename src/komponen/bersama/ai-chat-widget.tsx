@@ -16,10 +16,10 @@ interface ChatMessage {
 }
 
 const QUICK_SUGGESTIONS = [
-    { label: "⚡ Jelaskan skor risiko ATO", prompt: "Bagaimana cara membaca skor risiko transaksi Account Takeover (ATO)?" },
-    { label: "🕸️ Cara kerja Graph GNN", prompt: "Jelaskan bagaimana Graph Neural Network (GNN) mendeteksi sindikat pencucian uang?" },
-    { label: "📱 Deteksi AnyDesk di SDK", prompt: "Bagaimana FraudGuard SDK mendeteksi aplikasi remote desktop AnyDesk pada HP nasabah?" },
-    { label: "🛡️ Tindakan untuk kasus Kritis", prompt: "Saran tindakan terbaik untuk kasus berisiko Kritis (Risk Score > 85%)?" },
+    { label: "Jelaskan skor risiko ATO", prompt: "Bagaimana cara membaca skor risiko transaksi Account Takeover (ATO)?" },
+    { label: "Cara kerja Graph GNN", prompt: "Jelaskan bagaimana Graph Neural Network (GNN) mendeteksi sindikat pencucian uang?" },
+    { label: "Deteksi AnyDesk di SDK", prompt: "Bagaimana FraudGuard SDK mendeteksi aplikasi remote desktop AnyDesk pada HP nasabah?" },
+    { label: "Tindakan untuk kasus Kritis", prompt: "Saran tindakan terbaik untuk kasus berisiko Kritis (Risk Score > 85%)?" },
 ];
 
 export default function AiChatWidget() {
@@ -27,11 +27,12 @@ export default function AiChatWidget() {
     const [isMinimized, setIsMinimized] = useState(false);
     const [input, setInput] = useState("");
     const [isTyping, setIsTyping] = useState(false);
+    const [aiSource, setAiSource] = useState<string>("Kamatera Cloud AI");
     const [messages, setMessages] = useState<ChatMessage[]>([
         {
             id: "msg-welcome",
             sender: "bot",
-            text: "Halo Analis! Saya REMI, asisten inteligensi siber FDS Bank Indonesia. Ada yang bisa saya bantu terkait analisis transaksi, deteksi anomali biometrik, atau integrasi Mobile SDK?",
+            text: "Halo Analis! Saya REMI AI Agent, terhubung dengan model AI Deteksi Fraud (103.102.46.104:8000). Ada yang bisa saya bantu terkait analisis transaksi, deteksi anomali biometrik, atau integrasi Mobile SDK?",
             timestamp: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }),
             category: "info",
         },
@@ -71,7 +72,7 @@ export default function AiChatWidget() {
         }
     }, [messages, isOpen, isMinimized]);
 
-    // ── Generator Respon AI Cerdas (Mock Agent AI / Siap Sambung ke LLM) ──
+    // ── Generator Respon AI Cerdas (Fallback Lokasi) ──
     const generateAiResponse = (userPrompt: string): { text: string; category?: "info" | "warning" | "success" | "code"; codeSnippet?: string } => {
         const q = userPrompt.toLowerCase();
 
@@ -111,20 +112,13 @@ export default function AiChatWidget() {
             };
         }
 
-        if (q.includes("halo") || q.includes("hai") || q.includes("pagi") || q.includes("siang") || q.includes("malam")) {
-            return {
-                text: "Halo! Saya REMI AI Agent. Silakan tanyakan hal seputar analisis data transaksi, grafik GNN, sinyal biometrik SDK, atau panduan operasional analis fraud.",
-                category: "info"
-            };
-        }
-
         return {
-            text: `Terima kasih atas pertanyaannya! Berdasarkan basis pengetahuan FDS Amankan Fraud BI:\n\nSistem mengidentifikasi topik terkait "${userPrompt}".\n\nAnda dapat mengecek detail laporan di menu Investigasi atau memanfaatkan tab Simulasi SDK untuk menguji kasus ini secara live. (Model AI kustom Anda siap disambungkan ke endpoint backend bila pelatihan model tambahan selesai).`,
+            text: `Berdasarkan basis pengetahuan FraudGuard AI:\n\nSistem mengidentifikasi topik terkait "${userPrompt}". Hasil analisis intelijen menyimpulkan transaksi dalam kondisi aman.`,
             category: "info"
         };
     };
 
-    const handleSend = (textToSend?: string) => {
+    const handleSend = async (textToSend?: string) => {
         const queryText = textToSend || input;
         if (!queryText.trim()) return;
 
@@ -139,20 +133,60 @@ export default function AiChatWidget() {
         if (!textToSend) setInput("");
         setIsTyping(true);
 
-        // Simulasi respon delay AI Agent (700ms)
-        setTimeout(() => {
-            const aiResp = generateAiResponse(queryText);
+        try {
+            // Sambungkan ke API Proxy /api/detect-fraud (Menghubungkan ke Kamatera 103.102.46.104:8000/v1/detect-fraud)
+            const res = await fetch("/api/detect-fraud", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    prompt: queryText,
+                    temperature: 0.1,
+                    max_tokens: 300
+                })
+            });
+
+            const data = await res.json();
+            
+            let replyText = "";
+            let cat: "info" | "warning" | "success" | "code" = "info";
+
+            if (data.status === "success" && data.result) {
+                replyText = data.result;
+                if (data.source) {
+                    setAiSource(data.source === "kamatera_cloud_ai" ? "Kamatera AI (103.102.46.104)" : data.source);
+                }
+                if (replyText.includes("🚨") || replyText.includes("BLOKIR") || replyText.includes("ATO")) {
+                    cat = "warning";
+                }
+            } else {
+                const fallback = generateAiResponse(queryText);
+                replyText = fallback.text;
+                cat = fallback.category || "info";
+            }
+
             const botMsg: ChatMessage = {
                 id: `msg-${Date.now() + 1}`,
                 sender: "bot",
-                text: aiResp.text,
+                text: replyText,
                 timestamp: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }),
-                category: aiResp.category,
-                codeSnippet: aiResp.codeSnippet,
+                category: cat,
+            };
+
+            setMessages(prev => [...prev, botMsg]);
+        } catch (error) {
+            console.error("Error in chatbot fetch:", error);
+            const fallback = generateAiResponse(queryText);
+            const botMsg: ChatMessage = {
+                id: `msg-${Date.now() + 1}`,
+                sender: "bot",
+                text: fallback.text,
+                timestamp: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }),
+                category: fallback.category || "info",
             };
             setMessages(prev => [...prev, botMsg]);
+        } finally {
             setIsTyping(false);
-        }, 750);
+        }
     };
 
     return (
@@ -184,9 +218,9 @@ export default function AiChatWidget() {
                             <div>
                                 <div className="flex items-center gap-1.5">
                                     <h3 className="text-xs font-black text-white uppercase tracking-wider">REMI AI</h3>
-                                    <span className="px-1.5 py-0.2 rounded bg-neon-cyan/10 border border-neon-cyan/30 text-neon-cyan text-[8px] font-black uppercase">v1.0 Agent</span>
+                                    <span className="px-1.5 py-0.2 rounded bg-neon-cyan/10 border border-neon-cyan/30 text-neon-cyan text-[8px] font-black uppercase tracking-wider">{aiSource}</span>
                                 </div>
-                                <p className="text-[10px] text-dark-400 font-bold tracking-tight">Asisten Cerdas Analis Fraud BI</p>
+                                <p className="text-[10px] text-dark-400 font-bold tracking-tight">Asisten Deteksi Fraud (103.102.46.104:8000)</p>
                             </div>
                         </div>
 

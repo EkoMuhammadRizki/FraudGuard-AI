@@ -4,19 +4,16 @@ export default function AuthLayout({
     children: React.ReactNode;
 }) {
     return (
-        <div className="min-h-screen bg-dark-900 flex items-center justify-center relative overflow-hidden">
-            {/* Immersive Cyber Grid & Glows */}
-            <div className="absolute inset-0 cyber-grid opacity-20 pointer-events-none" />
-            
-            {/* Floating Orbs */}
-            <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary-blue/10 blur-[100px] rounded-full animate-pulse pointer-events-none" />
-            <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-hyper-violet/10 blur-[100px] rounded-full animate-pulse delay-1000 pointer-events-none" />
-            
-            {/* Center Container */}
-            <div className="relative z-10 w-full flex items-center justify-center p-6">
-                <div className="w-full max-w-md">
-                    {children}
-                </div>
+        <div className="min-h-screen bg-dark-950 text-white flex items-center justify-center relative overflow-hidden py-10 px-4 font-sans selection:bg-neon-cyan selection:text-dark-950">
+            {/* Cyber Grid & Background Orbs */}
+            <div className="absolute inset-0 cyber-grid opacity-25 pointer-events-none" />
+            <div className="absolute -top-32 -left-32 w-[600px] h-[600px] bg-neon-cyan/10 blur-[150px] rounded-full pointer-events-none" />
+            <div className="absolute -bottom-32 -right-32 w-[600px] h-[600px] bg-hyper-violet/15 blur-[150px] rounded-full pointer-events-none" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[450px] bg-primary-blue/10 blur-[160px] rounded-full pointer-events-none" />
+
+            {/* Center Container for Auth Card */}
+            <div className="relative z-10 w-full max-w-4xl mx-auto flex items-center justify-center">
+                {children}
             </div>
         </div>
     );

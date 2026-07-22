@@ -188,20 +188,10 @@ export default function RingkasanPage() {
                             Pemantauan infrastruktur: <span className="text-white">Aktif</span>
                         </p>
                     </div>
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                        {/* ML Engine Status */}
+
+                    {/* Header Controls: Single Unified Capsule Bar */}
+                    <div className="flex items-center gap-3 shrink-0">
                         <ModelStatusBadge showDetails pollInterval={60000} />
-                        <div className="flex items-center justify-between sm:justify-start gap-4 sm:gap-6 glass-panel px-4 py-2.5 rounded-xl border-white/5 bg-white/5">
-                            <div className="flex items-center gap-2.5">
-                                <span className="relative flex h-2 w-2">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-status-success opacity-75" />
-                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-status-success" />
-                                </span>
-                                <span className="text-status-success font-black text-xs uppercase tracking-widest">Sinyal Langsung</span>
-                            </div>
-                            <div className="w-[1px] h-4 bg-white/10" />
-                            <span className="text-dark-400 text-[10px] font-black uppercase tracking-tighter">Diperbarui: <span className="text-white">Sekarang</span></span>
-                        </div>
                     </div>
                 </div>
 
