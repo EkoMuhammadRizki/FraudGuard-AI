@@ -74,6 +74,22 @@ export default function AiChatWidget() {
         }
     }, [messages, isOpen, isMinimized]);
 
+    // ── Listener Event Global (Pemicu dari Card Dashboard / Halaman lain) ──
+    useEffect(() => {
+        const handleOpenRemi = (e: CustomEvent<{ prompt?: string }>) => {
+            setIsOpen(true);
+            setIsMinimized(false);
+            if (e.detail?.prompt) {
+                setTimeout(() => {
+                    handleSend(e.detail.prompt);
+                }, 100);
+            }
+        };
+
+        window.addEventListener("open-remi-chat", handleOpenRemi as EventListener);
+        return () => window.removeEventListener("open-remi-chat", handleOpenRemi as EventListener);
+    }, []);
+
     // ── Generator Respon AI Cerdas (Fallback Lokasi) ──
     const generateAiResponse = (userPrompt: string): { text: string; category?: "info" | "warning" | "success" | "code"; codeSnippet?: string } => {
         const q = userPrompt.toLowerCase();

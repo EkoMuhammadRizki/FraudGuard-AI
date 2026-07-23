@@ -57,54 +57,24 @@ export default function FraudDetectorComponent() {
         checkServer();
     }, []);
 
-    const handleCheck = async (e: React.FormEvent) => {
+    const handleCheck = (e: React.FormEvent) => {
         e.preventDefault();
         if (!inputData.trim()) return;
 
-        setLoading(true);
-        setResult('');
-        setXaiFeatures([]);
-        setForensicNarrative('');
-        setHasAnalyzed(false);
+        // Buka widget REMI AI secara otomatis dan kirimkan prompt ke Chatbot UI
+        if (typeof window !== "undefined") {
+            window.dispatchEvent(new CustomEvent("open-remi-chat", {
+                detail: { prompt: inputData }
+            }));
+        }
+    };
 
-        try {
-            // Menghubungkan ke API Proxy /api/detect-fraud (Forward ke Kamatera 103.102.46.104:8000/v1/detect-fraud)
-            const response = await fetch('/api/detect-fraud', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    prompt: inputData,
-                    temperature: 0.1,
-                    max_tokens: 300
-                }),
-            });
-
-            const data = await response.json();
-
-            if (data.status === 'success') {
-                setResult(data.result);
-                setXaiFeatures(data.xai_features || []);
-                setForensicNarrative(
-                    data.forensic_narrative || 
-                    `TRANSAKSI 2F572A3F DINILAI BERSIH OLEH MODEL DENGAN TINGKAT RISIKO RENDAH ${data.risk_score || 0}% (DI BAWAH THRESHOLD ${data.threshold_used || 38}%). POLA PERILAKU INPUT TERMINAL, DURASI TRANSAKSI, DAN GEOLOKASI BERADA PADA BATAS WAJAR. TINDAKAN ANALIS OTOMATIS: LOLOS.`
-                );
-                setRiskScore(data.risk_score ?? 0);
-                setThresholdUsed(data.threshold_used ?? 38);
-                setHasAnalyzed(true);
-
-                if (data.source) {
-                    setServerInfo(prev => prev ? { ...prev, source: data.source } : null);
-                }
-            } else {
-                setResult('Gagal mendapatkan analisis dari AI.');
-            }
-        } catch (error) {
-            console.error('Error connecting to AI server:', error);
-            setResult('Terjadi kesalahan koneksi ke server AI.');
-        } finally {
-            setLoading(false);
+    const handlePresetClick = (promptText: string) => {
+        setInputData(promptText);
+        if (typeof window !== "undefined") {
+            window.dispatchEvent(new CustomEvent("open-remi-chat", {
+                detail: { prompt: promptText }
+            }));
         }
     };
 
@@ -151,7 +121,7 @@ export default function FraudDetectorComponent() {
                         <button
                             key={idx}
                             type="button"
-                            onClick={() => setInputData(item.prompt)}
+                            onClick={() => handlePresetClick(item.prompt)}
                             className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-neon-cyan/10 border border-white/10 hover:border-neon-cyan/30 text-xs text-dark-300 hover:text-neon-cyan transition-all font-medium flex items-center gap-1.5"
                         >
                             <Terminal className="w-3.5 h-3.5 text-neon-cyan" />
