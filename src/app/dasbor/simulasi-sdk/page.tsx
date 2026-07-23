@@ -363,6 +363,8 @@ export default function SimulasiSDKPage() {
                                     <label className="text-[8px] font-black text-dark-400 uppercase tracking-widest">Rekening Tujuan</label>
                                     <input type="text" placeholder="cth: 1029 3847 56"
                                         value={formatRecipient(recipient)}
+                                        onKeyDown={handleKeyDown}
+                                        onKeyUp={handleKeyUp}
                                         onChange={e => handleRecipientChange(e.target.value)}
                                         disabled={isProcessing}
                                         className="w-full bg-dark-950/60 border border-white/5 rounded-xl px-4 py-2.5 text-xs font-mono text-white placeholder-dark-600 focus:outline-none focus:border-neon-cyan/50" />
@@ -374,6 +376,8 @@ export default function SimulasiSDKPage() {
                                         <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-mono text-dark-500">Rp</span>
                                         <input type="text" placeholder="150.000"
                                             value={formatAmount(amount)}
+                                            onKeyDown={handleKeyDown}
+                                            onKeyUp={handleKeyUp}
                                             onChange={e => handleAmountChange(e.target.value)}
                                             disabled={isProcessing}
                                             className="w-full bg-dark-950/60 border border-white/5 rounded-xl pl-9 pr-4 py-2.5 text-xs font-mono text-white placeholder-dark-600 focus:outline-none focus:border-neon-cyan/50" />
@@ -389,7 +393,7 @@ export default function SimulasiSDKPage() {
                                         onChange={e => setPin(e.target.value.replace(/\D/g, ""))}
                                         disabled={isProcessing}
                                         className="w-full bg-dark-950/60 border border-white/5 rounded-xl px-4 py-2.5 text-xs font-mono text-center tracking-widest text-white placeholder-dark-600 focus:outline-none focus:border-neon-cyan/50" />
-                                    <p className="text-[7px] text-dark-600 font-mono text-center">SDK merekam ritme ketikan Anda pada form ini.</p>
+                                    <p className="text-[7px] text-dark-600 font-mono text-center">SDK merekam ritme ketikan Anda pada seluruh form ini secara live.</p>
                                 </div>
                             </div>
 

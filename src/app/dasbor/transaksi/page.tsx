@@ -4,6 +4,7 @@ import { formatCurrency, getRiskColor, getRiskBgColor } from "@/pustaka/utilitas
 import { Search, ChevronDown, X, Cpu, ShieldAlert, ShieldCheck, ArrowRight, AlertTriangle } from "lucide-react";
 import InfoTooltip from "@/komponen/ui/info-tooltip";
 import { transactionFeed, investigationDetails } from "@/pustaka/data-fraudguard";
+import type { XaiFeature } from "@/pustaka/data-fraudguard";
 import { useRouter } from "next/navigation";
 
 // Kamus penjelasan UX Writer friendly untuk indikator model anomali FDS
@@ -464,7 +465,7 @@ export default function TransaksiPage() {
 
                                 <div className="space-y-3.5">
                                     {selectedRecord && selectedRecord.xaiFeatures && selectedRecord.xaiFeatures.length > 0 ? (
-                                        selectedRecord.xaiFeatures.map((feat, idx) => {
+                                        selectedRecord.xaiFeatures.map((feat: XaiFeature, idx: number) => {
                                             const exp = getReasonExplanation(feat.name);
                                             return (
                                                 <div 

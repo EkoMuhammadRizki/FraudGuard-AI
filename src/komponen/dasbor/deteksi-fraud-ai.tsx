@@ -1,6 +1,13 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Bot, Sparkles, Send, ShieldAlert, Cpu, CheckCircle2, AlertTriangle, RefreshCw, Copy, Check, Terminal } from 'lucide-react';
+import { Bot, Sparkles, ShieldAlert, Cpu, RefreshCw, Copy, Check, Terminal } from 'lucide-react';
+import InfoTooltip from '@/komponen/ui/info-tooltip';
+
+interface XaiFeature {
+    name: string;
+    importance: number;
+    impact: 'tinggi' | 'sedang' | 'rendah';
+}
 
 const PRESET_LOGS = [
     {
@@ -23,6 +30,13 @@ export default function FraudDetectorComponent() {
     const [loading, setLoading] = useState(false);
     const [serverInfo, setServerInfo] = useState<{ ip: string; online: boolean; source?: string } | null>(null);
     const [copied, setCopied] = useState(false);
+
+    // XAI SHAP & Forensic Log State
+    const [xaiFeatures, setXaiFeatures] = useState<XaiFeature[]>([]);
+    const [forensicNarrative, setForensicNarrative] = useState<string>('');
+    const [riskScore, setRiskScore] = useState<number>(0);
+    const [thresholdUsed, setThresholdUsed] = useState<number>(38);
+    const [hasAnalyzed, setHasAnalyzed] = useState(false);
 
     // Cek status koneksi AI Server
     useEffect(() => {
@@ -49,6 +63,9 @@ export default function FraudDetectorComponent() {
 
         setLoading(true);
         setResult('');
+        setXaiFeatures([]);
+        setForensicNarrative('');
+        setHasAnalyzed(false);
 
         try {
             // Menghubungkan ke API Proxy /api/detect-fraud (Forward ke Kamatera 103.102.46.104:8000/v1/detect-fraud)
@@ -68,6 +85,15 @@ export default function FraudDetectorComponent() {
 
             if (data.status === 'success') {
                 setResult(data.result);
+                setXaiFeatures(data.xai_features || []);
+                setForensicNarrative(
+                    data.forensic_narrative || 
+                    `TRANSAKSI 2F572A3F DINILAI BERSIH OLEH MODEL DENGAN TINGKAT RISIKO RENDAH ${data.risk_score || 0}% (DI BAWAH THRESHOLD ${data.threshold_used || 38}%). POLA PERILAKU INPUT TERMINAL, DURASI TRANSAKSI, DAN GEOLOKASI BERADA PADA BATAS WAJAR. TINDAKAN ANALIS OTOMATIS: LOLOS.`
+                );
+                setRiskScore(data.risk_score ?? 0);
+                setThresholdUsed(data.threshold_used ?? 38);
+                setHasAnalyzed(true);
+
                 if (data.source) {
                     setServerInfo(prev => prev ? { ...prev, source: data.source } : null);
                 }
@@ -90,7 +116,7 @@ export default function FraudDetectorComponent() {
     };
 
     return (
-        <div className="w-full bg-dark-900/90 border border-white/10 rounded-3xl p-6 sm:p-8 shadow-[0_10px_40px_rgba(0,0,0,0.5)] backdrop-blur-xl relative overflow-hidden">
+        <div className="w-full bg-dark-900/90 border border-white/10 rounded-3xl p-6 sm:p-8 shadow-[0_10px_40px_rgba(0,0,0,0.5)] backdrop-blur-xl relative overflow-hidden space-y-6">
             {/* Header / Cyber Badge */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
                 <div className="flex items-center gap-3">
@@ -118,7 +144,7 @@ export default function FraudDetectorComponent() {
             </div>
 
             {/* Template Presets */}
-            <div className="mt-6">
+            <div>
                 <p className="text-xs font-bold text-dark-400 uppercase tracking-wider mb-2">Preset Log Contoh Transaksi:</p>
                 <div className="flex flex-wrap gap-2">
                     {PRESET_LOGS.map((item, idx) => (
@@ -136,7 +162,7 @@ export default function FraudDetectorComponent() {
             </div>
 
             {/* Form Inputs */}
-            <form onSubmit={handleCheck} className="mt-6 space-y-4">
+            <form onSubmit={handleCheck} className="space-y-4">
                 <div className="relative">
                     <textarea
                         className="w-full p-4 bg-dark-950 border border-white/10 rounded-2xl text-sm text-white placeholder-dark-500 focus:outline-none focus:border-neon-cyan/50 focus:ring-1 focus:ring-neon-cyan/30 transition-all font-mono leading-relaxed custom-scrollbar"
@@ -177,7 +203,7 @@ export default function FraudDetectorComponent() {
 
             {/* Hasil Analisis Output Box */}
             {result && (
-                <div className="mt-6 p-5 bg-dark-950/90 border border-neon-cyan/30 rounded-2xl space-y-3 relative group">
+                <div className="p-5 bg-dark-950/90 border border-neon-cyan/30 rounded-2xl space-y-3 relative group">
                     <div className="flex items-center justify-between border-b border-white/10 pb-3">
                         <div className="flex items-center gap-2">
                             <ShieldAlert className="w-5 h-5 text-neon-cyan" />
@@ -204,6 +230,75 @@ export default function FraudDetectorComponent() {
                     )}
                 </div>
             )}
+
+            {/* ─── FITUR SHAP / XAI INTEGRATION PANEL ─── */}
+            {hasAnalyzed && (
+                <div className="p-6 md:p-8 bg-dark-950/95 border border-white/10 rounded-3xl relative overflow-hidden group shadow-2xl">
+                    <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-hyper-violet to-transparent opacity-20" />
+
+                    <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-4 mb-8">
+                        <div>
+                            <div className="flex items-center gap-2">
+                                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tighter uppercase italic">
+                                    Dampak <span className="text-hyper-violet">Fitur SHAP / XAI</span>
+                                </h3>
+                                <InfoTooltip text="Explainable AI (XAI) berbasis SHAP values. Menjelaskan faktor apa yang paling mempengaruhi keputusan model. Bar merah = dampak tinggi, kuning = sedang, hijau = rendah." />
+                            </div>
+                            <p className="text-[10px] font-bold text-dark-500 mt-1 uppercase tracking-[0.2em]">
+                                Penalaran keputusan AI yang transparan & pembobotan atribut
+                            </p>
+                        </div>
+                        <div className="px-5 py-2 rounded-2xl bg-dark-900 border border-white/10 text-hyper-violet text-[10px] font-black uppercase tracking-widest self-start xl:self-center">
+                            SHAP-READY ENGINE v4.0.1
+                        </div>
+                    </div>
+
+                    {/* SHAP Feature Impact Bars */}
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-12 gap-y-6">
+                        {xaiFeatures.length > 0 ? (
+                            xaiFeatures.map((feature) => {
+                                const barColor = feature.impact === 'tinggi' ? 'bg-status-error' : feature.impact === 'sedang' ? 'bg-amber-400' : 'bg-status-success';
+                                const percentageVal = Math.round(feature.importance * 100);
+                                return (
+                                    <div key={feature.name} className="group/feat">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <div className="text-[11px] font-black text-white uppercase tracking-wider group-hover/feat:text-neon-cyan transition-colors">
+                                                {feature.name}
+                                            </div>
+                                            <div className="text-[10px] font-black font-mono text-dark-400">
+                                                {percentageVal}%
+                                            </div>
+                                        </div>
+                                        <div className="h-2.5 bg-dark-900 rounded-full overflow-hidden p-[1px] border border-white/5 shadow-inner">
+                                            <div
+                                                className={`h-full rounded-full ${barColor} shadow-sm transition-all duration-1000`}
+                                                style={{ width: `${Math.min(percentageVal, 100)}%` }}
+                                            />
+                                        </div>
+                                    </div>
+                                );
+                            })
+                        ) : (
+                            <div className="col-span-2 text-center text-dark-500 font-bold uppercase tracking-widest text-xs py-10">
+                                TIDAK ADA KONTRIBUSI FITUR ANOMALI TERDETEKSI OLEH SHAP
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Log Narasi Forensik Model Box */}
+                    <div className="mt-10 p-6 rounded-2xl bg-white/[0.02] border border-white/10 group/narrative relative overflow-hidden">
+                        <div className={`absolute top-0 left-0 w-2 h-full ${riskScore >= thresholdUsed ? 'bg-status-error' : 'bg-status-success'} opacity-60`} />
+                        <h4 className="text-xs font-black text-white uppercase tracking-[0.3em] mb-3 flex items-center gap-2.5">
+                            <Cpu className="w-5 h-5 text-neon-cyan" strokeWidth={2.5} />
+                            Log Narasi Forensik Model
+                        </h4>
+                        <p className="text-xs sm:text-sm font-bold text-dark-400 leading-relaxed uppercase tracking-tight">
+                            {forensicNarrative}
+                        </p>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
+

@@ -16,10 +16,10 @@ interface ChatMessage {
 }
 
 const QUICK_SUGGESTIONS = [
-    { label: "Jelaskan skor risiko ATO", prompt: "Bagaimana cara membaca skor risiko transaksi Account Takeover (ATO)?" },
-    { label: "Cara kerja Graph GNN", prompt: "Jelaskan bagaimana Graph Neural Network (GNN) mendeteksi sindikat pencucian uang?" },
+    { label: "Cari Transaksi TX000424", prompt: "Detail transaksi TX000424 di database" },
+    { label: "Statistik Real-time Database", prompt: "Berapa total transaksi & statistik di database dasbor?" },
+    { label: "Daftar Transaksi Kritis", prompt: "Tampilkan transaksi berisiko kritis terbaru di database" },
     { label: "Deteksi AnyDesk di SDK", prompt: "Bagaimana FraudGuard SDK mendeteksi aplikasi remote desktop AnyDesk pada HP nasabah?" },
-    { label: "Tindakan untuk kasus Kritis", prompt: "Saran tindakan terbaik untuk kasus berisiko Kritis (Risk Score > 85%)?" },
 ];
 
 export default function AiChatWidget() {
@@ -27,12 +27,12 @@ export default function AiChatWidget() {
     const [isMinimized, setIsMinimized] = useState(false);
     const [input, setInput] = useState("");
     const [isTyping, setIsTyping] = useState(false);
-    const [aiSource, setAiSource] = useState<string>("Kamatera Cloud AI");
+    const [aiSource, setAiSource] = useState<string>("MongoDB Atlas & Model Engine");
     const [messages, setMessages] = useState<ChatMessage[]>([
         {
             id: "msg-welcome",
             sender: "bot",
-            text: "Halo Analis! Saya REMI AI Agent, terhubung dengan model AI Deteksi Fraud (103.102.46.104:8000). Ada yang bisa saya bantu terkait analisis transaksi, deteksi anomali biometrik, atau integrasi Mobile SDK?",
+            text: "Halo Analis! Saya REMI AI Agent, terhubung langsung dengan Database MongoDB Atlas & Model Inference Server (103.102.46.104:8000).\n\nSaya dapat menjawab pertanyaan transaksi dari dataset, mencari ID transaksi, menghitung statistik dasbor, atau menganalisis log anomali.",
             timestamp: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }),
             category: "info",
         },
@@ -41,6 +41,8 @@ export default function AiChatWidget() {
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const widgetRef = useRef<HTMLDivElement>(null);
+    const lastDiscussedTxIdRef = useRef<string | null>(null);
+    const lastTopicRef = useRef<string | null>(null);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -76,6 +78,13 @@ export default function AiChatWidget() {
     const generateAiResponse = (userPrompt: string): { text: string; category?: "info" | "warning" | "success" | "code"; codeSnippet?: string } => {
         const q = userPrompt.toLowerCase();
 
+        if (q.includes("pengembang") || q.includes("pembuat") || q.includes("developer") || q.includes("creator") || q.includes("eko") || q.includes("ihya") || q.includes("muhibin") || q.includes("reza") || q === "ulang" || q.includes("ulangi")) {
+            return {
+                text: "🛡️ **Tim Pengembang FraudGuard-AI (AmankanGuard)**:\n\nPlatform **FraudGuard-AI (AmankanGuard)** dikembangkan oleh tim pengembang FDS AI & Cyber Security:\n1. **Eko Muhammad Rizki**\n2. **Ihya Abdillah**\n3. **Muhammad Muhibin**\n4. **Reza Asriano**\n\nSistem ini dirancang sebagai platform Real-Time Fraud Detection System (FDS) perbankan generasi baru berbasis Machine Learning Ensemble (XGBoost, LightGBM, Graph Neural Network / GNN) dan Biometric Mobile Telemetry SDK.",
+                category: "info"
+            };
+        }
+
         if (q.includes("ato") || q.includes("account takeover") || q.includes("skor risiko")) {
             return {
                 text: "Skor risiko Account Takeover (ATO) diukur dari gabungan 3 sinyal utama:\n\n1. XGBoost (Binary ML): Menilai deviasi nominal dari kebiasaan transaksi 30 hari terakhir.\n2. Behavioral Telemetry (SDK): Menilai ketikan yang terlalu cepat (bot script) atau sangat hesitant/ragu-ragu (dituntun penipu).\n3. Threat Intel IP/Device: Menilai reputasi alamat IP dan perangkat pengirim.\n\nJika skor > 33.74%, sistem merekomendasikan Pembekuan Sementara & Verifikasi OTP Biometrik.",
@@ -105,16 +114,9 @@ export default function AiChatWidget() {
             };
         }
 
-        if (q.includes("kritis") || q.includes("tindakan") || q.includes("rekomendasi") || q.includes("analis")) {
-            return {
-                text: "Untuk transaksi berstatus KRITIS (Risk Score > 85%), standar operasional analis fraud (Best Practice) adalah:\n\n1. Hentikan & Blokir sementara dana di rekening penerima.\n2. Konfirmasi Langsung (Call-out) ke nasabah pengirim untuk memverifikasi apakah ia sedang dituntun penipu.\n3. Tandai Investigasi: Klik tombol Tandai Investigasi di dasbor untuk mengunci kasus dan mencatat catatan analisis.",
-                category: "warning"
-            };
-        }
-
         return {
-            text: `Berdasarkan basis pengetahuan FraudGuard AI:\n\nSistem mengidentifikasi topik terkait "${userPrompt}". Hasil analisis intelijen menyimpulkan transaksi dalam kondisi aman.`,
-            category: "info"
+            text: "⚠️ **Maaf, Batasan Domain Terdeteksi**:\n\nSebagai asisten cerdas REMI AI pada platform FraudGuard-AI (AmankanGuard), saya ditugaskan khusus untuk menjawab pertanyaan seputar deteksi fraud perbankan, analisis forensik transaksi, pencarian database FDS, model machine learning (SHAP/GNN/XGBoost), serta telemetri Mobile SDK.",
+            category: "warning"
         };
     };
 
@@ -134,12 +136,40 @@ export default function AiChatWidget() {
         setIsTyping(true);
 
         try {
-            // Sambungkan ke API Proxy /api/detect-fraud (Menghubungkan ke Kamatera 103.102.46.104:8000/v1/detect-fraud)
+            const qLower = queryText.toLowerCase();
+            if (qLower.includes("pengembang") || qLower.includes("pembuat") || qLower.includes("developer") || qLower.includes("creator") || qLower.includes("eko") || qLower.includes("ihya") || qLower.includes("muhibin") || qLower.includes("reza")) {
+                lastTopicRef.current = "developer";
+            }
+
+            // Check for explicit ID in prompt
+            const idPattern = /(tx[0-9]+|ac[0-9]+|rec-[a-z0-9]+|[0-9a-f]{6,24}|9948[0-9]+|8888[0-9]+|5746[0-9]+)/i;
+            const match = queryText.match(idPattern);
+            if (match) {
+                lastDiscussedTxIdRef.current = match[0].toUpperCase();
+                lastTopicRef.current = "transaction";
+            }
+
+            const getActiveTxId = () => {
+                if (typeof window !== "undefined") {
+                    return new URLSearchParams(window.location.search).get("txid");
+                }
+                return null;
+            };
+
+            const activeTxId = getActiveTxId();
+            const isTxQuery = match || qLower.includes("transaksi") || qLower.includes("tersebut") || qLower.includes("apakah fraud") || qLower.includes("pengirim") || qLower.includes("penerima");
+            const targetTxId = match ? match[0].toUpperCase() : (isTxQuery ? (lastDiscussedTxIdRef.current || activeTxId) : null);
+
+            // Sambungkan ke API Proxy /api/detect-fraud (Menghubungkan ke MongoDB Atlas & Model Open-Source AI)
             const res = await fetch("/api/detect-fraud", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     prompt: queryText,
+                    active_context: {
+                        id: targetTxId || null,
+                        topic: lastTopicRef.current || "general"
+                    },
                     temperature: 0.1,
                     max_tokens: 300
                 })
@@ -153,7 +183,13 @@ export default function AiChatWidget() {
             if (data.status === "success" && data.result) {
                 replyText = data.result;
                 if (data.source) {
-                    setAiSource(data.source === "kamatera_cloud_ai" ? "Kamatera AI (103.102.46.104)" : data.source);
+                    if (data.source === "database_intelligence") {
+                        setAiSource("Database & FDS Intelligence");
+                    } else if (data.source === "kamatera_cloud_ai") {
+                        setAiSource("Kamatera AI (103.102.46.104)");
+                    } else {
+                        setAiSource(data.source);
+                    }
                 }
                 if (replyText.includes("🚨") || replyText.includes("BLOKIR") || replyText.includes("ATO")) {
                     cat = "warning";

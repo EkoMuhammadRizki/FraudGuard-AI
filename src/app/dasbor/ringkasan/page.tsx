@@ -7,6 +7,7 @@ import { formatCurrency, getRiskColor, getRiskBgColor } from "@/pustaka/utilitas
 import { Activity, Siren, CheckCircle, Target, Zap, Cpu, ShieldAlert, ShieldCheck, ArrowRight, AlertTriangle, X } from "lucide-react";
 import InfoTooltip from "@/komponen/ui/info-tooltip";
 import ModelStatusBadge from "@/komponen/ui/model-status-badge";
+import type { XaiFeature } from "@/pustaka/data-fraudguard";
 import {
     AreaChart,
     Area,
@@ -453,7 +454,7 @@ export default function RingkasanPage() {
                                 </div>
                                 <div className="space-y-3.5">
                                     {selectedRecord && selectedRecord.xaiFeatures && selectedRecord.xaiFeatures.length > 0 ? (
-                                        selectedRecord.xaiFeatures.map((feat, idx) => {
+                                        selectedRecord.xaiFeatures.map((feat: XaiFeature, idx: number) => {
                                             const exp = getReasonExplanation(feat.name);
                                             return (
                                                 <div key={idx} className="p-5 rounded-2xl bg-white/[0.01] hover:bg-white/[0.02] border border-white/5 hover:border-white/10 transition-all flex flex-col sm:flex-row gap-4 sm:items-start">

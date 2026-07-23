@@ -468,11 +468,11 @@ function InvestigasiContent() {
         }
     };
 
-    const getNodeById = (id: string) => gnnNodes.find((n) => n.id === id);
+    const getNodeById = (id: string) => gnnNodes.find((n: { id: string }) => n.id === id);
 
     const getVerdictText = () => {
         if (detail.riskScore >= 38) {
-            return `Sistem Amankan.ai menandai transaksi ${detail.id} dengan tingkat risiko ${detail.riskScore}% (Tingkat: ${detail.modelVerdict}). Analisis GNN mendeteksi anomali hubungan pada node terminal ${detail.device} dan IP ${detail.ip}. XAI menerangkan kontribusi risiko utama disebabkan oleh: ${xaiFeatures.map(f => f.name).join(", ")}. Merekomendasikan tindakan: ${detail.analystAction === 'Tahan' ? 'Pembekuan sementara akun dan penahanan transaksi.' : 'Review mendalam oleh analis senior.'}`;
+            return `Sistem Amankan.ai menandai transaksi ${detail.id} dengan tingkat risiko ${detail.riskScore}% (Tingkat: ${detail.modelVerdict}). Analisis GNN mendeteksi anomali hubungan pada node terminal ${detail.device} dan IP ${detail.ip}. XAI menerangkan kontribusi risiko utama disebabkan oleh: ${xaiFeatures.map((f: { name: string }) => f.name).join(", ")}. Merekomendasikan tindakan: ${detail.analystAction === 'Tahan' ? 'Pembekuan sementara akun dan penahanan transaksi.' : 'Review mendalam oleh analis senior.'}`;
         } else {
             return `Transaksi ${detail.id} dinilai bersih oleh model dengan tingkat risiko rendah ${detail.riskScore}% (di bawah threshold 38%). Pola perilaku input terminal, durasi transaksi, dan geolokasi berada pada batas wajar. Tindakan analis otomatis: Lolos.`;
         }
@@ -692,7 +692,7 @@ function InvestigasiContent() {
                     <div className="relative bg-dark-950/60 rounded-2xl border border-white/5 overflow-hidden shadow-inner aspect-[3/4] sm:aspect-[16/9] lg:aspect-[21/9]">
                         <svg viewBox="0 0 600 500" className="w-full h-full p-6 md:p-10 drop-shadow-md" xmlns="http://www.w3.org/2000/svg">
                             {/* Connection Lines (Edges) */}
-                            {gnnEdges.map((edge, i) => {
+                            {gnnEdges.map((edge: { from: string; to: string; suspicious: boolean; weight: number }, i: number) => {
                                 const from = getNodeById(edge.from);
                                 const to = getNodeById(edge.to);
                                 if (!from || !to) return null;
@@ -714,7 +714,7 @@ function InvestigasiContent() {
                             })}
 
                             {/* Entity Nodes */}
-                            {gnnNodes.map((node) => {
+                            {gnnNodes.map((node: { id: string; label: string; x: number; y: number; type: string; risk: number }) => {
                                 const color = getNodeColor(node.type);
                                 const isSelected = selectedNode === node.id;
                                 return (
@@ -764,7 +764,7 @@ function InvestigasiContent() {
 
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-20 gap-y-8">
                         {xaiFeatures.length > 0 ? (
-                            xaiFeatures.map((feature) => {
+                            xaiFeatures.map((feature: { name: string; importance: number; impact: string }) => {
                                 const barColor = feature.impact === "tinggi" ? "bg-status-error" : feature.impact === "sedang" ? "bg-amber-warning" : "bg-status-success";
                                 return (
                                     <div key={feature.name} className="group/feat">
@@ -793,7 +793,7 @@ function InvestigasiContent() {
                             Log Narasi Forensik Model
                         </h4>
                         <p className="text-sm font-bold text-dark-400 leading-relaxed uppercase tracking-tight">
-                            {getVerdictText()}
+                            {record?.forensicNarrative || getVerdictText()}
                         </p>
                     </div>
                 </div>

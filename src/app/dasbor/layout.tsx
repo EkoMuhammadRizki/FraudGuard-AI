@@ -149,9 +149,15 @@ export default function DasborLayout({
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    // ── Tampilkan modal disclaimer & sumber data setiap kali masuk dasbor ──
+    // ── Tampilkan modal disclaimer HANYA saat login dari halaman login ke dasbor ──
     useEffect(() => {
-        setShowSumberData(true);
+        if (typeof window !== "undefined") {
+            const justLoggedIn = sessionStorage.getItem("fg_show_modal_on_login");
+            if (justLoggedIn === "true") {
+                setShowSumberData(true);
+                sessionStorage.removeItem("fg_show_modal_on_login"); // Hapus flag agar modal TIDAK MUNCUL saat refresh (F5/hard reset)
+            }
+        }
     }, []);
 
     // ── Keyboard shortcut: Ctrl+K to focus search ──
