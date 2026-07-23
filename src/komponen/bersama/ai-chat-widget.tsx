@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import {
     Bot, X, Send, Sparkles, MessageSquare, ShieldAlert,
     Cpu, Zap, HelpCircle, ChevronDown, Minimize2, RefreshCw,
-    AlertTriangle, CheckCircle2
+    AlertTriangle, CheckCircle2, Terminal
 } from "lucide-react";
 
 interface ChatMessage {
@@ -359,38 +359,68 @@ export default function AiChatWidget() {
                                 <div ref={messagesEndRef} />
                             </div>
 
-                            {/* Quick Suggestion Chips */}
-                            <div className="px-3 py-2 bg-dark-900/60 border-t border-white/5 flex gap-1.5 overflow-x-auto custom-scrollbar shrink-0">
-                                {QUICK_SUGGESTIONS.map((item, idx) => (
-                                    <button
-                                        key={idx}
-                                        onClick={() => handleSend(item.prompt)}
-                                        className="shrink-0 px-2.5 py-1 rounded-xl bg-white/5 hover:bg-neon-cyan/10 border border-white/10 hover:border-neon-cyan/30 text-[10px] text-dark-300 hover:text-neon-cyan transition-all font-medium"
-                                    >
-                                        {item.label}
-                                    </button>
-                                ))}
+                            {/* Preset Log Contoh Transaksi Bar */}
+                            <div className="px-3 pt-2 pb-1.5 bg-dark-900/90 border-t border-white/10 shrink-0 space-y-1.5">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-[9px] font-black text-dark-400 uppercase tracking-wider">Preset Log Contoh Transaksi:</span>
+                                    {input && (
+                                        <button
+                                            type="button"
+                                            onClick={() => setInput("")}
+                                            className="text-[9px] font-bold text-dark-500 hover:text-white uppercase tracking-wider transition-colors"
+                                        >
+                                            Reset Input
+                                        </button>
+                                    )}
+                                </div>
+                                <div className="flex gap-1.5 overflow-x-auto custom-scrollbar pb-1">
+                                    {QUICK_SUGGESTIONS.map((item, idx) => (
+                                        <button
+                                            key={idx}
+                                            type="button"
+                                            onClick={() => setInput(item.prompt)}
+                                            className={`shrink-0 px-2.5 py-1 rounded-xl border text-[9px] font-mono transition-all flex items-center gap-1 ${
+                                                input === item.prompt
+                                                    ? "bg-neon-cyan/20 text-neon-cyan border-neon-cyan/50 font-bold shadow-sm shadow-neon-cyan/20"
+                                                    : "bg-white/5 hover:bg-neon-cyan/10 text-dark-300 hover:text-neon-cyan border-white/10 hover:border-neon-cyan/30 font-medium"
+                                            }`}
+                                        >
+                                            <Terminal className="w-3 h-3 text-neon-cyan shrink-0" />
+                                            {item.label}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
 
-                            {/* Input Form Bar */}
+                            {/* Template Input Form Bar */}
                             <form
                                 onSubmit={(e) => { e.preventDefault(); handleSend(); }}
-                                className="p-3 bg-dark-900 border-t border-white/10 flex items-center gap-2 shrink-0"
+                                className="p-3 bg-dark-900 border-t border-white/10 flex flex-col gap-2 shrink-0"
                             >
-                                <input
-                                    ref={inputRef}
-                                    type="text"
+                                <textarea
+                                    ref={inputRef as any}
+                                    rows={2}
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
-                                    placeholder="Tanyakan sesuatu pada REMI AI..."
-                                    className="flex-1 bg-dark-950 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-dark-500 outline-none focus:border-neon-cyan/50 transition-all font-medium"
+                                    placeholder="Pilih preset di atas atau masukkan detail transaksi, log aktivitas, & prompt untuk dianalisis..."
+                                    className="w-full bg-dark-950 border border-white/10 rounded-xl p-2.5 text-xs text-white placeholder-dark-500 outline-none focus:border-neon-cyan/50 transition-all font-mono leading-relaxed custom-scrollbar resize-none"
                                 />
                                 <button
                                     type="submit"
                                     disabled={!input.trim() || isTyping}
-                                    className="p-2.5 rounded-xl bg-gradient-to-r from-neon-cyan to-primary-blue text-dark-950 font-black hover:opacity-90 active:scale-95 transition-all disabled:opacity-40 disabled:scale-100"
+                                    className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-neon-cyan via-primary-blue to-hyper-violet text-dark-950 font-black text-xs hover:opacity-90 active:scale-[0.99] transition-all disabled:opacity-40 disabled:scale-100 flex items-center justify-center gap-2 shadow-lg shadow-neon-cyan/20 uppercase tracking-wider"
                                 >
-                                    <Send className="w-4 h-4" />
+                                    {isTyping ? (
+                                        <>
+                                            <RefreshCw className="w-3.5 h-3.5 animate-spin text-dark-950" />
+                                            <span>Menganalisis Risiko Fraud via REMI AI...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Sparkles className="w-3.5 h-3.5 text-dark-950" />
+                                            <span>Analisis Risiko Fraud dengan REMI AI</span>
+                                        </>
+                                    )}
                                 </button>
                             </form>
                         </>
