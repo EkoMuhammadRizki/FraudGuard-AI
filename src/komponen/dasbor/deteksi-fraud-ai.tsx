@@ -127,18 +127,18 @@ export default function FraudDetectorComponent() {
                     </div>
                     <div>
                         <div className="flex items-center gap-2">
-                            <h2 className="text-lg font-black text-white uppercase tracking-wider">AmankanGuard — Deteksi Fraud AI</h2>
-                            <span className="px-2 py-0.5 rounded bg-neon-cyan/10 border border-neon-cyan/30 text-neon-cyan text-[10px] font-black uppercase">v2.0 Model</span>
+                            <h2 className="text-lg font-black text-white uppercase tracking-wider">REMI AI — ASISTEN DETEKSI FRAUD</h2>
+                            <span className="px-2 py-0.5 rounded bg-neon-cyan/10 border border-neon-cyan/30 text-neon-cyan text-[10px] font-black uppercase tracking-wider">DATABASE & FDS INTELLIGENCE</span>
                         </div>
-                        <p className="text-xs text-dark-400 font-medium">Analisis real-time log & prompt transaksi menggunakan Model Kamatera Cloud AI</p>
+                        <p className="text-xs text-dark-400 font-medium">Asisten Analisis Real-Time Log, Metadata Transaksi, & Compliance Regulasi OJK/BI/UU PDP</p>
                     </div>
                 </div>
 
                 {/* Server Connectivity Status Pill */}
                 <div className="flex items-center gap-2 bg-dark-950 px-3.5 py-1.5 rounded-xl border border-white/10 self-start sm:self-center">
                     <span className={`w-2.5 h-2.5 rounded-full ${serverInfo?.online ? 'bg-status-success animate-pulse' : 'bg-amber-400'}`} />
-                    <span className="text-xs font-mono text-dark-300">
-                        {serverInfo?.online ? `Kamatera AI (${serverInfo.ip})` : `Engine REMI AI Active`}
+                    <span className="text-xs font-mono text-dark-300 font-bold">
+                        {serverInfo?.online ? `Kamatera AI (${serverInfo.ip})` : `Engine REMI AI Active (103.102.46.104:8000)`}
                     </span>
                 </div>
             </div>
@@ -167,7 +167,7 @@ export default function FraudDetectorComponent() {
                     <textarea
                         className="w-full p-4 bg-dark-950 border border-white/10 rounded-2xl text-sm text-white placeholder-dark-500 focus:outline-none focus:border-neon-cyan/50 focus:ring-1 focus:ring-neon-cyan/30 transition-all font-mono leading-relaxed custom-scrollbar"
                         rows={5}
-                        placeholder="Masukkan detail transaksi, log aktivitas, atau prompt narasi untuk dianalisis oleh AI..."
+                        placeholder="Tanyakan sesuatu pada REMI AI atau masukkan detail transaksi, log aktivitas, & prompt narasi untuk dianalisis..."
                         value={inputData}
                         onChange={(e) => setInputData(e.target.value)}
                     />
@@ -190,12 +190,12 @@ export default function FraudDetectorComponent() {
                     {loading ? (
                         <>
                             <RefreshCw className="w-4 h-4 animate-spin text-dark-950" />
-                            <span>Menganalisis Risiko Fraud via Model AI...</span>
+                            <span>Menganalisis Risiko Fraud via REMI AI...</span>
                         </>
                     ) : (
                         <>
                             <Sparkles className="w-4 h-4 text-dark-950" />
-                            <span>Analisis Risiko Fraud AI</span>
+                            <span>Analisis Risiko Fraud dengan REMI AI</span>
                         </>
                     )}
                 </button>
