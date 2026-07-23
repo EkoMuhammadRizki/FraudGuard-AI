@@ -416,10 +416,7 @@ export default function AiChatWidget() {
                                             <span>Menganalisis Risiko Fraud via REMI AI...</span>
                                         </>
                                     ) : (
-                                        <>
-                                            <Sparkles className="w-3.5 h-3.5 text-dark-950" />
-                                            <span>Analisis Risiko Fraud dengan REMI AI</span>
-                                        </>
+                                        <span>Analisis Risiko Fraud dengan REMI AI</span>
                                     )}
                                 </button>
                             </form>
