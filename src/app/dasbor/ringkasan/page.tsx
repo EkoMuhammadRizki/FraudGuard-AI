@@ -93,10 +93,100 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     return null;
 };
 
+const MODEL_PROFILES = [
+    {
+        id: "ensemble",
+        name: "Meta Ensemble Stacker",
+        shortName: "Meta Ensemble",
+        color: "#06B6D4", // Neon Cyan
+        f1Score: "82.5%",
+        fpr: "0.68%",
+        prAuc: "89.4%",
+        threshold: "0.3374",
+        status: "TEROPTIMALISASI",
+        data: [
+            { month: "Jan", rate: 18.5 }, { month: "Feb", rate: 15.2 }, { month: "Mar", rate: 12.8 },
+            { month: "Apr", rate: 10.1 }, { month: "Mei", rate: 7.5 }, { month: "Jun", rate: 5.3 },
+            { month: "Jul", rate: 4.1 }, { month: "Agu", rate: 3.2 }, { month: "Sep", rate: 2.8 },
+            { month: "Okt", rate: 2.4 }, { month: "Nov", rate: 1.8 }, { month: "Des", rate: 0.68 }
+        ]
+    },
+    {
+        id: "xgboost",
+        name: "XGBoost Binary Pipeline",
+        shortName: "XGBoost",
+        color: "#3B82F6", // Primary Blue
+        f1Score: "80.2%",
+        fpr: "1.12%",
+        prAuc: "87.1%",
+        threshold: "0.3800",
+        status: "STABIL",
+        data: [
+            { month: "Jan", rate: 22.0 }, { month: "Feb", rate: 18.1 }, { month: "Mar", rate: 15.0 },
+            { month: "Apr", rate: 12.4 }, { month: "Mei", rate: 9.8 }, { month: "Jun", rate: 7.2 },
+            { month: "Jul", rate: 5.4 }, { month: "Agu", rate: 4.1 }, { month: "Sep", rate: 3.2 },
+            { month: "Okt", rate: 2.5 }, { month: "Nov", rate: 1.9 }, { month: "Des", rate: 1.12 }
+        ]
+    },
+    {
+        id: "lightgbm",
+        name: "LightGBM Multiclass Model",
+        shortName: "LightGBM",
+        color: "#8B5CF6", // Hyper Violet
+        f1Score: "79.5%",
+        fpr: "1.45%",
+        prAuc: "85.8%",
+        threshold: "0.4100",
+        status: "KLASIFIKASI MULTI",
+        data: [
+            { month: "Jan", rate: 24.5 }, { month: "Feb", rate: 20.2 }, { month: "Mar", rate: 16.9 },
+            { month: "Apr", rate: 13.5 }, { month: "Mei", rate: 10.8 }, { month: "Jun", rate: 8.4 },
+            { month: "Jul", rate: 6.2 }, { month: "Agu", rate: 4.8 }, { month: "Sep", rate: 3.6 },
+            { month: "Okt", rate: 2.8 }, { month: "Nov", rate: 2.1 }, { month: "Des", rate: 1.45 }
+        ]
+    },
+    {
+        id: "gnn",
+        name: "Graph ML Classifier (GNN)",
+        shortName: "GNN Graph",
+        color: "#10B981", // Emerald Green
+        f1Score: "84.1%",
+        fpr: "0.52%",
+        prAuc: "91.2%",
+        threshold: "0.2950",
+        status: "TOPOLOGI MULE",
+        data: [
+            { month: "Jan", rate: 16.2 }, { month: "Feb", rate: 13.0 }, { month: "Mar", rate: 10.5 },
+            { month: "Apr", rate: 8.1 }, { month: "Mei", rate: 6.0 }, { month: "Jun", rate: 4.2 },
+            { month: "Jul", rate: 3.1 }, { month: "Agu", rate: 2.3 }, { month: "Sep", rate: 1.8 },
+            { month: "Okt", rate: 1.2 }, { month: "Nov", rate: 0.8 }, { month: "Des", rate: 0.52 }
+        ]
+    },
+    {
+        id: "sdk",
+        name: "Mobile SDK Telemetry",
+        shortName: "SDK Biometric",
+        color: "#F59E0B", // Amber Warning
+        f1Score: "88.6%",
+        fpr: "0.35%",
+        prAuc: "93.8%",
+        threshold: "0.2500",
+        status: "BEHAVIORAL LIVE",
+        data: [
+            { month: "Jan", rate: 14.0 }, { month: "Feb", rate: 11.2 }, { month: "Mar", rate: 8.8 },
+            { month: "Apr", rate: 6.5 }, { month: "Mei", rate: 4.8 }, { month: "Jun", rate: 3.2 },
+            { month: "Jul", rate: 2.2 }, { month: "Agu", rate: 1.5 }, { month: "Sep", rate: 1.0 },
+            { month: "Okt", rate: 0.7 }, { month: "Nov", rate: 0.5 }, { month: "Des", rate: 0.35 }
+        ]
+    }
+];
+
 export default function RingkasanPage() {
     const router = useRouter();
     
     // Dynamic states from MongoDB
+    const [selectedModelId, setSelectedModelId] = useState("ensemble");
+    const activeModel = MODEL_PROFILES.find(m => m.id === selectedModelId) || MODEL_PROFILES[0];
     const [stats, setStats] = useState(dashboardSummary);
     const [transaksiList, setTransaksiList] = useState<any[]>([]);
     const [liveCount, setLiveCount] = useState(dashboardSummary.totalTransactions);
@@ -249,35 +339,71 @@ export default function RingkasanPage() {
                         </div>
                     </div>
 
-                    {/* Chart FP */}
+                    {/* Chart FP / Presisi Model Dinamis */}
                     <div className="xl:col-span-2 glass-panel p-6 md:p-10 rounded-[2.5rem] relative group">
                         <div className="absolute top-0 right-0 w-full h-[1px] bg-gradient-to-l from-transparent via-hyper-violet to-transparent opacity-20 group-hover:opacity-40 transition-opacity" />
-                        <div className="flex flex-col gap-1 mb-10">
-                            <div className="flex items-start sm:items-center justify-between gap-6 flex-wrap">
+                        
+                        <div className="flex flex-col gap-4 mb-6">
+                            <div className="flex items-start sm:items-center justify-between gap-4 flex-wrap">
                                 <div className="flex items-center gap-3">
                                     <h3 className="text-2xl font-black text-white tracking-tighter uppercase italic leading-tight">Presisi <br className="hidden xl:block 2xl:hidden" /><span className="text-hyper-violet">Model</span></h3>
-                                    <InfoTooltip text="Grafik tren penurunan False Positive Rate (FPR) sepanjang tahun. Semakin rendah angkanya, semakin presisi model AI dalam membedakan transaksi sah vs. fraud." />
+                                    <InfoTooltip text="Grafik tren penurunan False Positive Rate (FPR) sepanjang tahun. Klik tab model di bawah untuk melihat performa spesifik sub-model Machine Learning." />
                                 </div>
-                                <span className="px-3 py-1.5 rounded-xl bg-status-success/10 text-status-success text-[10px] font-black border border-status-success/20 tracking-widest shrink-0">
-                                    TEROPTIMALISASI
+                                <span className="px-3 py-1.5 rounded-xl bg-status-success/10 text-status-success text-[10px] font-black border border-status-success/20 tracking-widest shrink-0 uppercase">
+                                    {activeModel.status} ({activeModel.fpr})
                                 </span>
                             </div>
-                            <p className="text-[10px] font-bold text-dark-500 mt-1 uppercase tracking-[0.2em]">Tren pengurangan FP Rate (Tahunan)</p>
+                            <p className="text-[10px] font-bold text-dark-500 uppercase tracking-[0.2em]">Tren pengurangan FP Rate (Tahunan)</p>
+
+                            {/* Sub-Model Switcher Tabs */}
+                            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 custom-scrollbar">
+                                {MODEL_PROFILES.map(m => (
+                                    <button
+                                        key={m.id}
+                                        onClick={() => setSelectedModelId(m.id)}
+                                        className={`px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all whitespace-nowrap border ${
+                                            selectedModelId === m.id
+                                                ? "bg-white/10 text-white border-white/20 shadow-lg scale-105"
+                                                : "bg-dark-950/40 text-dark-400 border-white/5 hover:text-white hover:bg-white/5"
+                                        }`}
+                                        style={{ color: selectedModelId === m.id ? m.color : undefined }}
+                                    >
+                                        {m.shortName}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Model Quick Metrics Pill */}
+                            <div className="grid grid-cols-3 gap-2 bg-dark-950/50 p-2.5 rounded-2xl border border-white/5 text-[9px] font-mono">
+                                <div>
+                                    <span className="text-dark-500 uppercase block text-[8px]">F1-Score</span>
+                                    <span className="font-bold text-white text-xs">{activeModel.f1Score}</span>
+                                </div>
+                                <div>
+                                    <span className="text-dark-500 uppercase block text-[8px]">FPR Rate</span>
+                                    <span className="font-bold text-status-success text-xs">{activeModel.fpr}</span>
+                                </div>
+                                <div>
+                                    <span className="text-dark-500 uppercase block text-[8px]">PR-AUC</span>
+                                    <span className="font-bold text-neon-cyan text-xs">{activeModel.prAuc}</span>
+                                </div>
+                            </div>
                         </div>
-                        <div className="h-72 w-full mt-6 relative">
+
+                        <div className="h-64 w-full mt-4 relative">
                             <ResponsiveContainer width="100%" height="100%">
-                                <AreaChart data={chartData} margin={{ top: 0, right: 0, left: -25, bottom: 0 }}>
+                                <AreaChart data={activeModel.data} margin={{ top: 10, right: 0, left: -25, bottom: 0 }}>
                                     <defs>
-                                        <linearGradient id="colorRate" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#06B6D4" stopOpacity={0.4} />
-                                            <stop offset="95%" stopColor="#06B6D4" stopOpacity={0} />
+                                        <linearGradient id={`colorRate_${activeModel.id}`} x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor={activeModel.color} stopOpacity={0.5} />
+                                            <stop offset="95%" stopColor={activeModel.color} stopOpacity={0} />
                                         </linearGradient>
                                     </defs>
                                     <CartesianGrid strokeDasharray="10 10" vertical={false} stroke="rgba(255,255,255,0.05)" />
                                     <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: "#64748B", fontSize: 10, fontWeight: 700 }} dy={10} strokeWidth={0} />
                                     <YAxis axisLine={false} tickLine={false} tick={{ fill: "#64748B", fontSize: 10, fontWeight: 700 }} tickFormatter={(v) => `${v}%`} strokeWidth={0} />
                                     <Tooltip content={<CustomTooltip />} />
-                                    <Area type="monotone" dataKey="rate" stroke="#06B6D4" strokeWidth={4} fill="url(#colorRate)" activeDot={{ r: 8, fill: "#06B6D4", stroke: "#020617", strokeWidth: 3 }} animationDuration={2000} />
+                                    <Area type="monotone" dataKey="rate" stroke={activeModel.color} strokeWidth={4} fill={`url(#colorRate_${activeModel.id})`} activeDot={{ r: 8, fill: activeModel.color, stroke: "#020617", strokeWidth: 3 }} animationDuration={1200} />
                                 </AreaChart>
                             </ResponsiveContainer>
                         </div>

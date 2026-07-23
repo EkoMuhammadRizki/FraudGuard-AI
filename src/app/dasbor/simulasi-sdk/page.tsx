@@ -530,7 +530,7 @@ export default function SimulasiSDKPage() {
                                     <h3 className="text-xs font-black text-white uppercase tracking-wider">Panduan Integrasi Developer</h3>
                                 </div>
                                 <span className="text-[8px] font-black px-2 py-0.5 rounded bg-hyper-violet/10 text-hyper-violet border border-hyper-violet/20 uppercase tracking-widest">
-                                    SDK v2.4.1
+                                    SDK v1.0.0
                                 </span>
                             </div>
 
