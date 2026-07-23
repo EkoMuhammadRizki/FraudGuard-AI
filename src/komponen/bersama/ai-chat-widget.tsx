@@ -16,10 +16,12 @@ interface ChatMessage {
 }
 
 const QUICK_SUGGESTIONS = [
+    { label: ">_ Terindikasi ATO (Account Takeover)", prompt: "Terindikasi ATO: Pengguna melakukan login dari perangkat baru Android-Xiaomi di Jakarta Barat, diikuti pergantian PIN m-banking 2 menit lalu, dan langsung mencoba transfer sebesar Rp 15.000.000 ke rekening baru yang belum pernah ditransaksikan." },
+    { label: ">_ Jaringan Keledai (Money Mule Ring)", prompt: "Rekening ID-994821 menerima 14 kali transfer pecahan Rp 2.500.000 dari pengirim berbeda dalam 10 menit. Seluruh dana langsung diteruskan ke 1 rekening penampung utama." },
+    { label: ">_ Sesi AnyDesk / Remote Control", prompt: "Aktivitas m-banking berjalan dengan sinyal Mobile SDK: remoteDesktopActive=true, detectedApp=AnyDesk, dwell_avg=1.2ms, flight_avg=0.5ms. Terdeteksi eksekusi otomatis tanpa jeda ketikan manual." },
     { label: "Cari Transaksi TX000424", prompt: "Detail transaksi TX000424 di database" },
     { label: "Statistik Real-time Database", prompt: "Berapa total transaksi & statistik di database dasbor?" },
     { label: "Daftar Transaksi Kritis", prompt: "Tampilkan transaksi berisiko kritis terbaru di database" },
-    { label: "Deteksi AnyDesk di SDK", prompt: "Bagaimana FraudGuard SDK mendeteksi aplikasi remote desktop AnyDesk pada HP nasabah?" },
 ];
 
 export default function AiChatWidget() {
