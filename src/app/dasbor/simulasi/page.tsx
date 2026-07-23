@@ -6,7 +6,6 @@ import {
     Loader2, TerminalSquare, Send, RefreshCw, ChevronRight
 } from "lucide-react";
 import ModelStatusBadge from "@/komponen/ui/model-status-badge";
-import FraudDetectorComponent from "@/komponen/dasbor/deteksi-fraud-ai";
 
 
 // ─── Types ────────────────────────────────────────────────
@@ -494,11 +493,6 @@ export default function SimulasiPage() {
                 <div className="flex-shrink-0">
                     <ModelStatusBadge showDetails pollInterval={30000} />
                 </div>
-            </div>
-
-            {/* Fraud Detector AI Component (Integrasi Model Kamatera 103.102.46.104) */}
-            <div className="w-full">
-                <FraudDetectorComponent />
             </div>
 
             {/* Main Grid */}
