@@ -55,6 +55,7 @@ interface SidebarProps {
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     const pathname = usePathname();
     const router = useRouter();
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [activeUser, setActiveUser] = useState<{ name: string; username: string; role: string } | null>(null);
 
     // Read logged in user profile from storage
