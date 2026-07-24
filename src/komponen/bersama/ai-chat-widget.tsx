@@ -93,6 +93,21 @@ export default function AiChatWidget() {
         return () => window.removeEventListener("open-remi-chat", handleOpenRemi as EventListener);
     }, []);
 
+    // ── Formatter Teks Markdown (Tebal / Bold) ──
+    const formatText = (text: string) => {
+        const parts = text.split(/(\*\*.*?\*\*)/g);
+        return parts.map((part, index) => {
+            if (part.startsWith("**") && part.endsWith("**")) {
+                return (
+                    <strong key={index} className="font-extrabold text-neon-cyan drop-shadow-sm">
+                        {part.slice(2, -2)}
+                    </strong>
+                );
+            }
+            return part;
+        });
+    };
+
     // ── Generator Respon AI Cerdas (Fallback Lokasi) ──
     const generateAiResponse = (userPrompt: string): { text: string; category?: "info" | "warning" | "success" | "code"; codeSnippet?: string } => {
         const q = userPrompt.toLowerCase();
@@ -298,24 +313,40 @@ export default function AiChatWidget() {
                                                         : "bg-dark-900 border border-white/10 text-dark-200 rounded-tl-none"
                                                 }`}
                                             >
-                                                {/* Text rendering dengan line breaks */}
-                                                <div className="whitespace-pre-wrap font-sans">
-                                                    {msg.text.replace(/\*\*/g, "").split("\n").map((line, i) => (
-                                                        <p key={i} className={i > 0 ? "mt-1.5" : ""}>{line}</p>
-                                                    ))}
+                                                {/* Text rendering dengan Formatter Markdown & Badge visual yang cantik */}
+                                                <div className="space-y-1.5 font-sans leading-relaxed text-[11px]">
+                                                    {msg.text.split("\n").map((line, i) => {
+                                                        if (!line.trim()) return <div key={i} className="h-1" />;
+                                                        
+                                                        // Render list bullet yang rapi
+                                                        if (line.trim().startsWith("•") || line.trim().startsWith("-") || /^[0-9]+\./.test(line.trim())) {
+                                                            return (
+                                                                <div key={i} className="flex items-start gap-1.5 pl-1 my-0.5">
+                                                                    <span className="text-neon-cyan font-bold text-[10px] mt-0.5">•</span>
+                                                                    <span>{formatText(line.replace(/^[•\-\d+\.]\s*/, ""))}</span>
+                                                                </div>
+                                                            );
+                                                        }
+
+                                                        return (
+                                                            <p key={i} className="text-dark-100">
+                                                                {formatText(line)}
+                                                            </p>
+                                                        );
+                                                    })}
                                                 </div>
 
                                                 {/* Code Snippet pendukung bila ada */}
                                                 {msg.codeSnippet && (
-                                                    <div className="mt-2.5 bg-dark-950 p-2.5 rounded-xl border border-white/5 font-mono text-[10px] text-neon-cyan overflow-x-auto">
+                                                    <div className="mt-2.5 bg-dark-950 p-3 rounded-xl border border-neon-cyan/20 font-mono text-[10px] text-neon-cyan overflow-x-auto shadow-inner">
                                                         <pre>{msg.codeSnippet}</pre>
                                                     </div>
                                                 )}
                                             </div>
 
-                                            <div className={`text-[9px] font-mono text-dark-500 flex items-center gap-1 ${msg.sender === "user" ? "justify-end" : "justify-start"}`}>
+                                            <div className={`text-[9px] font-mono text-dark-500 flex items-center gap-1.5 ${msg.sender === "user" ? "justify-end" : "justify-start"}`}>
                                                 <span>{msg.timestamp}</span>
-                                                {msg.sender === "user" && <span>• Terkirim</span>}
+                                                {msg.sender === "user" && <span className="text-neon-cyan">✓ Terkirim</span>}
                                             </div>
                                         </div>
                                     </div>
