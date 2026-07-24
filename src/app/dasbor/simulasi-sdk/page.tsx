@@ -447,7 +447,7 @@ export default function SimulasiSDKPage() {
                     {[
                         { id: "console" as RightTab, label: "Console Execution", icon: <Terminal className="w-3.5 h-3.5" /> },
                         { id: "token" as RightTab, label: "Token Inspector", icon: <Code className="w-3.5 h-3.5" /> },
-                        { id: "developer" as RightTab, label: "Integrasi Developer Mobile", icon: <BookOpen className="w-3.5 h-3.5" /> },
+                        { id: "developer" as RightTab, label: "Mobile SDK Telemetry", icon: <BookOpen className="w-3.5 h-3.5" /> },
                     ].map(tab => (
                         <button key={tab.id} onClick={() => setRightTab(tab.id)}
                             className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all ${
