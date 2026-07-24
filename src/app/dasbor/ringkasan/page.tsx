@@ -7,6 +7,7 @@ import { formatCurrency, getRiskColor, getRiskBgColor } from "@/pustaka/utilitas
 import { Activity, Siren, CheckCircle, Target, Zap, Cpu, ShieldAlert, ShieldCheck, ArrowRight, AlertTriangle, X } from "lucide-react";
 import InfoTooltip from "@/komponen/ui/info-tooltip";
 import ModelStatusBadge from "@/komponen/ui/model-status-badge";
+import InteractiveTourModal from "@/komponen/bersama/interactive-tour-modal";
 import type { XaiFeature } from "@/pustaka/data-fraudguard";
 import {
     AreaChart,
@@ -184,6 +185,8 @@ const MODEL_PROFILES = [
 export default function RingkasanPage() {
     const router = useRouter();
     
+    const [isTourOpen, setIsTourOpen] = useState(false);
+    
     // Dynamic states from MongoDB
     const [selectedModelId, setSelectedModelId] = useState("ensemble");
     const activeModel = MODEL_PROFILES.find(m => m.id === selectedModelId) || MODEL_PROFILES[0];
@@ -269,6 +272,7 @@ export default function RingkasanPage() {
 
     return (
         <>
+            <InteractiveTourModal isOpen={isTourOpen} onClose={() => setIsTourOpen(false)} />
             <div className="space-y-10 min-w-0 overflow-hidden animate-fade-in pb-12">
                 {/* ── HEADER ── */}
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-2 border-b border-white/5">
@@ -281,12 +285,26 @@ export default function RingkasanPage() {
                             Ringkasan <span className="text-neon-cyan">Operasional</span>
                         </h1>
                         <p className="text-dark-400 font-medium text-xs">
-                            Pantau kesehatan model machine learning ensemble, latensi infrensi, dan analisis arus data transaksi.
+                            Pantau kesehatan model machine learning ensemble, latensi inferensi, dan analisis arus data transaksi.
                         </p>
                     </div>
 
-                    {/* Header Controls */}
-                    <div className="flex items-center gap-3 shrink-0">
+                    {/* Header Controls & Action Bar */}
+                    <div className="flex flex-wrap items-center gap-3 shrink-0">
+                        <button
+                            onClick={() => setIsTourOpen(true)}
+                            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-neon-cyan/10 border border-neon-cyan/30 text-neon-cyan hover:bg-neon-cyan hover:text-dark-950 text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer shadow-md shadow-neon-cyan/10 active:scale-95"
+                        >
+                            <Zap className="w-3.5 h-3.5" />
+                            <span>Panduan Interaktif</span>
+                        </button>
+                        <Link
+                            href="/dasbor/transaksi"
+                            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-dark-900 border border-white/10 hover:border-white/20 text-white text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer hover:bg-white/5"
+                        >
+                            <Activity className="w-3.5 h-3.5 text-emerald-400" />
+                            <span>Mulai Stream Live</span>
+                        </Link>
                         <ModelStatusBadge showDetails pollInterval={30000} />
                     </div>
                 </div>

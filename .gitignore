@@ -50,4 +50,11 @@ next-env.d.ts
 Model-20260719T144720Z-1-001/
 drive-cara koneksi model-20260719T152225Z-1-001/
 python-api/models/
+results_2/
+ngrok.exe
+ngrok.zip
 *.pkl
+*.safetensors
+*.pt
+*.pth
+

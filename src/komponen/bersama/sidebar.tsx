@@ -15,36 +15,51 @@ import {
 } from "lucide-react";
 import Logo from "./logo";
 
-const menuItems = [
+const menuCategories = [
     {
-        label: "Ringkasan",
-        href: "/dasbor/ringkasan",
-        icon: <LayoutDashboard className="w-5 h-5" strokeWidth={2} />,
+        category: "OPERASIONAL",
+        items: [
+            {
+                label: "Ringkasan",
+                href: "/dasbor/ringkasan",
+                icon: <LayoutDashboard className="w-4 h-4" strokeWidth={2} />,
+            },
+            {
+                label: "Investigasi",
+                href: "/dasbor/investigasi",
+                icon: <Search className="w-4 h-4" strokeWidth={2} />,
+            },
+            {
+                label: "Transaksi Live",
+                href: "/dasbor/transaksi",
+                icon: <Activity className="w-4 h-4" strokeWidth={2} />,
+            },
+        ],
     },
     {
-        label: "Investigasi",
-        href: "/dasbor/investigasi",
-        icon: <Search className="w-5 h-5" strokeWidth={2} />,
+        category: "KEPATUHAN & HUKUM",
+        items: [
+            {
+                label: "Laporan Audit PDF",
+                href: "/dasbor/laporan",
+                icon: <FileText className="w-4 h-4" strokeWidth={2} />,
+            },
+        ],
     },
     {
-        label: "Transaksi",
-        href: "/dasbor/transaksi",
-        icon: <Activity className="w-5 h-5" strokeWidth={2} />,
-    },
-    {
-        label: "Laporan",
-        href: "/dasbor/laporan",
-        icon: <FileText className="w-5 h-5" strokeWidth={2} />,
-    },
-    {
-        label: "Sandbox Pengujian",
-        href: "/dasbor/simulasi",
-        icon: <TestTube2 className="w-5 h-5" strokeWidth={2} />,
-    },
-    {
-        label: "Mobile SDK Telemetry",
-        href: "/dasbor/simulasi-sdk",
-        icon: <Cpu className="w-5 h-5" strokeWidth={2} />,
+        category: "PLATFORM & INTEGRASI",
+        items: [
+            {
+                label: "Sandbox Pengujian",
+                href: "/dasbor/simulasi",
+                icon: <TestTube2 className="w-4 h-4" strokeWidth={2} />,
+            },
+            {
+                label: "Mobile SDK Telemetry",
+                href: "/dasbor/simulasi-sdk",
+                icon: <Cpu className="w-4 h-4" strokeWidth={2} />,
+            },
+        ],
     },
 ];
 interface SidebarProps {
@@ -134,60 +149,75 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 </button>
             </div>
 
-            {/* Navigation Menu */}
-            <nav className="flex-1 py-10 px-4 space-y-2 overflow-y-auto custom-scrollbar">
-                <div className="px-4 mb-4">
-                  <span className="text-[10px] font-black text-dark-500 uppercase tracking-[0.2em]">Operasi Utama</span>
-                </div>
-                {menuItems.map((item) => {
-                    const cleanHref = item.href.split("#")[0];
-                    const isActive = pathname === item.href || pathname === cleanHref || pathname.startsWith(cleanHref + "/");
-                    return (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            onClick={onClose}
-                            className={`flex items-center gap-4 px-4 py-4 text-sm font-bold transition-all rounded-2xl relative group/nav ${isActive
-                                ? "bg-primary-blue/10 text-neon-cyan shadow-[inset_0_0_20px_rgba(6,182,212,0.05)]"
-                                : "text-dark-400 hover:text-white hover:bg-white/5"
-                                }`}
-                        >
-                            {/* Active Indicator */}
-                            {isActive && (
-                              <div className="absolute left-0 w-1 h-6 bg-neon-cyan rounded-full shadow-sm" />
-                            )}
-                            
-                            <div className={`transition-all duration-300 ${isActive ? 'scale-105 text-neon-cyan' : 'group-hover/nav:scale-105 group-hover/nav:text-white'}`}>
-                              {item.icon}
-                            </div>
-                            <span className="tracking-wide">{item.label}</span>
-                            
-                            {isActive && (
-                              <div className="ml-auto w-1.5 h-1.5 rounded-full bg-neon-cyan shadow-sm" />
-                            )}
-                        </Link>
-                    );
-                })}
+            {/* Navigation Menu (Grouped by Category) */}
+            <nav className="flex-1 py-6 px-4 space-y-6 overflow-y-auto custom-scrollbar">
+                {menuCategories.map((group) => (
+                    <div key={group.category} className="space-y-1">
+                        <div className="px-3 pb-1.5">
+                            <span className="text-[10px] font-mono font-bold text-dark-400 uppercase tracking-[0.18em]">
+                                {group.category}
+                            </span>
+                        </div>
+                        {group.items.map((item) => {
+                            const cleanHref = item.href.split("#")[0];
+                            const isActive = pathname === item.href || pathname === cleanHref || pathname.startsWith(cleanHref + "/");
+                            return (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    onClick={onClose}
+                                    className={`flex items-center gap-3.5 px-3.5 py-3 text-xs font-bold transition-all rounded-xl relative group/nav ${isActive
+                                        ? "bg-neon-cyan/10 text-neon-cyan border border-neon-cyan/20 shadow-[inset_0_0_15px_rgba(6,182,212,0.08)]"
+                                        : "text-dark-400 hover:text-white hover:bg-white/5 border border-transparent"
+                                        }`}
+                                >
+                                    {/* Active Indicator */}
+                                    {isActive && (
+                                        <div className="absolute left-0 w-1 h-5 bg-neon-cyan rounded-full shadow-sm" />
+                                    )}
+                                    
+                                    <div className={`transition-all duration-300 ${isActive ? 'scale-105 text-neon-cyan' : 'group-hover/nav:scale-105 group-hover/nav:text-white'}`}>
+                                        {item.icon}
+                                    </div>
+                                    <span className="tracking-wide">{item.label}</span>
+                                    
+                                    {isActive && (
+                                        <div className="ml-auto w-1.5 h-1.5 rounded-full bg-neon-cyan shadow-sm" />
+                                    )}
+                                </Link>
+                            );
+                        })}
+                    </div>
+                ))}
             </nav>
 
-            {/* Lower Profile Section */}
-            <div className="p-6">
-                <div className="glass-panel p-5 rounded-3xl border-white/5 bg-white/5 group/profile">
-                    <div className="flex items-center gap-4 mb-5">
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-neon-cyan via-primary-blue to-hyper-violet flex items-center justify-center text-dark-950 text-lg font-black shadow-lg shadow-neon-cyan/20">
+            {/* Lower Profile & Engine Status Section */}
+            <div className="p-4 space-y-3 border-t border-white/5">
+                {/* Engine Status Indicator (No Emojis) */}
+                <div className="rounded-xl border border-white/10 bg-dark-900/60 p-3">
+                    <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse inline-block" />
+                        <span className="text-[11px] font-mono font-bold text-emerald-400 uppercase tracking-wider">ENGINE ML ACTIVE</span>
+                    </div>
+                    <p className="text-[10px] text-dark-400 font-mono mt-1">Kafka Streaming · MongoDB Atlas</p>
+                </div>
+
+                <div className="glass-panel p-3.5 rounded-2xl border-white/5 bg-white/5 group/profile">
+                    <div className="flex items-center gap-3 mb-3">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-neon-cyan via-primary-blue to-hyper-violet flex items-center justify-center text-dark-950 text-sm font-black shadow-md shadow-neon-cyan/20">
                             {userInitials}
                         </div>
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-black text-white truncate leading-tight">{userName}</p>
-                            <p className="text-[10px] font-bold text-neon-cyan/80 truncate mt-1 tracking-tight">{userRole}</p>
+                            <p className="text-xs font-black text-white truncate leading-tight">{userName}</p>
+                            <p className="text-[10px] font-mono font-bold text-neon-cyan/80 truncate mt-0.5 tracking-tight">{userRole}</p>
                         </div>
                     </div>
                     <button
                         onClick={() => setShowLogoutModal(true)}
-                        className="flex items-center justify-center gap-3 w-full py-3 rounded-xl bg-dark-900/50 border border-white/5 text-xs font-black text-dark-400 hover:text-white hover:bg-status-error/10 hover:border-status-error/20 transition-all uppercase tracking-widest cursor-pointer"
+                        className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-dark-900/50 border border-white/5 text-[11px] font-mono font-bold text-dark-400 hover:text-white hover:bg-status-error/10 hover:border-status-error/20 transition-all uppercase tracking-wider cursor-pointer"
                     >
-                        <LogOut className="w-4 h-4" strokeWidth={2.5} />
-                        Keluar
+                        <LogOut className="w-3.5 h-3.5" strokeWidth={2.5} />
+                        Keluar Sesi
                     </button>
                 </div>
             </div>
