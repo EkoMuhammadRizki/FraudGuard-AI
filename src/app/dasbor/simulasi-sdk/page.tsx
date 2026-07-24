@@ -254,176 +254,53 @@ export default function SimulasiSDKPage() {
                 </div>
             </div>
 
-            {/* ════════ TOP: Console & Developer Integration Section ════════ */}
-            <div className="space-y-4">
-                {/* Tab Switcher */}
-                <div className="flex items-center gap-1 bg-dark-950/60 rounded-2xl p-1 border border-white/5">
-                    {[
-                        { id: "console" as RightTab, label: "Console Execution", icon: <Terminal className="w-3.5 h-3.5" /> },
-                        { id: "token" as RightTab, label: "Token Inspector", icon: <Code className="w-3.5 h-3.5" /> },
-                        { id: "developer" as RightTab, label: "Integrasi Developer Mobile", icon: <BookOpen className="w-3.5 h-3.5" /> },
-                    ].map(tab => (
-                        <button key={tab.id} onClick={() => setRightTab(tab.id)}
-                            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all ${
-                                rightTab === tab.id
-                                    ? "bg-white/5 text-white border border-white/10"
-                                    : "text-dark-500 hover:text-dark-300"
-                            }`}>
-                            {tab.icon} {tab.label}
+            {/* ════════ 1. PRESET SKENARIO SIMULASI (TOP FULL WIDTH) ════════ */}
+            <div className="glass-panel rounded-[2rem] p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <Zap className="w-4 h-4 text-neon-cyan" />
+                        <h3 className="text-xs font-black text-white uppercase tracking-wider">Preset Skenario Simulasi</h3>
+                    </div>
+                    <span className="text-[8px] font-black px-2 py-0.5 rounded bg-neon-cyan/10 text-neon-cyan border border-neon-cyan/20 uppercase tracking-widest">
+                        Pilih Profil Ancaman
+                    </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {SDK_PRESETS.map(preset => (
+                        <button
+                            key={preset.id}
+                            onClick={() => applyPreset(preset)}
+                            disabled={isProcessing}
+                            className={`group p-4 rounded-2xl border text-left transition-all active:scale-[0.98] ${
+                                activePreset === preset.id
+                                    ? "border-white/20 bg-white/5 ring-1 ring-white/10"
+                                    : "border-white/5 bg-dark-950/40 hover:border-white/10 hover:bg-white/[0.03]"
+                            }`}
+                        >
+                            <div className="flex items-center gap-2 mb-2">
+                                <span className="text-lg">{preset.icon}</span>
+                                <span className="text-xs font-black text-white uppercase tracking-wider">{preset.name}</span>
+                                {activePreset === preset.id && (
+                                    <span className="ml-auto text-[8px] font-black px-1.5 py-0.5 rounded bg-white/10 text-white uppercase tracking-widest">Aktif</span>
+                                )}
+                            </div>
+                            <p className="text-[10px] text-dark-400 leading-relaxed">{preset.description}</p>
+                            <div className="mt-3 grid grid-cols-2 gap-2 text-[9px] font-mono">
+                                <div className="text-dark-500">Dwell: <span className="text-white font-bold">{preset.telemetry.avgDwellMs}ms</span></div>
+                                <div className="text-dark-500">Flight: <span className="text-white font-bold">{preset.telemetry.avgFlightMs}ms</span></div>
+                                <div className="text-dark-500">Hesitasi: <span className="text-white font-bold">{preset.telemetry.hesitationScore}%</span></div>
+                                <div className="text-dark-500">Konsistensi: <span className="text-white font-bold">{preset.telemetry.typingConsistency}%</span></div>
+                            </div>
                         </button>
                     ))}
                 </div>
-
-                {/* Tab Content 1: Console Logs & Inference Stage */}
-                {rightTab === "console" && (
-                    <div className="space-y-4">
-                        {/* Real-time Pipeline Pipeline Stage Visualizer */}
-                        {isProcessing && (
-                            <div className="glass-panel p-4 rounded-2xl border-neon-cyan/20 bg-neon-cyan/5 animate-pulse">
-                                <div className="flex items-center justify-between mb-2">
-                                    <div className="flex items-center gap-2">
-                                        <RefreshCw className="w-4 h-4 text-neon-cyan animate-spin" />
-                                        <span className="text-xs font-black text-white uppercase tracking-wider">
-                                            Proses Evaluasi SDK & Inference FDS Server...
-                                        </span>
-                                    </div>
-                                    <span className="text-[9px] font-mono text-neon-cyan uppercase">
-                                        Tahap: {pipelineStage}
-                                    </span>
-                                </div>
-                                <div className="grid grid-cols-4 gap-2">
-                                    {[
-                                        { key: "token", label: "1. Token Gen" },
-                                        { key: "inference", label: "2. Telemetry ML" },
-                                        { key: "meta", label: "3. Ensemble FDS" },
-                                        { key: "done", label: "4. Keputusan" },
-                                    ].map(stg => (
-                                        <div key={stg.key} className={`p-2 rounded-xl text-center text-[8px] font-mono font-bold border ${
-                                            pipelineStage === stg.key || (stg.key === "done" && pipelineStage === "done")
-                                                ? "bg-neon-cyan/20 border-neon-cyan text-neon-cyan"
-                                                : "bg-dark-950/40 border-white/5 text-dark-500"
-                                        }`}>
-                                            {stg.label}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* ML Evaluation Result Alert Box */}
-                        {mlResult && (
-                            <div className={`glass-panel p-5 rounded-2xl border ${
-                                mlResult.blockTransaction ? "border-status-error/40 bg-status-error/5" : "border-status-success/40 bg-status-success/5"
-                            }`}>
-                                <div className="flex items-start justify-between gap-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${
-                                            mlResult.blockTransaction ? "bg-status-error/20 border-status-error/40 text-status-error" : "bg-status-success/20 border-status-success/40 text-status-success"
-                                        }`}>
-                                            {mlResult.blockTransaction ? <ShieldAlert className="w-5 h-5" /> : <ShieldCheck className="w-5 h-5" />}
-                                        </div>
-                                        <div>
-                                            <div className="flex items-center gap-2">
-                                                <span className={`text-xs font-black uppercase tracking-wider ${
-                                                    mlResult.blockTransaction ? "text-status-error" : "text-status-success"
-                                                }`}>
-                                                    {mlResult.recommendation}
-                                                </span>
-                                                <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-white/10 text-white border border-white/10">
-                                                    Score: {(mlResult.riskScore * 100).toFixed(1)}%
-                                                </span>
-                                            </div>
-                                            <p className="text-[10px] text-dark-300 mt-1 leading-relaxed">{mlResult.reasoning}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Console Log Terminal Window */}
-                        <div className="glass-panel rounded-2xl p-4 bg-dark-950/80 border-white/5 space-y-2">
-                            <div className="flex items-center justify-between border-b border-white/5 pb-2">
-                                <div className="flex items-center gap-2">
-                                    <Terminal className="w-3.5 h-3.5 text-neon-cyan" />
-                                    <span className="text-[9px] font-black text-dark-400 uppercase tracking-wider">Log Eksekusi Real-Time Client SDK</span>
-                                </div>
-                                <button onClick={() => setLogs([])} className="text-[8px] font-bold text-dark-500 hover:text-white uppercase tracking-wider transition">Clear Log</button>
-                            </div>
-                            <div className="h-44 overflow-y-auto font-mono text-[10px] space-y-1 custom-scrollbar pr-2">
-                                {logs.map((lg, i) => (
-                                    <div key={i} className="flex items-start gap-2 leading-relaxed">
-                                        <span className="text-dark-600 shrink-0">[{lg.time}]</span>
-                                        <span className={`shrink-0 font-bold ${
-                                            lg.type === "error" ? "text-status-error" :
-                                            lg.type === "warning" ? "text-amber-warning" :
-                                            lg.type === "success" ? "text-status-success" :
-                                            "text-neon-cyan"
-                                        }`}>[{lg.type.toUpperCase()}]</span>
-                                        <span className="text-dark-200">{lg.message}</span>
-                                    </div>
-                                ))}
-                                <div ref={logEndRef} />
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {/* Tab Content 2: Token Inspector */}
-                {rightTab === "token" && (
-                    <div className="glass-panel rounded-2xl p-4 bg-dark-950/80 border-white/5 space-y-3">
-                        <div className="flex items-center justify-between border-b border-white/5 pb-2">
-                            <div className="flex items-center gap-2">
-                                <Code className="w-3.5 h-3.5 text-hyper-violet" />
-                                <span className="text-[9px] font-black text-dark-400 uppercase tracking-wider">Payload Token Kriptografi JWT SDK</span>
-                            </div>
-                            <button onClick={() => copyToClipboard(jwtPayload, "token")} className="flex items-center gap-1 text-[8px] font-bold text-neon-cyan hover:underline uppercase tracking-wider">
-                                {copiedSnippet === "token" ? <Check className="w-3 h-3 text-status-success" /> : <Copy className="w-3 h-3" />}
-                                {copiedSnippet === "token" ? "Tersalin!" : "Salin JSON"}
-                            </button>
-                        </div>
-                        <pre className="h-64 overflow-y-auto font-mono text-[10px] text-neon-cyan/90 bg-dark-950 p-3 rounded-xl border border-white/5 custom-scrollbar leading-relaxed">
-                            {jwtPayload}
-                        </pre>
-                    </div>
-                )}
-
-                {/* Tab Content 3: Integrasi Developer */}
-                {rightTab === "developer" && (
-                    <div className="glass-panel rounded-2xl p-4 bg-dark-950/80 border-white/5 space-y-4">
-                        <div className="flex items-center justify-between border-b border-white/5 pb-2">
-                            <div className="flex items-center gap-2">
-                                <BookOpen className="w-3.5 h-3.5 text-primary-blue" />
-                                <span className="text-[9px] font-black text-dark-400 uppercase tracking-wider">Kode Integrasi Mobile SDK</span>
-                            </div>
-                            <div className="flex items-center gap-1 bg-dark-900 rounded-lg p-0.5 border border-white/5">
-                                {(["android", "ios", "reactNative", "flutter"] as const).map(plat => (
-                                    <button key={plat} onClick={() => setDevPlatform(plat)}
-                                        className={`px-2 py-1 rounded text-[8px] font-mono font-bold uppercase transition ${
-                                            devPlatform === plat ? "bg-primary-blue text-white" : "text-dark-500 hover:text-white"
-                                        }`}>
-                                        {plat}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                        <div className="relative">
-                            <pre className="h-56 overflow-y-auto font-mono text-[10px] text-white/90 bg-dark-950 p-3 rounded-xl border border-white/5 custom-scrollbar leading-relaxed">
-                                {SDK_CODE_SNIPPETS[devPlatform]}
-                            </pre>
-                            <button onClick={() => copyToClipboard(SDK_CODE_SNIPPETS[devPlatform], devPlatform)}
-                                className="absolute top-2 right-2 flex items-center gap-1 text-[8px] font-bold px-2 py-1 rounded bg-white/10 hover:bg-white/20 text-white uppercase transition">
-                                {copiedSnippet === devPlatform ? <Check className="w-3 h-3 text-status-success" /> : <Copy className="w-3 h-3" />}
-                                {copiedSnippet === devPlatform ? "Tersalin!" : "Salin Kode"}
-                            </button>
-                        </div>
-                    </div>
-                )}
             </div>
 
-            {/* ════════ Bottom Grid Layout: Smartphone Simulator (Left) + Preset Scenarios & Telemetry (Right) ════════ */}
+            {/* ════════ 2. MAIN GRID: Phone (Left) + Console Debugger Tabs (Right) ════════ */}
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
 
-                {/* ── LEFT: Smartphone Mockup + Threat Manual Toggle ── */}
+                {/* ── LEFT: Smartphone Mockup & Threat Toggle ── */}
                 <div className="xl:col-span-5 flex flex-col items-center">
 
                     {/* Threat Toggle Panel */}
@@ -542,53 +419,176 @@ export default function SimulasiSDKPage() {
                     </div>
                 </div>
 
-                {/* ── RIGHT: Preset Scenario + Live Telemetry ── */}
+                {/* ── RIGHT: Console Tabs & Live Behavioral Telemetry ── */}
                 <div className="xl:col-span-7 space-y-6">
 
-                    {/* Preset Skenario Simulasi Section */}
-                    <div className="glass-panel rounded-[2rem] p-6 space-y-4">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <Zap className="w-4 h-4 text-neon-cyan" />
-                                <h3 className="text-xs font-black text-white uppercase tracking-wider">Preset Skenario Simulasi</h3>
-                            </div>
-                            <span className="text-[8px] font-black px-2 py-0.5 rounded bg-neon-cyan/10 text-neon-cyan border border-neon-cyan/20 uppercase tracking-widest">
-                                Pilih Profil Ancaman
-                            </span>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            {SDK_PRESETS.map(preset => (
-                                <button
-                                    key={preset.id}
-                                    onClick={() => applyPreset(preset)}
-                                    disabled={isProcessing}
-                                    className={`group p-4 rounded-2xl border text-left transition-all active:scale-[0.98] ${
-                                        activePreset === preset.id
-                                            ? "border-white/20 bg-white/5 ring-1 ring-white/10"
-                                            : "border-white/5 bg-dark-950/40 hover:border-white/10 hover:bg-white/[0.03]"
-                                    }`}
-                                >
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <span className="text-lg">{preset.icon}</span>
-                                        <span className="text-xs font-black text-white uppercase tracking-wider">{preset.name}</span>
-                                        {activePreset === preset.id && (
-                                            <span className="ml-auto text-[8px] font-black px-1.5 py-0.5 rounded bg-white/10 text-white uppercase tracking-widest">Aktif</span>
-                                        )}
-                                    </div>
-                                    <p className="text-[10px] text-dark-400 leading-relaxed">{preset.description}</p>
-                                    <div className="mt-3 grid grid-cols-2 gap-2 text-[9px] font-mono">
-                                        <div className="text-dark-500">Dwell: <span className="text-white font-bold">{preset.telemetry.avgDwellMs}ms</span></div>
-                                        <div className="text-dark-500">Flight: <span className="text-white font-bold">{preset.telemetry.avgFlightMs}ms</span></div>
-                                        <div className="text-dark-500">Hesitasi: <span className="text-white font-bold">{preset.telemetry.hesitationScore}%</span></div>
-                                        <div className="text-dark-500">Konsistensi: <span className="text-white font-bold">{preset.telemetry.typingConsistency}%</span></div>
-                                    </div>
+                    {/* Console Debugger / Token / Developer Tabs */}
+                    <div className="space-y-4">
+                        {/* Tab Switcher */}
+                        <div className="flex items-center gap-1 bg-dark-950/60 rounded-2xl p-1 border border-white/5">
+                            {[
+                                { id: "console" as RightTab, label: "Console", icon: <Terminal className="w-3.5 h-3.5" /> },
+                                { id: "token" as RightTab, label: "Token Inspector", icon: <Code className="w-3.5 h-3.5" /> },
+                                { id: "developer" as RightTab, label: "Integrasi Developer", icon: <BookOpen className="w-3.5 h-3.5" /> },
+                            ].map(tab => (
+                                <button key={tab.id} onClick={() => setRightTab(tab.id)}
+                                    className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all ${
+                                        rightTab === tab.id
+                                            ? "bg-white/5 text-white border border-white/10"
+                                            : "text-dark-500 hover:text-dark-300"
+                                    }`}>
+                                    {tab.icon} {tab.label}
                                 </button>
                             ))}
                         </div>
+
+                        {/* Tab Content 1: Console Logs & Inference Stage */}
+                        {rightTab === "console" && (
+                            <div className="space-y-4">
+                                {/* Real-time Pipeline Stage Visualizer */}
+                                {isProcessing && (
+                                    <div className="glass-panel p-4 rounded-2xl border-neon-cyan/20 bg-neon-cyan/5 animate-pulse">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <div className="flex items-center gap-2">
+                                                <RefreshCw className="w-4 h-4 text-neon-cyan animate-spin" />
+                                                <span className="text-xs font-black text-white uppercase tracking-wider">
+                                                    Proses Evaluasi SDK & Inference FDS Server...
+                                                </span>
+                                            </div>
+                                            <span className="text-[9px] font-mono text-neon-cyan uppercase">
+                                                Tahap: {pipelineStage}
+                                            </span>
+                                        </div>
+                                        <div className="grid grid-cols-4 gap-2">
+                                            {[
+                                                { key: "token", label: "1. Token Gen" },
+                                                { key: "inference", label: "2. Telemetry ML" },
+                                                { key: "meta", label: "3. Ensemble FDS" },
+                                                { key: "done", label: "4. Keputusan" },
+                                            ].map(stg => (
+                                                <div key={stg.key} className={`p-2 rounded-xl text-center text-[8px] font-mono font-bold border ${
+                                                    pipelineStage === stg.key || (stg.key === "done" && pipelineStage === "done")
+                                                        ? "bg-neon-cyan/20 border-neon-cyan text-neon-cyan"
+                                                        : "bg-dark-950/40 border-white/5 text-dark-500"
+                                                }`}>
+                                                    {stg.label}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* ML Evaluation Result Alert Box */}
+                                {mlResult && (
+                                    <div className={`glass-panel p-5 rounded-2xl border ${
+                                        mlResult.blockTransaction ? "border-status-error/40 bg-status-error/5" : "border-status-success/40 bg-status-success/5"
+                                    }`}>
+                                        <div className="flex items-start justify-between gap-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${
+                                                    mlResult.blockTransaction ? "bg-status-error/20 border-status-error/40 text-status-error" : "bg-status-success/20 border-status-success/40 text-status-success"
+                                                }`}>
+                                                    {mlResult.blockTransaction ? <ShieldAlert className="w-5 h-5" /> : <ShieldCheck className="w-5 h-5" />}
+                                                </div>
+                                                <div>
+                                                    <div className="flex items-center gap-2">
+                                                        <span className={`text-xs font-black uppercase tracking-wider ${
+                                                            mlResult.blockTransaction ? "text-status-error" : "text-status-success"
+                                                        }`}>
+                                                            {mlResult.recommendation}
+                                                        </span>
+                                                        <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-white/10 text-white border border-white/10">
+                                                            Score: {(mlResult.riskScore * 100).toFixed(1)}%
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-[10px] text-dark-300 mt-1 leading-relaxed">{mlResult.reasoning}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Console Log Terminal Window */}
+                                <div className="glass-panel rounded-2xl p-4 bg-dark-950/80 border-white/5 space-y-2">
+                                    <div className="flex items-center justify-between border-b border-white/5 pb-2">
+                                        <div className="flex items-center gap-2">
+                                            <Terminal className="w-3.5 h-3.5 text-neon-cyan" />
+                                            <span className="text-[9px] font-black text-dark-400 uppercase tracking-wider">Log Eksekusi Real-Time Client SDK</span>
+                                        </div>
+                                        <button onClick={() => setLogs([])} className="text-[8px] font-bold text-dark-500 hover:text-white uppercase tracking-wider transition">Clear Log</button>
+                                    </div>
+                                    <div className="h-56 overflow-y-auto font-mono text-[10px] space-y-1 custom-scrollbar pr-2">
+                                        {logs.map((lg, i) => (
+                                            <div key={i} className="flex items-start gap-2 leading-relaxed">
+                                                <span className="text-dark-600 shrink-0">[{lg.time}]</span>
+                                                <span className={`shrink-0 font-bold ${
+                                                    lg.type === "error" ? "text-status-error" :
+                                                    lg.type === "warning" ? "text-amber-warning" :
+                                                    lg.type === "success" ? "text-status-success" :
+                                                    "text-neon-cyan"
+                                                }`}>[{lg.type.toUpperCase()}]</span>
+                                                <span className="text-dark-200">{lg.message}</span>
+                                            </div>
+                                        ))}
+                                        <div ref={logEndRef} />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Tab Content 2: Token Inspector */}
+                        {rightTab === "token" && (
+                            <div className="glass-panel rounded-2xl p-4 bg-dark-950/80 border-white/5 space-y-3">
+                                <div className="flex items-center justify-between border-b border-white/5 pb-2">
+                                    <div className="flex items-center gap-2">
+                                        <Code className="w-3.5 h-3.5 text-hyper-violet" />
+                                        <span className="text-[9px] font-black text-dark-400 uppercase tracking-wider">Payload Token Kriptografi JWT SDK</span>
+                                    </div>
+                                    <button onClick={() => copyToClipboard(jwtPayload, "token")} className="flex items-center gap-1 text-[8px] font-bold text-neon-cyan hover:underline uppercase tracking-wider">
+                                        {copiedSnippet === "token" ? <Check className="w-3 h-3 text-status-success" /> : <Copy className="w-3 h-3" />}
+                                        {copiedSnippet === "token" ? "Tersalin!" : "Salin JSON"}
+                                    </button>
+                                </div>
+                                <pre className="h-64 overflow-y-auto font-mono text-[10px] text-neon-cyan/90 bg-dark-950 p-3 rounded-xl border border-white/5 custom-scrollbar leading-relaxed">
+                                    {jwtPayload}
+                                </pre>
+                            </div>
+                        )}
+
+                        {/* Tab Content 3: Integrasi Developer */}
+                        {rightTab === "developer" && (
+                            <div className="glass-panel rounded-2xl p-4 bg-dark-950/80 border-white/5 space-y-4">
+                                <div className="flex items-center justify-between border-b border-white/5 pb-2">
+                                    <div className="flex items-center gap-2">
+                                        <BookOpen className="w-3.5 h-3.5 text-primary-blue" />
+                                        <span className="text-[9px] font-black text-dark-400 uppercase tracking-wider">Kode Integrasi Mobile SDK</span>
+                                    </div>
+                                    <div className="flex items-center gap-1 bg-dark-900 rounded-lg p-0.5 border border-white/5">
+                                        {(["android", "ios", "reactNative", "flutter"] as const).map(plat => (
+                                            <button key={plat} onClick={() => setDevPlatform(plat)}
+                                                className={`px-2 py-1 rounded text-[8px] font-mono font-bold uppercase transition ${
+                                                    devPlatform === plat ? "bg-primary-blue text-white" : "text-dark-500 hover:text-white"
+                                                }`}>
+                                                {plat}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="relative">
+                                    <pre className="h-56 overflow-y-auto font-mono text-[10px] text-white/90 bg-dark-950 p-3 rounded-xl border border-white/5 custom-scrollbar leading-relaxed">
+                                        {SDK_CODE_SNIPPETS[devPlatform]}
+                                    </pre>
+                                    <button onClick={() => copyToClipboard(SDK_CODE_SNIPPETS[devPlatform], devPlatform)}
+                                        className="absolute top-2 right-2 flex items-center gap-1 text-[8px] font-bold px-2 py-1 rounded bg-white/10 hover:bg-white/20 text-white uppercase transition">
+                                        {copiedSnippet === devPlatform ? <Check className="w-3 h-3 text-status-success" /> : <Copy className="w-3 h-3" />}
+                                        {copiedSnippet === devPlatform ? "Tersalin!" : "Salin Kode"}
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
-                    {/* Live Telemetry Display */}
+                    {/* Live Behavioral Telemetry Display */}
                     <div className="glass-panel rounded-[2rem] p-6 space-y-4">
                         <div className="flex items-center gap-2">
                             <BarChart3 className="w-4 h-4 text-neon-cyan" />
@@ -601,7 +601,9 @@ export default function SimulasiSDKPage() {
                             <TelemetryBar label="Typing Consistency (Konsistensi Ritme)" value={telemetryDisplay.consistency} max={100} unit="%" color="bg-hyper-violet" />
                         </div>
                     </div>
+
                 </div>
+
             </div>
         </div>
     );
