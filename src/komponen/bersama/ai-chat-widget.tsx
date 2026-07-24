@@ -256,17 +256,20 @@ export default function AiChatWidget() {
                                 
                                 {/* Model Selector Dropdown */}
                                 <div className="mt-1 flex items-center gap-1.5">
-                                    <span className="text-[9px] text-dark-400 font-semibold">Model:</span>
-                                    <select
-                                        value={selectedModel}
-                                        onChange={(e) => setSelectedModel(e.target.value as any)}
-                                        className="bg-dark-900 border border-white/15 text-white text-[10px] font-bold rounded-lg px-2 py-0.5 focus:outline-none focus:border-neon-cyan cursor-pointer transition-all"
-                                    >
-                                        <option value="auto">🤖 Auto (Local AI → Groq → Gemini)</option>
-                                        <option value="local">💻 Local AI Server (Port 8000)</option>
-                                        <option value="groq">⚡ Groq (Llama-3.3-70B)</option>
-                                        <option value="gemini">♊ Google Gemini 2.0 Flash</option>
-                                    </select>
+                                    <span className="text-[9px] text-dark-400 font-medium">Model:</span>
+                                    <div className="relative inline-block">
+                                        <select
+                                            value={selectedModel}
+                                            onChange={(e) => setSelectedModel(e.target.value as any)}
+                                            className="appearance-none bg-dark-900/90 hover:bg-dark-850 border border-white/10 hover:border-neon-cyan/40 text-dark-200 hover:text-white text-[10px] font-semibold rounded-lg pl-2.5 pr-6 py-1 focus:outline-none focus:ring-1 focus:ring-neon-cyan/50 backdrop-blur-md cursor-pointer transition-all duration-200 shadow-sm"
+                                        >
+                                            <option value="auto" className="bg-dark-900 text-white font-medium py-1">Auto (Smart Cascade)</option>
+                                            <option value="local" className="bg-dark-900 text-white font-medium py-1">REMI AI (Local Engine)</option>
+                                            <option value="groq" className="bg-dark-900 text-white font-medium py-1">Groq (Llama 3.3 70B)</option>
+                                            <option value="gemini" className="bg-dark-900 text-white font-medium py-1">Gemini 2.0 Flash</option>
+                                        </select>
+                                        <ChevronDown className="w-3 h-3 text-dark-400 pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
