@@ -475,17 +475,21 @@ export default function SimulasiPage() {
     return (
         <div className="p-4 sm:p-6 md:p-10 space-y-8 min-h-screen" onMouseMove={handleMouseMove}>
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-white/5">
                 <div className="flex items-center gap-3">
-                    <div className="p-2.5 bg-hyper-violet/10 rounded-xl border border-hyper-violet/20">
-                        <Activity className="w-5 h-5 text-hyper-violet" strokeWidth={2.5} />
+                    <div className="p-2.5 bg-neon-cyan/10 rounded-xl border border-neon-cyan/20">
+                        <Activity className="w-5 h-5 text-neon-cyan" strokeWidth={2.5} />
                     </div>
-                    <div>
+                    <div className="space-y-0.5">
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-neon-cyan/10 border border-neon-cyan/20 text-neon-cyan text-[9px] font-mono font-bold uppercase tracking-widest">
+                            <span className="w-1.5 h-1.5 rounded-full bg-neon-cyan animate-pulse" />
+                            Virtual Pipeline Simulation Engine
+                        </div>
                         <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tighter uppercase italic">
-                            Amankan Fraud <span className="text-hyper-violet">Terminal Virtual</span>
+                            Terminal Simulasi <span className="text-neon-cyan">Pipeline FDS</span>
                         </h1>
-                        <p className="text-[10px] font-bold text-dark-500 uppercase tracking-[0.2em] mt-0.5">
-                            Mesin Simulasi Deteksi Fraud Berbasis Perilaku
+                        <p className="text-[11px] font-medium text-dark-400">
+                            Uji coba inferensi real-time pipeline deteksi fraud: Kafka Streaming ➔ XGBoost / LightGBM ➔ GNN Meta-Learner.
                         </p>
                     </div>
                 </div>

@@ -185,14 +185,19 @@ function InvestigasiEmptyState({ onSearch }: { onSearch: (id: string) => void })
 
     return (
         <div className="space-y-10 min-w-0 overflow-hidden animate-fade-in pb-12">
-            <div className="space-y-2">
-                <h1 className="text-3xl md:text-5xl font-black text-white tracking-tighter uppercase leading-[1.1] italic">
-                    Forensic <span className="text-primary-blue">Investigation</span>
-                </h1>
-                <p className="text-dark-400 font-bold flex items-center gap-2 uppercase tracking-widest text-[10px]">
-                    <span className="w-1.5 h-1.5 bg-neon-cyan/50 rounded-full shrink-0" />
-                    Pusat Analisis Relasional Node GNN & XAI
-                </p>
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-2 border-b border-white/5">
+                <div className="space-y-1.5">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neon-cyan/10 border border-neon-cyan/20 text-neon-cyan text-[10px] font-mono font-bold uppercase tracking-widest">
+                        <span className="w-1.5 h-1.5 rounded-full bg-neon-cyan animate-ping" />
+                        Pusat Analisis Relasional Node GNN & XAI (MongoDB)
+                    </div>
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tighter uppercase italic">
+                        Forensic <span className="text-neon-cyan">Investigation</span>
+                    </h1>
+                    <p className="text-dark-400 font-medium text-xs">
+                        Audit forensik topologi relasi jaringan perbankan, grafik relasi mule account, dan atribusi fitur Explainable AI.
+                    </p>
+                </div>
             </div>
 
             <div className="glass-panel p-8 md:p-12 rounded-[2.5rem] relative overflow-hidden group">

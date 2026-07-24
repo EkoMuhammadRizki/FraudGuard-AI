@@ -271,18 +271,23 @@ export default function RingkasanPage() {
         <>
             <div className="space-y-10 min-w-0 overflow-hidden animate-fade-in pb-12">
                 {/* ── HEADER ── */}
-                <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
-                    <div className="space-y-2">
-                        <h1 className="text-3xl md:text-5xl font-black text-white tracking-tighter uppercase leading-[1.1]">Ringkasan <span className="text-primary-blue block sm:inline">Operasional</span></h1>
-                        <p className="text-dark-400 font-bold flex items-center gap-2 uppercase tracking-widest text-[10px]">
-                            <span className="w-1.5 h-1.5 bg-neon-cyan/50 rounded-full shrink-0" />
-                            Pemantauan infrastruktur: <span className="text-white">Aktif</span>
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-2 border-b border-white/5">
+                    <div className="space-y-1.5">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neon-cyan/10 border border-neon-cyan/20 text-neon-cyan text-[10px] font-mono font-bold uppercase tracking-widest">
+                            <span className="w-1.5 h-1.5 rounded-full bg-neon-cyan animate-ping" />
+                            Pusat Intelijen FDS Real-Time
+                        </div>
+                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tighter uppercase italic">
+                            Ringkasan <span className="text-neon-cyan">Operasional</span>
+                        </h1>
+                        <p className="text-dark-400 font-medium text-xs">
+                            Pantau kesehatan model machine learning ensemble, latensi infrensi, dan analisis arus data transaksi.
                         </p>
                     </div>
 
-                    {/* Header Controls: Single Unified Capsule Bar */}
+                    {/* Header Controls */}
                     <div className="flex items-center gap-3 shrink-0">
-                        <ModelStatusBadge showDetails pollInterval={60000} />
+                        <ModelStatusBadge showDetails pollInterval={30000} />
                     </div>
                 </div>
 

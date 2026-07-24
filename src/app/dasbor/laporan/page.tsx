@@ -188,14 +188,17 @@ export default function LaporanPage() {
         <div className="space-y-10 min-w-0 overflow-hidden animate-fade-in pb-12">
 
             {/* ── HEADER ── */}
-            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-                <div className="space-y-2">
-                    <h1 className="text-3xl md:text-5xl font-black text-white tracking-tighter uppercase leading-[1.1] italic">
-                        Intelligence <span className="text-primary-blue block sm:inline">Reports</span>
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-2 border-b border-white/5">
+                <div className="space-y-1.5">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neon-cyan/10 border border-neon-cyan/20 text-neon-cyan text-[10px] font-mono font-bold uppercase tracking-widest">
+                        <span className="w-1.5 h-1.5 rounded-full bg-neon-cyan animate-pulse" />
+                        Penerbitan Dokumen Resmi & Audit Regulasi
+                    </div>
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tighter uppercase italic">
+                        Intelligence <span className="text-neon-cyan">Reports</span>
                     </h1>
-                    <p className="text-dark-400 font-bold flex items-center gap-2 uppercase tracking-widest text-[10px]">
-                        <span className="w-1.5 h-1.5 bg-hyper-violet/50 rounded-full shrink-0 animate-pulse" />
-                        Mesin Analitik: <span className="text-white">Pengiriman Aktif</span>
+                    <p className="text-dark-400 font-medium text-xs">
+                        Hasilkan PDF audit forensik GNN, laporan kepatuhan POJK/ISO27001, dan ringkasan eksekutif secara instan.
                     </p>
                 </div>
                 <div className="flex items-center gap-4">
