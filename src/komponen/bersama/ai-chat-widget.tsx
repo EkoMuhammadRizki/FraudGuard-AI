@@ -52,13 +52,13 @@ export default function AiChatWidget() {
     const [isMinimized, setIsMinimized] = useState(false);
     const [input, setInput] = useState("");
     const [isTyping, setIsTyping] = useState(false);
-    const [selectedModel, setSelectedModel] = useState<"auto" | "local" | "groq" | "gemini_36_flash" | "gemini_25_pro" | "gemini_25_flash">("auto");
-    const [aiSource, setAiSource] = useState<string>("Auto Cascade Engine");
+    const [selectedModel, setSelectedModel] = useState<"local" | "groq" | "gemini_36_flash" | "gemini_25_pro" | "gemini_25_flash">("local");
+    const [aiSource, setAiSource] = useState<string>("REMI AI Engine");
     const [messages, setMessages] = useState<ChatMessage[]>([
         {
             id: "msg-welcome",
             sender: "bot",
-            text: "Halo Analis! Saya REMI AI Agent (AmankanGuard).\n\nAnda dapat memilih Model AI di header (AI Server Lokal / Groq Llama 70B / Gemini 2.0 Flash) untuk menjawab analisis transaksi, pertanyaan regulasi finansial, maupun pertanyaan umum.",
+            text: "Halo Analis! Saya REMI AI Agent (AmankanGuard).\n\nAnda dapat memilih Model AI di header (REMI AI Engine / Groq Llama 3.3 70B / Gemini 3.6 Flash / Gemini 2.5 Pro / Gemini 2.5 Flash) untuk menjawab analisis transaksi, pertanyaan regulasi finansial, maupun pertanyaan umum.",
             timestamp: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }),
             category: "info",
         },
@@ -301,7 +301,6 @@ export default function AiChatWidget() {
                                             onChange={(e) => setSelectedModel(e.target.value as any)}
                                             className="appearance-none bg-dark-900/90 hover:bg-dark-850 border border-white/10 hover:border-neon-cyan/40 text-dark-200 hover:text-white text-[10px] font-semibold rounded-lg pl-2.5 pr-6 py-1 focus:outline-none focus:ring-1 focus:ring-neon-cyan/50 backdrop-blur-md cursor-pointer transition-all duration-200 shadow-sm"
                                         >
-                                            <option value="auto" className="bg-dark-900 text-white font-medium py-1">Auto (Smart Cascade)</option>
                                             <option value="local" className="bg-dark-900 text-white font-medium py-1">REMI AI Engine</option>
                                             <option value="groq" className="bg-dark-900 text-white font-medium py-1">Groq (Llama 3.3 70B)</option>
                                             <option value="gemini_36_flash" className="bg-dark-900 text-white font-medium py-1">Gemini 3.6 Flash</option>
