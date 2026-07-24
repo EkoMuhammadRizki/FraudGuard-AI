@@ -254,53 +254,176 @@ export default function SimulasiSDKPage() {
                 </div>
             </div>
 
-            {/* ════════ Preset Scenario Selector ════════ */}
-            <div className="glass-panel rounded-[2rem] p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <Zap className="w-4 h-4 text-neon-cyan" />
-                        <h3 className="text-xs font-black text-white uppercase tracking-wider">Preset Skenario Simulasi</h3>
-                    </div>
-                    <span className="text-[8px] font-black px-2 py-0.5 rounded bg-neon-cyan/10 text-neon-cyan border border-neon-cyan/20 uppercase tracking-widest">
-                        Pilih Profil Ancaman
-                    </span>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {SDK_PRESETS.map(preset => (
-                        <button
-                            key={preset.id}
-                            onClick={() => applyPreset(preset)}
-                            disabled={isProcessing}
-                            className={`group p-4 rounded-2xl border text-left transition-all active:scale-[0.98] ${
-                                activePreset === preset.id
-                                    ? "border-white/20 bg-white/5 ring-1 ring-white/10"
-                                    : "border-white/5 bg-dark-950/40 hover:border-white/10 hover:bg-white/[0.03]"
-                            }`}
-                        >
-                            <div className="flex items-center gap-2 mb-2">
-                                <span className="text-lg">{preset.icon}</span>
-                                <span className="text-xs font-black text-white uppercase tracking-wider">{preset.name}</span>
-                                {activePreset === preset.id && (
-                                    <span className="ml-auto text-[8px] font-black px-1.5 py-0.5 rounded bg-white/10 text-white uppercase tracking-widest">Aktif</span>
-                                )}
-                            </div>
-                            <p className="text-[10px] text-dark-400 leading-relaxed">{preset.description}</p>
-                            <div className="mt-3 grid grid-cols-2 gap-2 text-[9px] font-mono">
-                                <div className="text-dark-500">Dwell: <span className="text-white font-bold">{preset.telemetry.avgDwellMs}ms</span></div>
-                                <div className="text-dark-500">Flight: <span className="text-white font-bold">{preset.telemetry.avgFlightMs}ms</span></div>
-                                <div className="text-dark-500">Hesitasi: <span className="text-white font-bold">{preset.telemetry.hesitationScore}%</span></div>
-                                <div className="text-dark-500">Konsistensi: <span className="text-white font-bold">{preset.telemetry.typingConsistency}%</span></div>
-                            </div>
+            {/* ════════ TOP: Console & Developer Integration Section ════════ */}
+            <div className="space-y-4">
+                {/* Tab Switcher */}
+                <div className="flex items-center gap-1 bg-dark-950/60 rounded-2xl p-1 border border-white/5">
+                    {[
+                        { id: "console" as RightTab, label: "Console Execution", icon: <Terminal className="w-3.5 h-3.5" /> },
+                        { id: "token" as RightTab, label: "Token Inspector", icon: <Code className="w-3.5 h-3.5" /> },
+                        { id: "developer" as RightTab, label: "Integrasi Developer Mobile", icon: <BookOpen className="w-3.5 h-3.5" /> },
+                    ].map(tab => (
+                        <button key={tab.id} onClick={() => setRightTab(tab.id)}
+                            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all ${
+                                rightTab === tab.id
+                                    ? "bg-white/5 text-white border border-white/10"
+                                    : "text-dark-500 hover:text-dark-300"
+                            }`}>
+                            {tab.icon} {tab.label}
                         </button>
                     ))}
                 </div>
+
+                {/* Tab Content 1: Console Logs & Inference Stage */}
+                {rightTab === "console" && (
+                    <div className="space-y-4">
+                        {/* Real-time Pipeline Pipeline Stage Visualizer */}
+                        {isProcessing && (
+                            <div className="glass-panel p-4 rounded-2xl border-neon-cyan/20 bg-neon-cyan/5 animate-pulse">
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center gap-2">
+                                        <RefreshCw className="w-4 h-4 text-neon-cyan animate-spin" />
+                                        <span className="text-xs font-black text-white uppercase tracking-wider">
+                                            Proses Evaluasi SDK & Inference FDS Server...
+                                        </span>
+                                    </div>
+                                    <span className="text-[9px] font-mono text-neon-cyan uppercase">
+                                        Tahap: {pipelineStage}
+                                    </span>
+                                </div>
+                                <div className="grid grid-cols-4 gap-2">
+                                    {[
+                                        { key: "token", label: "1. Token Gen" },
+                                        { key: "inference", label: "2. Telemetry ML" },
+                                        { key: "meta", label: "3. Ensemble FDS" },
+                                        { key: "done", label: "4. Keputusan" },
+                                    ].map(stg => (
+                                        <div key={stg.key} className={`p-2 rounded-xl text-center text-[8px] font-mono font-bold border ${
+                                            pipelineStage === stg.key || (stg.key === "done" && pipelineStage === "done")
+                                                ? "bg-neon-cyan/20 border-neon-cyan text-neon-cyan"
+                                                : "bg-dark-950/40 border-white/5 text-dark-500"
+                                        }`}>
+                                            {stg.label}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* ML Evaluation Result Alert Box */}
+                        {mlResult && (
+                            <div className={`glass-panel p-5 rounded-2xl border ${
+                                mlResult.blockTransaction ? "border-status-error/40 bg-status-error/5" : "border-status-success/40 bg-status-success/5"
+                            }`}>
+                                <div className="flex items-start justify-between gap-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${
+                                            mlResult.blockTransaction ? "bg-status-error/20 border-status-error/40 text-status-error" : "bg-status-success/20 border-status-success/40 text-status-success"
+                                        }`}>
+                                            {mlResult.blockTransaction ? <ShieldAlert className="w-5 h-5" /> : <ShieldCheck className="w-5 h-5" />}
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-2">
+                                                <span className={`text-xs font-black uppercase tracking-wider ${
+                                                    mlResult.blockTransaction ? "text-status-error" : "text-status-success"
+                                                }`}>
+                                                    {mlResult.recommendation}
+                                                </span>
+                                                <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-white/10 text-white border border-white/10">
+                                                    Score: {(mlResult.riskScore * 100).toFixed(1)}%
+                                                </span>
+                                            </div>
+                                            <p className="text-[10px] text-dark-300 mt-1 leading-relaxed">{mlResult.reasoning}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Console Log Terminal Window */}
+                        <div className="glass-panel rounded-2xl p-4 bg-dark-950/80 border-white/5 space-y-2">
+                            <div className="flex items-center justify-between border-b border-white/5 pb-2">
+                                <div className="flex items-center gap-2">
+                                    <Terminal className="w-3.5 h-3.5 text-neon-cyan" />
+                                    <span className="text-[9px] font-black text-dark-400 uppercase tracking-wider">Log Eksekusi Real-Time Client SDK</span>
+                                </div>
+                                <button onClick={() => setLogs([])} className="text-[8px] font-bold text-dark-500 hover:text-white uppercase tracking-wider transition">Clear Log</button>
+                            </div>
+                            <div className="h-44 overflow-y-auto font-mono text-[10px] space-y-1 custom-scrollbar pr-2">
+                                {logs.map((lg, i) => (
+                                    <div key={i} className="flex items-start gap-2 leading-relaxed">
+                                        <span className="text-dark-600 shrink-0">[{lg.time}]</span>
+                                        <span className={`shrink-0 font-bold ${
+                                            lg.type === "error" ? "text-status-error" :
+                                            lg.type === "warning" ? "text-amber-warning" :
+                                            lg.type === "success" ? "text-status-success" :
+                                            "text-neon-cyan"
+                                        }`}>[{lg.type.toUpperCase()}]</span>
+                                        <span className="text-dark-200">{lg.message}</span>
+                                    </div>
+                                ))}
+                                <div ref={logEndRef} />
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Tab Content 2: Token Inspector */}
+                {rightTab === "token" && (
+                    <div className="glass-panel rounded-2xl p-4 bg-dark-950/80 border-white/5 space-y-3">
+                        <div className="flex items-center justify-between border-b border-white/5 pb-2">
+                            <div className="flex items-center gap-2">
+                                <Code className="w-3.5 h-3.5 text-hyper-violet" />
+                                <span className="text-[9px] font-black text-dark-400 uppercase tracking-wider">Payload Token Kriptografi JWT SDK</span>
+                            </div>
+                            <button onClick={() => copyToClipboard(jwtPayload, "token")} className="flex items-center gap-1 text-[8px] font-bold text-neon-cyan hover:underline uppercase tracking-wider">
+                                {copiedSnippet === "token" ? <Check className="w-3 h-3 text-status-success" /> : <Copy className="w-3 h-3" />}
+                                {copiedSnippet === "token" ? "Tersalin!" : "Salin JSON"}
+                            </button>
+                        </div>
+                        <pre className="h-64 overflow-y-auto font-mono text-[10px] text-neon-cyan/90 bg-dark-950 p-3 rounded-xl border border-white/5 custom-scrollbar leading-relaxed">
+                            {jwtPayload}
+                        </pre>
+                    </div>
+                )}
+
+                {/* Tab Content 3: Integrasi Developer */}
+                {rightTab === "developer" && (
+                    <div className="glass-panel rounded-2xl p-4 bg-dark-950/80 border-white/5 space-y-4">
+                        <div className="flex items-center justify-between border-b border-white/5 pb-2">
+                            <div className="flex items-center gap-2">
+                                <BookOpen className="w-3.5 h-3.5 text-primary-blue" />
+                                <span className="text-[9px] font-black text-dark-400 uppercase tracking-wider">Kode Integrasi Mobile SDK</span>
+                            </div>
+                            <div className="flex items-center gap-1 bg-dark-900 rounded-lg p-0.5 border border-white/5">
+                                {(["android", "ios", "reactNative", "flutter"] as const).map(plat => (
+                                    <button key={plat} onClick={() => setDevPlatform(plat)}
+                                        className={`px-2 py-1 rounded text-[8px] font-mono font-bold uppercase transition ${
+                                            devPlatform === plat ? "bg-primary-blue text-white" : "text-dark-500 hover:text-white"
+                                        }`}>
+                                        {plat}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="relative">
+                            <pre className="h-56 overflow-y-auto font-mono text-[10px] text-white/90 bg-dark-950 p-3 rounded-xl border border-white/5 custom-scrollbar leading-relaxed">
+                                {SDK_CODE_SNIPPETS[devPlatform]}
+                            </pre>
+                            <button onClick={() => copyToClipboard(SDK_CODE_SNIPPETS[devPlatform], devPlatform)}
+                                className="absolute top-2 right-2 flex items-center gap-1 text-[8px] font-bold px-2 py-1 rounded bg-white/10 hover:bg-white/20 text-white uppercase transition">
+                                {copiedSnippet === devPlatform ? <Check className="w-3 h-3 text-status-success" /> : <Copy className="w-3 h-3" />}
+                                {copiedSnippet === devPlatform ? "Tersalin!" : "Salin Kode"}
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
 
-            {/* ════════ Grid Layout: Phone + Right Panel ════════ */}
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
+            {/* ════════ Bottom Grid Layout: Smartphone Simulator (Left) + Preset Scenarios & Telemetry (Right) ════════ */}
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
 
-                {/* ── LEFT: Smartphone Mockup ── */}
+                {/* ── LEFT: Smartphone Mockup + Threat Manual Toggle ── */}
                 <div className="xl:col-span-5 flex flex-col items-center">
 
                     {/* Threat Toggle Panel */}
@@ -417,248 +540,67 @@ export default function SimulasiSDKPage() {
                             <div className="w-24 h-1.5 bg-dark-700 rounded-full" />
                         </div>
                     </div>
-
-                    {/* ── Live Telemetry Bars (below phone) ── */}
-                    <div className="w-full max-w-[320px] mt-4 bg-dark-950/80 border border-white/5 rounded-2xl p-4 space-y-3">
-                        <div className="flex items-center gap-2">
-                            <BarChart3 className="w-3.5 h-3.5 text-neon-cyan" />
-                            <span className="text-[9px] font-black text-dark-500 uppercase tracking-widest">Live Behavioral Telemetry</span>
-                        </div>
-                        <TelemetryBar label="Avg Dwell Time" value={telemetryDisplay.avgDwell} max={500} unit="ms" color="bg-neon-cyan" />
-                        <TelemetryBar label="Avg Flight Time" value={telemetryDisplay.avgFlight} max={1000} unit="ms" color="bg-primary-blue" />
-                        <TelemetryBar label="Hesitation Score" value={telemetryDisplay.hesitation} max={100} unit="%" color="bg-status-warning" />
-                        <TelemetryBar label="Typing Consistency" value={telemetryDisplay.consistency} max={100} unit="%" color="bg-hyper-violet" />
-                    </div>
                 </div>
 
-                {/* ── RIGHT: SDK Debugger Panel ── */}
+                {/* ── RIGHT: Preset Scenario + Live Telemetry ── */}
                 <div className="xl:col-span-7 space-y-6">
 
-                    {/* Tab Switcher */}
-                    <div className="flex items-center gap-1 bg-dark-950/60 rounded-2xl p-1 border border-white/5">
-                        {[
-                            { id: "console" as RightTab, label: "Console", icon: <Terminal className="w-3.5 h-3.5" /> },
-                            { id: "token" as RightTab, label: "Token Inspector", icon: <Code className="w-3.5 h-3.5" /> },
-                            { id: "developer" as RightTab, label: "Integrasi Developer", icon: <BookOpen className="w-3.5 h-3.5" /> },
-                        ].map(tab => (
-                            <button key={tab.id} onClick={() => setRightTab(tab.id)}
-                                className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all ${
-                                    rightTab === tab.id
-                                        ? "bg-white/5 text-white border border-white/10"
-                                        : "text-dark-500 hover:text-dark-300"
-                                }`}>
-                                {tab.icon} {tab.label}
-                            </button>
-                        ))}
+                    {/* Preset Skenario Simulasi Section */}
+                    <div className="glass-panel rounded-[2rem] p-6 space-y-4">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <Zap className="w-4 h-4 text-neon-cyan" />
+                                <h3 className="text-xs font-black text-white uppercase tracking-wider">Preset Skenario Simulasi</h3>
+                            </div>
+                            <span className="text-[8px] font-black px-2 py-0.5 rounded bg-neon-cyan/10 text-neon-cyan border border-neon-cyan/20 uppercase tracking-widest">
+                                Pilih Profil Ancaman
+                            </span>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            {SDK_PRESETS.map(preset => (
+                                <button
+                                    key={preset.id}
+                                    onClick={() => applyPreset(preset)}
+                                    disabled={isProcessing}
+                                    className={`group p-4 rounded-2xl border text-left transition-all active:scale-[0.98] ${
+                                        activePreset === preset.id
+                                            ? "border-white/20 bg-white/5 ring-1 ring-white/10"
+                                            : "border-white/5 bg-dark-950/40 hover:border-white/10 hover:bg-white/[0.03]"
+                                    }`}
+                                >
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <span className="text-lg">{preset.icon}</span>
+                                        <span className="text-xs font-black text-white uppercase tracking-wider">{preset.name}</span>
+                                        {activePreset === preset.id && (
+                                            <span className="ml-auto text-[8px] font-black px-1.5 py-0.5 rounded bg-white/10 text-white uppercase tracking-widest">Aktif</span>
+                                        )}
+                                    </div>
+                                    <p className="text-[10px] text-dark-400 leading-relaxed">{preset.description}</p>
+                                    <div className="mt-3 grid grid-cols-2 gap-2 text-[9px] font-mono">
+                                        <div className="text-dark-500">Dwell: <span className="text-white font-bold">{preset.telemetry.avgDwellMs}ms</span></div>
+                                        <div className="text-dark-500">Flight: <span className="text-white font-bold">{preset.telemetry.avgFlightMs}ms</span></div>
+                                        <div className="text-dark-500">Hesitasi: <span className="text-white font-bold">{preset.telemetry.hesitationScore}%</span></div>
+                                        <div className="text-dark-500">Konsistensi: <span className="text-white font-bold">{preset.telemetry.typingConsistency}%</span></div>
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
                     </div>
 
-                    {/* ────── TAB: Console ────── */}
-                    {rightTab === "console" && (
-                        <div className="glass-panel rounded-[2rem] p-6 space-y-4">
-                            <div className="flex items-center justify-between border-b border-white/5 pb-3">
-                                <div className="flex items-center gap-2">
-                                    <Terminal className="w-4 h-4 text-neon-cyan" />
-                                    <h3 className="text-xs font-black text-white uppercase tracking-wider">Console Debugger Mobile SDK</h3>
-                                </div>
-                                <span className="text-[8px] font-black px-2 py-0.5 rounded bg-neon-cyan/10 text-neon-cyan border border-neon-cyan/20 uppercase tracking-widest">
-                                    Client Logs
-                                </span>
-                            </div>
-
-                            <div className="bg-[#040712] border border-white/5 rounded-2xl p-4 h-72 overflow-y-auto font-mono text-[10px] space-y-1.5 custom-scrollbar">
-                                {logs.length === 0 ? (
-                                    <div className="text-dark-600 italic select-none pt-28 text-center uppercase tracking-widest">
-                                        Menunggu interaksi perangkat...
-                                    </div>
-                                ) : (
-                                    logs.map((log, idx) => (
-                                        <div key={idx} className="flex items-start gap-2 leading-relaxed">
-                                            <span className="text-dark-500 select-none shrink-0">{log.time}</span>
-                                            <span className={
-                                                log.type === "success" ? "text-status-success" :
-                                                log.type === "warn" ? "text-status-warning" :
-                                                log.type === "danger" ? "text-status-error font-bold" :
-                                                "text-dark-300"
-                                            }>
-                                                {log.message}
-                                            </span>
-                                        </div>
-                                    ))
-                                )}
-                                <div ref={logEndRef} />
-                            </div>
+                    {/* Live Telemetry Display */}
+                    <div className="glass-panel rounded-[2rem] p-6 space-y-4">
+                        <div className="flex items-center gap-2">
+                            <BarChart3 className="w-4 h-4 text-neon-cyan" />
+                            <h3 className="text-xs font-black text-white uppercase tracking-wider">Live Behavioral Telemetry (Biometrik Ketikan)</h3>
                         </div>
-                    )}
-
-                    {/* ────── TAB: Token Inspector ────── */}
-                    {rightTab === "token" && (
-                        <div className="glass-panel rounded-[2rem] p-6 space-y-4">
-                            <div className="flex items-center justify-between border-b border-white/5 pb-3">
-                                <div className="flex items-center gap-2">
-                                    <Code className="w-4 h-4 text-neon-cyan" />
-                                    <h3 className="text-xs font-black text-white uppercase tracking-wider">HTTP Request Header & Secure Token</h3>
-                                </div>
-                                <span className="text-[8px] font-black px-2 py-0.5 rounded bg-white/5 text-dark-400 border border-white/10 uppercase tracking-widest">
-                                    JWT/JWS Inspector
-                                </span>
-                            </div>
-
-                            <div className="bg-[#040712] border border-white/5 rounded-2xl p-4 font-mono text-[10px] text-dark-300 space-y-3 overflow-x-auto max-h-96 overflow-y-auto custom-scrollbar">
-                                <div>
-                                    <span className="text-hyper-violet font-bold">POST</span> <span className="text-white">http://api.bankrakyat.id/v1/transfer</span>
-                                </div>
-                                <div className="space-y-1 border-b border-white/5 pb-2.5">
-                                    <div><span className="text-neon-cyan">Content-Type:</span> application/json</div>
-                                    <div className="flex items-center gap-1.5">
-                                        <span className="text-neon-cyan">X-FraudGuard-Token:</span>
-                                        <span className="text-status-success font-black truncate max-w-[280px]">
-                                            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-                                        </span>
-                                    </div>
-                                </div>
-                                <pre className="text-[9px] text-[#8ea6ff] pt-1 whitespace-pre-wrap">{jwtPayload}</pre>
-                            </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                            <TelemetryBar label="Avg Dwell Time (Lama Ketik Key)" value={telemetryDisplay.avgDwell} max={500} unit="ms" color="bg-neon-cyan" />
+                            <TelemetryBar label="Avg Flight Time (Jeda Antar Key)" value={telemetryDisplay.avgFlight} max={1000} unit="ms" color="bg-primary-blue" />
+                            <TelemetryBar label="Hesitation Score (Keraguan Nasabah)" value={telemetryDisplay.hesitation} max={100} unit="%" color="bg-status-warning" />
+                            <TelemetryBar label="Typing Consistency (Konsistensi Ritme)" value={telemetryDisplay.consistency} max={100} unit="%" color="bg-hyper-violet" />
                         </div>
-                    )}
-
-                    {/* ────── TAB: Developer Integration ────── */}
-                    {rightTab === "developer" && (
-                        <div className="glass-panel rounded-[2rem] p-6 space-y-4">
-                            <div className="flex items-center justify-between border-b border-white/5 pb-3">
-                                <div className="flex items-center gap-2">
-                                    <BookOpen className="w-4 h-4 text-neon-cyan" />
-                                    <h3 className="text-xs font-black text-white uppercase tracking-wider">Panduan Integrasi Developer</h3>
-                                </div>
-                                <span className="text-[8px] font-black px-2 py-0.5 rounded bg-hyper-violet/10 text-hyper-violet border border-hyper-violet/20 uppercase tracking-widest">
-                                    SDK v1.0.0
-                                </span>
-                            </div>
-
-                            {/* Platform Tabs */}
-                            <div className="flex items-center gap-1 bg-dark-950/60 rounded-xl p-1 border border-white/5">
-                                {(Object.keys(SDK_CODE_SNIPPETS) as Array<keyof typeof SDK_CODE_SNIPPETS>).map(key => (
-                                    <button key={key} onClick={() => setDevPlatform(key)}
-                                        className={`flex-1 py-2 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all ${
-                                            devPlatform === key
-                                                ? "bg-white/5 text-white border border-white/10"
-                                                : "text-dark-500 hover:text-dark-300"
-                                        }`}>
-                                        {SDK_CODE_SNIPPETS[key].label}
-                                    </button>
-                                ))}
-                            </div>
-
-                            {/* Install Snippet */}
-                            <div className="space-y-2">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-[9px] font-black text-dark-500 uppercase tracking-widest">Instalasi</span>
-                                    <button onClick={() => copyToClipboard(SDK_CODE_SNIPPETS[devPlatform].install, "install")}
-                                        className="text-[8px] font-bold text-dark-500 hover:text-neon-cyan flex items-center gap-1 transition-colors uppercase tracking-widest">
-                                        {copiedSnippet === "install" ? <><Check className="w-3 h-3" /> Disalin</> : <><Copy className="w-3 h-3" /> Salin</>}
-                                    </button>
-                                </div>
-                                <pre className="bg-[#040712] border border-white/5 rounded-xl p-4 font-mono text-[10px] text-[#8ea6ff] overflow-x-auto custom-scrollbar whitespace-pre-wrap">
-                                    {SDK_CODE_SNIPPETS[devPlatform].install}
-                                </pre>
-                            </div>
-
-                            {/* Usage Snippet */}
-                            <div className="space-y-2">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-[9px] font-black text-dark-500 uppercase tracking-widest">Penggunaan</span>
-                                    <button onClick={() => copyToClipboard(SDK_CODE_SNIPPETS[devPlatform].usage, "usage")}
-                                        className="text-[8px] font-bold text-dark-500 hover:text-neon-cyan flex items-center gap-1 transition-colors uppercase tracking-widest">
-                                        {copiedSnippet === "usage" ? <><Check className="w-3 h-3" /> Disalin</> : <><Copy className="w-3 h-3" /> Salin</>}
-                                    </button>
-                                </div>
-                                <pre className="bg-[#040712] border border-white/5 rounded-xl p-4 font-mono text-[10px] text-[#8ea6ff] overflow-x-auto max-h-72 overflow-y-auto custom-scrollbar whitespace-pre-wrap">
-                                    {SDK_CODE_SNIPPETS[devPlatform].usage}
-                                </pre>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* ────── ML Decision Box ────── */}
-                    {pipelineStage !== "idle" && (
-                        <div className="glass-panel rounded-[2rem] p-6 space-y-4 animate-fade-in relative overflow-hidden">
-                            {isProcessing ? (
-                                <div className="flex flex-col items-center justify-center py-6 gap-3">
-                                    <RefreshCw className="w-8 h-8 text-neon-cyan animate-spin" />
-                                    <span className="text-[10px] font-black text-neon-cyan uppercase tracking-widest animate-pulse">
-                                        {pipelineStage === "token" && "Mengepak Token Perilaku SDK..."}
-                                        {pipelineStage === "inference" && "Mengirim Payload ke FDS API..."}
-                                        {pipelineStage === "meta" && "Model ML FDS sedang menguji..."}
-                                    </span>
-                                </div>
-                            ) : (
-                                mlResult && (
-                                    <div className="space-y-4">
-                                        <div className="flex items-center justify-between border-b border-white/5 pb-3">
-                                            <div className="flex items-center gap-2">
-                                                <Layers className="w-4 h-4 text-neon-cyan" />
-                                                <h3 className="text-xs font-black text-white uppercase tracking-wider">Hasil Uji Mesin FDS (Live ML)</h3>
-                                            </div>
-                                            <span className={`text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-widest ${
-                                                mlResult.isLive
-                                                    ? "bg-status-success/10 text-status-success border border-status-success/20"
-                                                    : "bg-amber-400/10 text-amber-400 border border-amber-400/20"
-                                            }`}>
-                                                {mlResult.isLive ? "⚡ LIVE ML" : "🎭 DEMO MODE"}
-                                            </span>
-                                        </div>
-
-                                        <div className={`rounded-2xl border p-5 flex flex-col items-center text-center space-y-2 ${
-                                            mlResult.finalDecision === "BLOCKED"
-                                                ? "border-status-error/30 bg-status-error/5 text-status-error"
-                                                : "border-status-success/30 bg-status-success/5 text-status-success"
-                                        }`}>
-                                            <div className="flex items-center gap-2 text-2xl font-black uppercase tracking-wider">
-                                                {mlResult.finalDecision === "BLOCKED" ? (
-                                                    <><ShieldAlert className="w-6 h-6" /> DIBLOKIR</>
-                                                ) : (
-                                                    <><ShieldCheck className="w-6 h-6" /> APPROVED (AMAN)</>
-                                                )}
-                                            </div>
-                                            {mlResult.finalDecision === "BLOCKED" && (
-                                                <div className="text-[10px] font-black uppercase tracking-widest text-status-error">
-                                                    Ancaman: {mlResult.fraudType}
-                                                </div>
-                                            )}
-                                            <div className="text-dark-400 font-mono text-[10px] tracking-wide mt-1">
-                                                Skor Risiko Final: <span className="font-bold">{Math.round(mlResult.riskScore)}/100</span> | Threshold: {mlResult.thresholdUsed}
-                                            </div>
-                                        </div>
-
-                                        <div className="bg-dark-950/40 rounded-xl p-4 border border-white/5 space-y-2.5">
-                                            <div className="text-[8px] font-black text-dark-500 uppercase tracking-widest">Ensemble Decision Scores (Live ML Models)</div>
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <div className="flex justify-between items-center text-[10px] font-mono">
-                                                    <span className="text-dark-400">XGBoost Binary:</span>
-                                                    <span className="text-white font-bold">{Math.round(mlResult.modelScores.xgboost)}%</span>
-                                                </div>
-                                                <div className="flex justify-between items-center text-[10px] font-mono">
-                                                    <span className="text-dark-400">LightGBM Multiclass:</span>
-                                                    <span className="text-white font-bold">{Math.round(mlResult.modelScores.lightgbmFraudSum)}%</span>
-                                                </div>
-                                                <div className="flex justify-between items-center text-[10px] font-mono">
-                                                    <span className="text-dark-400">Graph Neural Network:</span>
-                                                    <span className="text-white font-bold">{Math.round(mlResult.modelScores.graphGnn)}%</span>
-                                                </div>
-                                                <div className="flex justify-between items-center text-[10px] font-mono">
-                                                    <span className="text-neon-cyan font-bold">SDK Behavioral ML:</span>
-                                                    <span className="text-neon-cyan font-bold">{Math.round(mlResult.modelScores.sdkBehavioral ?? 0)}%</span>
-                                                </div>
-                                                <div className="flex justify-between items-center text-[10px] font-mono col-span-2 pt-1 border-t border-white/5">
-                                                    <span className="text-dark-300 font-bold">Meta-Learner Stacker Final:</span>
-                                                    <span className="text-white font-bold">{Math.round(mlResult.modelScores.ensembleFinal)}%</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )
-                            )}
-                        </div>
-                    )}
+                    </div>
                 </div>
             </div>
         </div>
