@@ -55,7 +55,35 @@ interface SidebarProps {
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     const pathname = usePathname();
     const router = useRouter();
-    const [showLogoutModal, setShowLogoutModal] = useState(false);
+    const [activeUser, setActiveUser] = useState<{ name: string; username: string; role: string } | null>(null);
+
+    // Read logged in user profile from storage
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const stored = localStorage.getItem("fg_user") || sessionStorage.getItem("fg_user");
+            if (stored) {
+                try {
+                    setActiveUser(JSON.parse(stored));
+                } catch (e) {
+                    console.error("Error parsing user profile", e);
+                }
+            }
+        }
+    }, []);
+
+    // Extract dynamic initials
+    const getUserInitials = (nameStr: string) => {
+        if (!nameStr) return "FG";
+        const parts = nameStr.trim().split(" ");
+        if (parts.length >= 2) {
+            return (parts[0][0] + parts[1][0]).toUpperCase();
+        }
+        return nameStr.substring(0, 2).toUpperCase();
+    };
+
+    const userName = activeUser?.name || "Eko Muhammad Rizki";
+    const userRole = activeUser?.role ? activeUser.role.toUpperCase() : "AKSES LEVEL 4";
+    const userInitials = getUserInitials(userName);
 
     const handleLogout = () => {
         if (typeof window !== "undefined") {
@@ -145,12 +173,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             <div className="p-6">
                 <div className="glass-panel p-5 rounded-3xl border-white/5 bg-white/5 group/profile">
                     <div className="flex items-center gap-4 mb-5">
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-blue to-hyper-violet flex items-center justify-center text-white text-lg font-black shadow-lg">
-                            EK
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-neon-cyan via-primary-blue to-hyper-violet flex items-center justify-center text-dark-950 text-lg font-black shadow-lg shadow-neon-cyan/20">
+                            {userInitials}
                         </div>
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-black text-white truncate leading-tight">Eko Muhammad Rizki</p>
-                            <p className="text-[10px] font-bold text-dark-500 truncate mt-1 tracking-tight">AKSES LEVEL 4</p>
+                            <p className="text-sm font-black text-white truncate leading-tight">{userName}</p>
+                            <p className="text-[10px] font-bold text-neon-cyan/80 truncate mt-1 tracking-tight">{userRole}</p>
                         </div>
                     </div>
                     <button

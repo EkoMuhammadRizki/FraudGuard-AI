@@ -502,11 +502,6 @@ export default function DasborLayout({
                                 </div>
                             )}
                         </div>
-
-                        {/* Profile Placeholder */}
-                        <div className="w-8 h-8 md:w-10 md:h-10 rounded-full border border-neon-cyan/30 bg-primary-blue/20 flex items-center justify-center text-neon-cyan font-black text-[10px] md:text-xs tracking-tighter shadow-sm">
-                          EK
-                        </div>
                     </div>
                 </header>
                 {/* Page Content */}

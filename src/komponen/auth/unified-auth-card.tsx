@@ -65,6 +65,10 @@ export default function UnifiedAuthCard({ initialMode = "login" }: UnifiedAuthCa
                 setSuccessMessage(data.message || "Login Berhasil! Mengalihkan ke Dasbor...");
                 if (typeof window !== "undefined") {
                     sessionStorage.setItem("fg_show_modal_on_login", "true");
+                    if (data.user) {
+                        localStorage.setItem("fg_user", JSON.stringify(data.user));
+                        sessionStorage.setItem("fg_user", JSON.stringify(data.user));
+                    }
                 }
                 setTimeout(() => {
                     router.push("/dasbor/ringkasan");
