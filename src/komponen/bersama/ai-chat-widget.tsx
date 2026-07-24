@@ -17,9 +17,9 @@ interface ChatMessage {
 
 // Preset khusus REMI AI (Analisis Transaksi Fraud)
 const LOCAL_PRESETS = [
-    { label: ">_ Indikasi ATO (Account Takeover)", prompt: "Terindikasi ATO: Pengguna login dari HP Android baru di Jakarta Barat, ganti PIN 2 menit lalu, dan mencoba transfer Rp 15.000.000 ke rekening baru." },
-    { label: ">_ Money Mule Ring (Pengepul)", prompt: "Rekening ID-994821 menerima 14x transfer pecahan Rp 2.500.000 dalam 10 menit dari pengirim berbeda." },
-    { label: ">_ Deteksi Screen Mirroring / AnyDesk", prompt: "Sinyal Telemetri SDK: remoteDesktopActive=true, detectedApp=AnyDesk. Eksekusi cepat tanpa jeda ketikan manual." },
+    { label: "Indikasi ATO (Account Takeover)", prompt: "Terindikasi ATO: Pengguna login dari HP Android baru di Jakarta Barat, ganti PIN 2 menit lalu, dan mencoba transfer Rp 15.000.000 ke rekening baru." },
+    { label: "Money Mule Ring (Pengepul)", prompt: "Rekening ID-994821 menerima 14x transfer pecahan Rp 2.500.000 dalam 10 menit dari pengirim berbeda." },
+    { label: "Deteksi Screen Mirroring / AnyDesk", prompt: "Sinyal Telemetri SDK: remoteDesktopActive=true, detectedApp=AnyDesk. Eksekusi cepat tanpa jeda ketikan manual." },
     { label: "Cari Transaksi TX000424", prompt: "Detail transaksi TX000424 di database" },
 ];
 
