@@ -29,12 +29,13 @@ export default function AiChatWidget() {
     const [isMinimized, setIsMinimized] = useState(false);
     const [input, setInput] = useState("");
     const [isTyping, setIsTyping] = useState(false);
-    const [aiSource, setAiSource] = useState<string>("MongoDB Atlas & Model Engine");
+    const [selectedModel, setSelectedModel] = useState<"auto" | "local" | "groq" | "gemini">("auto");
+    const [aiSource, setAiSource] = useState<string>("Auto Cascade Engine");
     const [messages, setMessages] = useState<ChatMessage[]>([
         {
             id: "msg-welcome",
             sender: "bot",
-            text: "Halo Analis! Saya REMI AI Agent, terhubung langsung dengan Database MongoDB Atlas & Model Inference Server (103.102.46.104:8000).\n\nSaya dapat menjawab pertanyaan transaksi dari dataset, mencari ID transaksi, menghitung statistik dasbor, atau menganalisis log anomali.",
+            text: "Halo Analis! Saya REMI AI Agent (AmankanGuard).\n\nAnda dapat memilih Model AI di header (AI Server Lokal / Groq Llama 70B / Gemini 2.0 Flash) untuk menjawab analisis transaksi, pertanyaan regulasi finansial, maupun pertanyaan umum.",
             timestamp: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }),
             category: "info",
         },
@@ -103,38 +104,9 @@ export default function AiChatWidget() {
             };
         }
 
-        if (q.includes("ato") || q.includes("account takeover") || q.includes("skor risiko")) {
-            return {
-                text: "Skor risiko Account Takeover (ATO) diukur dari gabungan 3 sinyal utama:\n\n1. XGBoost (Binary ML): Menilai deviasi nominal dari kebiasaan transaksi 30 hari terakhir.\n2. Behavioral Telemetry (SDK): Menilai ketikan yang terlalu cepat (bot script) atau sangat hesitant/ragu-ragu (dituntun penipu).\n3. Threat Intel IP/Device: Menilai reputasi alamat IP dan perangkat pengirim.\n\nJika skor > 33.74%, sistem merekomendasikan Pembekuan Sementara & Verifikasi OTP Biometrik.",
-                category: "warning"
-            };
-        }
-
-        if (q.includes("gnn") || q.includes("graph") || q.includes("sindikat") || q.includes("pencucian")) {
-            return {
-                text: "Graph Neural Network (GNN) memetakan hubungan antar-rekening sebagai Simpul (Node) dan transaksi sebagai Sisi (Edge).\n\nGNN mendeteksi 2 pola utama:\n• High Fan-Out (Penyebaran): 1 rekening pengirim mentransfer uang ke puluhan rekening baru dalam waktu singkat.\n• Aggregation/Mule Ring: Rekening-rekening penampung yang saling mentransfer kembali ke 1 rekening utama (hub).",
-                category: "info"
-            };
-        }
-
-        if (q.includes("anydesk") || q.includes("sdk") || q.includes("remote") || q.includes("layar")) {
-            return {
-                text: "FraudGuard Mobile SDK (v2.4.1) menggunakan Native Accessibility Service Hook & MediaProjection Monitor pada OS Android/iOS untuk mendeteksi paket aktif AnyDesk, TeamViewer, atau QuickSupport.\n\nKetika AnyDesk terdeteksi aktif saat nasabah membuka m-banking, SDK langsung mengirimkan flag remoteDesktopActive: true ke FDS Engine untuk memblokir transaksi instan.",
-                category: "code",
-                codeSnippet: `// Sinyal Telemetri SDK ke Backend BI
-{
-  "deviceIntegrity": {
-    "remoteDesktopActive": true,
-    "detectedApp": "com.anydesk.anydeskandroid",
-    "isRooted": false
-  }
-}`
-            };
-        }
-
         return {
-            text: "⚠️ **Maaf, Batasan Domain Terdeteksi**:\n\nSebagai asisten cerdas REMI AI pada platform FraudGuard-AI (AmankanGuard), saya ditugaskan khusus untuk menjawab pertanyaan seputar deteksi fraud perbankan, analisis forensik transaksi, pencarian database FDS, model machine learning (SHAP/GNN/XGBoost), serta telemetri Mobile SDK.",
-            category: "warning"
+            text: "⚠️ **Asisten REMI AI**:\n\nSistem memproses pertanyaan Anda berpatokan pada data transaksi & regulasi POJK No. 39/POJK.03/2019 (Anti-Fraud System).",
+            category: "info"
         };
     };
 
@@ -155,59 +127,51 @@ export default function AiChatWidget() {
 
         try {
             const qLower = queryText.toLowerCase();
-            if (qLower.includes("pengembang") || qLower.includes("pembuat") || qLower.includes("developer") || qLower.includes("creator") || qLower.includes("eko") || qLower.includes("ihya") || qLower.includes("muhibin") || qLower.includes("reza")) {
-                lastTopicRef.current = "developer";
-            }
 
-            // Check for explicit ID in prompt
+            // Cek apakah input mengandung ID Transaksi spesifik (misal TXN-xxxx atau ID 9948xxx)
             const idPattern = /(tx[0-9]+|ac[0-9]+|rec-[a-z0-9]+|[0-9a-f]{6,24}|9948[0-9]+|8888[0-9]+|5746[0-9]+)/i;
             const match = queryText.match(idPattern);
-            if (match) {
-                lastDiscussedTxIdRef.current = match[0].toUpperCase();
-                lastTopicRef.current = "transaction";
+            const isSpecificTxForensics = match || qLower.includes("detail transaksi") || qLower.includes("investigasi transaksi");
+
+            let res;
+            if (isSpecificTxForensics) {
+                // Panggil FDS Forensics Detector
+                res = await fetch("/api/detect-fraud", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        prompt: queryText,
+                        active_context: { id: match ? match[0].toUpperCase() : null },
+                        temperature: 0.1,
+                        max_tokens: 300
+                    })
+                });
+            } else {
+                // Panggil General LLM AI Chat (Groq / Gemini / Local AI Server)
+                const chatHistory = messages.slice(-4).map(m => ({
+                    role: m.sender === "user" ? "user" : "assistant",
+                    content: m.text
+                }));
+
+                res = await fetch("/api/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        provider: selectedModel,
+                        messages: [...chatHistory, { role: "user", content: queryText }]
+                    })
+                });
             }
-
-            const getActiveTxId = () => {
-                if (typeof window !== "undefined") {
-                    return new URLSearchParams(window.location.search).get("txid");
-                }
-                return null;
-            };
-
-            const activeTxId = getActiveTxId();
-            const isTxQuery = match || qLower.includes("transaksi") || qLower.includes("tersebut") || qLower.includes("apakah fraud") || qLower.includes("pengirim") || qLower.includes("penerima");
-            const targetTxId = match ? match[0].toUpperCase() : (isTxQuery ? (lastDiscussedTxIdRef.current || activeTxId) : null);
-
-            // Sambungkan ke API Proxy /api/detect-fraud (Menghubungkan ke MongoDB Atlas & Model Open-Source AI)
-            const res = await fetch("/api/detect-fraud", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    prompt: queryText,
-                    active_context: {
-                        id: targetTxId || null,
-                        topic: lastTopicRef.current || "general"
-                    },
-                    temperature: 0.1,
-                    max_tokens: 300
-                })
-            });
 
             const data = await res.json();
             
             let replyText = "";
             let cat: "info" | "warning" | "success" | "code" = "info";
 
-            if (data.status === "success" && data.result) {
-                replyText = data.result;
-                if (data.source) {
-                    if (data.source === "database_intelligence") {
-                        setAiSource("Database & FDS Intelligence");
-                    } else if (data.source === "kamatera_cloud_ai") {
-                        setAiSource("Kamatera AI (103.102.46.104)");
-                    } else {
-                        setAiSource(data.source);
-                    }
+            if (data.status === "success" && (data.response || data.result)) {
+                replyText = data.response || data.result;
+                if (data.model_used) {
+                    setAiSource(data.model_used);
                 }
                 if (replyText.includes("🚨") || replyText.includes("BLOKIR") || replyText.includes("ATO")) {
                     cat = "warning";
@@ -250,14 +214,14 @@ export default function AiChatWidget() {
             {isOpen && (
                 <div
                     className={`
-                        pointer-events-auto mb-4 w-[92vw] sm:w-[420px] bg-dark-950/95 border border-white/10
+                        pointer-events-auto mb-4 w-[92vw] sm:w-[440px] bg-dark-950/95 border border-white/10
                         rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.8)] backdrop-blur-2xl overflow-hidden
                         transition-all duration-300 ease-out origin-bottom-right flex flex-col
-                        ${isMinimized ? "h-16" : "h-[540px] max-h-[80vh]"}
+                        ${isMinimized ? "h-16" : "h-[560px] max-h-[82vh]"}
                     `}
                 >
                     {/* Header Widget */}
-                    <div className="bg-gradient-to-r from-blue-950/90 via-dark-900 to-dark-950 p-4 border-b border-white/10 flex items-center justify-between shrink-0">
+                    <div className="bg-gradient-to-r from-blue-950/90 via-dark-900 to-dark-950 p-3.5 border-b border-white/10 flex items-center justify-between shrink-0">
                         <div className="flex items-center gap-3">
                             {/* Avatar AI Robot */}
                             <div className="relative">
@@ -270,11 +234,25 @@ export default function AiChatWidget() {
                             </div>
 
                             <div>
-                                <div className="flex items-center gap-1.5">
+                                <div className="flex items-center gap-2">
                                     <h3 className="text-xs font-black text-white uppercase tracking-wider">REMI AI</h3>
-                                    <span className="px-1.5 py-0.2 rounded bg-neon-cyan/10 border border-neon-cyan/30 text-neon-cyan text-[8px] font-black uppercase tracking-wider">{aiSource}</span>
+                                    <span className="px-2 py-0.5 rounded-full bg-neon-cyan/10 border border-neon-cyan/30 text-neon-cyan text-[8px] font-black uppercase tracking-wider">{aiSource}</span>
                                 </div>
-                                <p className="text-[10px] text-dark-400 font-bold tracking-tight">Asisten Deteksi Fraud (103.102.46.104:8000)</p>
+                                
+                                {/* Model Selector Dropdown */}
+                                <div className="mt-1 flex items-center gap-1.5">
+                                    <span className="text-[9px] text-dark-400 font-semibold">Model:</span>
+                                    <select
+                                        value={selectedModel}
+                                        onChange={(e) => setSelectedModel(e.target.value as any)}
+                                        className="bg-dark-900 border border-white/15 text-white text-[10px] font-bold rounded-lg px-2 py-0.5 focus:outline-none focus:border-neon-cyan cursor-pointer transition-all"
+                                    >
+                                        <option value="auto">🤖 Auto (Local AI → Groq → Gemini)</option>
+                                        <option value="local">💻 Local AI Server (Port 8000)</option>
+                                        <option value="groq">⚡ Groq (Llama-3.3-70B)</option>
+                                        <option value="gemini">♊ Google Gemini 2.0 Flash</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
