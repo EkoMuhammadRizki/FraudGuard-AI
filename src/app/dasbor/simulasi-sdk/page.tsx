@@ -254,51 +254,192 @@ export default function SimulasiSDKPage() {
                 </div>
             </div>
 
-            {/* ════════ 1. PRESET SKENARIO SIMULASI (PROFIL ANCAMAN) ════════ */}
-            <div className="glass-panel rounded-[2rem] p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <Zap className="w-4 h-4 text-neon-cyan" />
-                        <h3 className="text-xs font-black text-white uppercase tracking-wider">Preset Skenario Transaksi (Profil Ancaman)</h3>
+            {/* ════════ 1. MAIN GRID: Smartphone (Left) + Telemetry & Preset Scenario (Right) ════════ */}
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+
+                {/* ── LEFT COLUMN: Smartphone Simulator & Threat Toggle ── */}
+                <div className="xl:col-span-5 flex flex-col items-center space-y-6">
+
+                    {/* Threat Toggle Panel */}
+                    <div className="w-full max-w-[340px] bg-dark-950/80 border border-white/5 rounded-2xl p-4 space-y-3">
+                        <div className="text-[9px] font-black text-dark-500 uppercase tracking-widest">Simulator Sinyal Bahaya (Manual)</div>
+                        <label className="flex items-center justify-between cursor-pointer group">
+                            <span className="text-xs font-bold text-dark-300 group-hover:text-white transition-colors">
+                                Aktifkan AnyDesk (Screen Share)
+                            </span>
+                            <div className="relative">
+                                <input type="checkbox" checked={simulateAnyDesk}
+                                    onChange={e => { setSimulateAnyDesk(e.target.checked); setActivePreset(null); }}
+                                    className="sr-only peer" />
+                                <div className="w-9 h-5 bg-dark-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-dark-500 peer-checked:after:bg-status-error after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-status-error/20 border border-white/5" />
+                            </div>
+                        </label>
+                        <label className="flex items-center justify-between cursor-pointer group">
+                            <span className="text-xs font-bold text-dark-300 group-hover:text-white transition-colors">
+                                Simulasikan Perangkat Rooted
+                            </span>
+                            <div className="relative">
+                                <input type="checkbox" checked={simulateRoot}
+                                    onChange={e => { setSimulateRoot(e.target.checked); setActivePreset(null); }}
+                                    className="sr-only peer" />
+                                <div className="w-9 h-5 bg-dark-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-dark-500 peer-checked:after:bg-status-error after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-status-error/20 border border-white/5" />
+                            </div>
+                        </label>
                     </div>
-                    <span className="text-[8px] font-black px-2 py-0.5 rounded bg-neon-cyan/10 text-neon-cyan border border-neon-cyan/20 uppercase tracking-widest">
-                        Pilih Skenario
-                    </span>
+
+                    {/* Smartphone Body */}
+                    <div className="relative w-[320px] h-[640px] bg-[#0c0f1d] rounded-[3rem] border-4 border-dark-800 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col">
+                        {/* Camera notch */}
+                        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-dark-800 rounded-b-2xl z-50 flex items-center justify-center">
+                            <span className="w-3 h-3 bg-black rounded-full" />
+                        </div>
+
+                        {/* M-Banking Header */}
+                        <div className="bg-gradient-to-r from-blue-900 via-blue-950 to-blue-900 pt-9 pb-4 px-6 border-b border-white/5 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <div className="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center border border-white/10">
+                                    <Cpu className="w-3 h-3 text-neon-cyan" />
+                                </div>
+                                <span className="text-[10px] font-black text-white tracking-widest uppercase italic">Rakyat Digital</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                                <Wifi className="w-3.5 h-3.5 text-status-success" />
+                                <span className="text-[9px] font-mono text-white/50">LTE</span>
+                            </div>
+                        </div>
+
+                        {/* App Content */}
+                        <div className="flex-1 p-6 space-y-6 overflow-y-auto custom-scrollbar pt-4">
+                            <div className="text-center">
+                                <h3 className="text-xs font-black text-white uppercase tracking-widest">Layanan Transfer Dana</h3>
+                                <p className="text-[8px] text-dark-500 uppercase tracking-wider mt-0.5">Metode Instan Online</p>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div className="space-y-1">
+                                    <label className="text-[8px] font-black text-dark-400 uppercase tracking-widest">Rekening Tujuan</label>
+                                    <input type="text" placeholder="cth: 1029 3847 56"
+                                        value={formatRecipient(recipient)}
+                                        onKeyDown={handleKeyDown}
+                                        onKeyUp={handleKeyUp}
+                                        onChange={e => handleRecipientChange(e.target.value)}
+                                        disabled={isProcessing}
+                                        className="w-full bg-dark-950/60 border border-white/5 rounded-xl px-4 py-2.5 text-xs font-mono text-white placeholder-dark-600 focus:outline-none focus:border-neon-cyan/50" />
+                                </div>
+
+                                <div className="space-y-1">
+                                    <label className="text-[8px] font-black text-dark-400 uppercase tracking-widest">Nominal Transfer (Rp)</label>
+                                    <div className="relative">
+                                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-mono text-dark-500">Rp</span>
+                                        <input type="text" placeholder="150.000"
+                                            value={formatAmount(amount)}
+                                            onKeyDown={handleKeyDown}
+                                            onKeyUp={handleKeyUp}
+                                            onChange={e => handleAmountChange(e.target.value)}
+                                            disabled={isProcessing}
+                                            className="w-full bg-dark-950/60 border border-white/5 rounded-xl pl-9 pr-4 py-2.5 text-xs font-mono text-white placeholder-dark-600 focus:outline-none focus:border-neon-cyan/50" />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-1">
+                                    <label className="text-[8px] font-black text-dark-400 uppercase tracking-widest">PIN Transaksi (Biometrik Keyboard)</label>
+                                    <input type="password" placeholder="••••••" maxLength={6}
+                                        value={pin}
+                                        onKeyDown={handleKeyDown}
+                                        onKeyUp={handleKeyUp}
+                                        onChange={e => setPin(e.target.value.replace(/\D/g, ""))}
+                                        disabled={isProcessing}
+                                        className="w-full bg-dark-950/60 border border-white/5 rounded-xl px-4 py-2.5 text-xs font-mono text-center tracking-widest text-white placeholder-dark-600 focus:outline-none focus:border-neon-cyan/50" />
+                                    <p className="text-[7px] text-dark-600 font-mono text-center">SDK merekam ritme ketikan Anda pada seluruh form ini secara live.</p>
+                                </div>
+                            </div>
+
+                            <div className="pt-2">
+                                <button onClick={runTransferSimulation} disabled={isProcessing}
+                                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-neon-cyan hover:bg-neon-cyan/80 text-dark-950 text-[10px] font-black uppercase tracking-widest transition active:scale-95 disabled:opacity-40">
+                                    <Send className="w-3.5 h-3.5" /> Transfer Sekarang
+                                </button>
+                            </div>
+
+                            <div className="text-center">
+                                <button onClick={resetSDKSimulation}
+                                    className="text-[8px] font-bold text-dark-500 hover:text-white uppercase tracking-wider transition">
+                                    Reset Form
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Home bar */}
+                        <div className="h-10 bg-dark-950/40 flex items-center justify-center border-t border-white/5">
+                            <div className="w-24 h-1.5 bg-dark-700 rounded-full" />
+                        </div>
+                    </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {SDK_PRESETS.map(preset => (
-                        <button
-                            key={preset.id}
-                            onClick={() => applyPreset(preset)}
-                            disabled={isProcessing}
-                            className={`group p-4 rounded-2xl border text-left transition-all active:scale-[0.98] ${
-                                activePreset === preset.id
-                                    ? "border-neon-cyan/50 bg-neon-cyan/10 ring-1 ring-neon-cyan/30 shadow-lg shadow-neon-cyan/10"
-                                    : "border-white/5 bg-dark-950/40 hover:border-white/20 hover:bg-white/[0.03]"
-                            }`}
-                        >
-                            <div className="flex items-center gap-2 mb-2">
-                                <span className="text-lg">{preset.icon}</span>
-                                <span className="text-xs font-black text-white uppercase tracking-wider">{preset.name}</span>
-                                {activePreset === preset.id && (
-                                    <span className="ml-auto text-[8px] font-black px-2 py-0.5 rounded bg-neon-cyan text-dark-950 uppercase tracking-widest font-mono">Aktif</span>
-                                )}
+                {/* ── RIGHT COLUMN: Live Behavioral Telemetry & Preset Scenario ── */}
+                <div className="xl:col-span-7 space-y-6">
+                    {/* Live Behavioral Telemetry Display */}
+                    <div className="glass-panel rounded-[2rem] p-6 space-y-4">
+                        <div className="flex items-center gap-2">
+                            <BarChart3 className="w-4 h-4 text-neon-cyan" />
+                            <h3 className="text-xs font-black text-white uppercase tracking-wider">Live Behavioral Telemetry (Biometrik Ketikan)</h3>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                            <TelemetryBar label="Avg Dwell Time (Lama Ketik Key)" value={telemetryDisplay.avgDwell} max={500} unit="ms" color="bg-neon-cyan" />
+                            <TelemetryBar label="Avg Flight Time (Jeda Antar Key)" value={telemetryDisplay.avgFlight} max={1000} unit="ms" color="bg-primary-blue" />
+                            <TelemetryBar label="Hesitation Score (Keraguan Nasabah)" value={telemetryDisplay.hesitation} max={100} unit="%" color="bg-status-warning" />
+                            <TelemetryBar label="Typing Consistency (Konsistensi Ritme)" value={telemetryDisplay.consistency} max={100} unit="%" color="bg-hyper-violet" />
+                        </div>
+                    </div>
+
+                    {/* PRESET SKENARIO SIMULASI (Mengisi Kekosongan Kolom Kanan) */}
+                    <div className="glass-panel rounded-[2rem] p-6 space-y-4">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <Zap className="w-4 h-4 text-neon-cyan" />
+                                <h3 className="text-xs font-black text-white uppercase tracking-wider">Preset Skenario Transaksi (Profil Ancaman)</h3>
                             </div>
-                            <p className="text-[10px] text-dark-400 leading-relaxed">{preset.description}</p>
-                            <div className="mt-3 grid grid-cols-2 gap-2 text-[9px] font-mono">
-                                <div className="text-dark-500">Dwell: <span className="text-white font-bold">{preset.telemetry.avgDwellMs}ms</span></div>
-                                <div className="text-dark-500">Flight: <span className="text-white font-bold">{preset.telemetry.avgFlightMs}ms</span></div>
-                                <div className="text-dark-500">Hesitasi: <span className="text-white font-bold">{preset.telemetry.hesitationScore}%</span></div>
-                                <div className="text-dark-500">Konsistensi: <span className="text-white font-bold">{preset.telemetry.typingConsistency}%</span></div>
-                            </div>
-                        </button>
-                    ))}
+                            <span className="text-[8px] font-black px-2 py-0.5 rounded bg-neon-cyan/10 text-neon-cyan border border-neon-cyan/20 uppercase tracking-widest">
+                                Pilih Skenario
+                            </span>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-3">
+                            {SDK_PRESETS.map(preset => (
+                                <button
+                                    key={preset.id}
+                                    onClick={() => applyPreset(preset)}
+                                    disabled={isProcessing}
+                                    className={`group p-4 rounded-2xl border text-left transition-all active:scale-[0.98] ${
+                                        activePreset === preset.id
+                                            ? "border-neon-cyan/50 bg-neon-cyan/10 ring-1 ring-neon-cyan/30 shadow-lg shadow-neon-cyan/10"
+                                            : "border-white/5 bg-dark-950/40 hover:border-white/20 hover:bg-white/[0.03]"
+                                    }`}
+                                >
+                                    <div className="flex items-center gap-2 mb-1.5">
+                                        <span className="text-lg">{preset.icon}</span>
+                                        <span className="text-xs font-black text-white uppercase tracking-wider">{preset.name}</span>
+                                        {activePreset === preset.id && (
+                                            <span className="ml-auto text-[8px] font-black px-2 py-0.5 rounded bg-neon-cyan text-dark-950 uppercase tracking-widest font-mono">Aktif</span>
+                                        )}
+                                    </div>
+                                    <p className="text-[10px] text-dark-400 leading-relaxed">{preset.description}</p>
+                                    <div className="mt-3 grid grid-cols-4 gap-2 text-[9px] font-mono">
+                                        <div className="text-dark-500">Dwell: <span className="text-white font-bold">{preset.telemetry.avgDwellMs}ms</span></div>
+                                        <div className="text-dark-500">Flight: <span className="text-white font-bold">{preset.telemetry.avgFlightMs}ms</span></div>
+                                        <div className="text-dark-500">Hesitasi: <span className="text-white font-bold">{preset.telemetry.hesitationScore}%</span></div>
+                                        <div className="text-dark-500">Konsistensi: <span className="text-white font-bold">{preset.telemetry.typingConsistency}%</span></div>
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
                 </div>
+
             </div>
 
-            {/* ════════ 1. TABS CONSOLE, TOKEN INSPECTOR, INTEGRASI DEVELOPER (TOP FULL WIDTH) ════════ */}
-            <div className="space-y-4">
+            {/* ════════ 2. TABS CONSOLE, TOKEN INSPECTOR, INTEGRASI DEVELOPER (BOTTOM FULL WIDTH) ════════ */}
+            <div className="space-y-4 pt-4">
                 {/* Tab Switcher */}
                 <div className="flex items-center gap-1 bg-dark-950/60 rounded-2xl p-1 border border-white/5">
                     {[
@@ -463,147 +604,6 @@ export default function SimulasiSDKPage() {
                         </div>
                     </div>
                 )}
-            </div>
-
-            {/* ════════ MAIN GRID: Left (Preset & Phone) + Right (Console Tabs & Telemetry) ════════ */}
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
-
-                {/* ── LEFT COLUMN: Preset Scenario + Smartphone Simulator ── */}
-                <div className="xl:col-span-5 flex flex-col items-center space-y-6">
-
-                    {/* Threat Toggle Panel */}
-                    <div className="w-full max-w-[340px] bg-dark-950/80 border border-white/5 rounded-2xl p-4 space-y-3">
-                        <div className="text-[9px] font-black text-dark-500 uppercase tracking-widest">Simulator Sinyal Bahaya (Manual)</div>
-                        <label className="flex items-center justify-between cursor-pointer group">
-                            <span className="text-xs font-bold text-dark-300 group-hover:text-white transition-colors">
-                                Aktifkan AnyDesk (Screen Share)
-                            </span>
-                            <div className="relative">
-                                <input type="checkbox" checked={simulateAnyDesk}
-                                    onChange={e => { setSimulateAnyDesk(e.target.checked); setActivePreset(null); }}
-                                    className="sr-only peer" />
-                                <div className="w-9 h-5 bg-dark-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-dark-500 peer-checked:after:bg-status-error after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-status-error/20 border border-white/5" />
-                            </div>
-                        </label>
-                        <label className="flex items-center justify-between cursor-pointer group">
-                            <span className="text-xs font-bold text-dark-300 group-hover:text-white transition-colors">
-                                Simulasikan Perangkat Rooted
-                            </span>
-                            <div className="relative">
-                                <input type="checkbox" checked={simulateRoot}
-                                    onChange={e => { setSimulateRoot(e.target.checked); setActivePreset(null); }}
-                                    className="sr-only peer" />
-                                <div className="w-9 h-5 bg-dark-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-dark-500 peer-checked:after:bg-status-error after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-status-error/20 border border-white/5" />
-                            </div>
-                        </label>
-                    </div>
-
-                    {/* Smartphone Body */}
-                    <div className="relative w-[320px] h-[640px] bg-[#0c0f1d] rounded-[3rem] border-4 border-dark-800 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col">
-                        {/* Camera notch */}
-                        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-dark-800 rounded-b-2xl z-50 flex items-center justify-center">
-                            <span className="w-3 h-3 bg-black rounded-full" />
-                        </div>
-
-                        {/* M-Banking Header */}
-                        <div className="bg-gradient-to-r from-blue-900 via-blue-950 to-blue-900 pt-9 pb-4 px-6 border-b border-white/5 flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <div className="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center border border-white/10">
-                                    <Cpu className="w-3 h-3 text-neon-cyan" />
-                                </div>
-                                <span className="text-[10px] font-black text-white tracking-widest uppercase italic">Rakyat Digital</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                                <Wifi className="w-3.5 h-3.5 text-status-success" />
-                                <span className="text-[9px] font-mono text-white/50">LTE</span>
-                            </div>
-                        </div>
-
-                        {/* App Content */}
-                        <div className="flex-1 p-6 space-y-6 overflow-y-auto custom-scrollbar pt-4">
-                            <div className="text-center">
-                                <h3 className="text-xs font-black text-white uppercase tracking-widest">Layanan Transfer Dana</h3>
-                                <p className="text-[8px] text-dark-500 uppercase tracking-wider mt-0.5">Metode Instan Online</p>
-                            </div>
-
-                            <div className="space-y-4">
-                                <div className="space-y-1">
-                                    <label className="text-[8px] font-black text-dark-400 uppercase tracking-widest">Rekening Tujuan</label>
-                                    <input type="text" placeholder="cth: 1029 3847 56"
-                                        value={formatRecipient(recipient)}
-                                        onKeyDown={handleKeyDown}
-                                        onKeyUp={handleKeyUp}
-                                        onChange={e => handleRecipientChange(e.target.value)}
-                                        disabled={isProcessing}
-                                        className="w-full bg-dark-950/60 border border-white/5 rounded-xl px-4 py-2.5 text-xs font-mono text-white placeholder-dark-600 focus:outline-none focus:border-neon-cyan/50" />
-                                </div>
-
-                                <div className="space-y-1">
-                                    <label className="text-[8px] font-black text-dark-400 uppercase tracking-widest">Nominal Transfer (Rp)</label>
-                                    <div className="relative">
-                                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-mono text-dark-500">Rp</span>
-                                        <input type="text" placeholder="150.000"
-                                            value={formatAmount(amount)}
-                                            onKeyDown={handleKeyDown}
-                                            onKeyUp={handleKeyUp}
-                                            onChange={e => handleAmountChange(e.target.value)}
-                                            disabled={isProcessing}
-                                            className="w-full bg-dark-950/60 border border-white/5 rounded-xl pl-9 pr-4 py-2.5 text-xs font-mono text-white placeholder-dark-600 focus:outline-none focus:border-neon-cyan/50" />
-                                    </div>
-                                </div>
-
-                                <div className="space-y-1">
-                                    <label className="text-[8px] font-black text-dark-400 uppercase tracking-widest">PIN Transaksi (Biometrik Keyboard)</label>
-                                    <input type="password" placeholder="••••••" maxLength={6}
-                                        value={pin}
-                                        onKeyDown={handleKeyDown}
-                                        onKeyUp={handleKeyUp}
-                                        onChange={e => setPin(e.target.value.replace(/\D/g, ""))}
-                                        disabled={isProcessing}
-                                        className="w-full bg-dark-950/60 border border-white/5 rounded-xl px-4 py-2.5 text-xs font-mono text-center tracking-widest text-white placeholder-dark-600 focus:outline-none focus:border-neon-cyan/50" />
-                                    <p className="text-[7px] text-dark-600 font-mono text-center">SDK merekam ritme ketikan Anda pada seluruh form ini secara live.</p>
-                                </div>
-                            </div>
-
-                            <div className="pt-2">
-                                <button onClick={runTransferSimulation} disabled={isProcessing}
-                                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-neon-cyan hover:bg-neon-cyan/80 text-dark-950 text-[10px] font-black uppercase tracking-widest transition active:scale-95 disabled:opacity-40">
-                                    <Send className="w-3.5 h-3.5" /> Transfer Sekarang
-                                </button>
-                            </div>
-
-                            <div className="text-center">
-                                <button onClick={resetSDKSimulation}
-                                    className="text-[8px] font-bold text-dark-500 hover:text-white uppercase tracking-wider transition">
-                                    Reset Form
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Home bar */}
-                        <div className="h-10 bg-dark-950/40 flex items-center justify-center border-t border-white/5">
-                            <div className="w-24 h-1.5 bg-dark-700 rounded-full" />
-                        </div>
-                    </div>
-                </div>
-
-                {/* ── RIGHT COLUMN: Live Behavioral Telemetry ── */}
-                <div className="xl:col-span-7 space-y-6">
-                    {/* Live Behavioral Telemetry Display */}
-                    <div className="glass-panel rounded-[2rem] p-6 space-y-4">
-                        <div className="flex items-center gap-2">
-                            <BarChart3 className="w-4 h-4 text-neon-cyan" />
-                            <h3 className="text-xs font-black text-white uppercase tracking-wider">Live Behavioral Telemetry (Biometrik Ketikan)</h3>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                            <TelemetryBar label="Avg Dwell Time (Lama Ketik Key)" value={telemetryDisplay.avgDwell} max={500} unit="ms" color="bg-neon-cyan" />
-                            <TelemetryBar label="Avg Flight Time (Jeda Antar Key)" value={telemetryDisplay.avgFlight} max={1000} unit="ms" color="bg-primary-blue" />
-                            <TelemetryBar label="Hesitation Score (Keraguan Nasabah)" value={telemetryDisplay.hesitation} max={100} unit="%" color="bg-status-warning" />
-                            <TelemetryBar label="Typing Consistency (Konsistensi Ritme)" value={telemetryDisplay.consistency} max={100} unit="%" color="bg-hyper-violet" />
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
     );
