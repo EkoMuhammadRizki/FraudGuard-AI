@@ -176,7 +176,7 @@ export default function UnifiedAuthCard({ initialMode = "login" }: UnifiedAuthCa
     const isReset = mode === "reset";
 
     return (
-        <div className="w-full max-w-4xl bg-dark-900/95 border border-white/10 rounded-[2.5rem] shadow-[0_25px_80px_rgba(0,0,0,0.85)] backdrop-blur-2xl overflow-hidden relative min-h-[620px]">
+        <div className="w-full max-w-4xl bg-dark-900/95 border border-white/10 rounded-[2rem] md:rounded-[2.5rem] shadow-[0_25px_80px_rgba(0,0,0,0.85)] backdrop-blur-2xl overflow-hidden relative min-h-0 md:min-h-[620px]">
             
             {/* Tombol Kembalikan ke Beranda Landing */}
             <Link 
@@ -188,18 +188,18 @@ export default function UnifiedAuthCard({ initialMode = "login" }: UnifiedAuthCa
             </Link>
 
             {/* ════════════════════════════════════════════════════════════════════
-               SLIDING CURVED OVERLAY PANEL (Meluncur Kiri <-> Kanan)
+               SLIDING CURVED OVERLAY PANEL (Tampil Hanya di Desktop - md:flex)
             ════════════════════════════════════════════════════════════════════ */}
             <div
                 className={`
-                    w-full md:w-1/2 min-h-[300px] md:min-h-[620px]
+                    hidden md:flex w-1/2 min-h-[620px]
                     absolute top-0 bottom-0 z-30
                     bg-gradient-to-br from-[#0B132B] via-[#1C2541] to-[#2563EB]
-                    p-8 md:p-12 text-white flex flex-col items-center justify-center text-center
+                    p-8 md:p-12 text-white flex-col items-center justify-center text-center
                     overflow-hidden transition-all duration-700 cubic-bezier(0.65, 0, 0.35, 1)
                     ${isLogin || isReset 
-                        ? "left-0 md:translate-x-0 md:rounded-r-[6rem] md:rounded-l-none rounded-b-[3rem] border-r border-white/10" 
-                        : "left-0 md:translate-x-full md:rounded-l-[6rem] md:rounded-r-none rounded-b-[3rem] border-l border-white/10"
+                        ? "left-0 translate-x-0 rounded-r-[6rem] rounded-l-none border-r border-white/10" 
+                        : "left-0 translate-x-full rounded-l-[6rem] rounded-r-none border-l border-white/10"
                     }
                 `}
             >
@@ -295,20 +295,23 @@ export default function UnifiedAuthCard({ initialMode = "login" }: UnifiedAuthCa
             {/* ════════════════════════════════════════════════════════════════════
                BACKGROUND FORMS CONTAINER (REGISTER DI KIRI, LOGIN/RESET DI KANAN)
             ════════════════════════════════════════════════════════════════════ */}
-            <div className="w-full flex flex-col md:flex-row min-h-[620px] relative">
+            <div className="w-full flex flex-col md:flex-row min-h-0 md:min-h-[620px] relative">
 
                 {/* ─── REGISTER FORM (Berada di Sisi Kiri) ─── */}
                 <div 
                     className={`
-                        w-full md:w-1/2 p-8 md:p-12 bg-dark-950/90 flex flex-col justify-center
+                        w-full md:w-1/2 p-6 pt-14 md:p-12 bg-dark-950/90 flex-col justify-center
                         transition-all duration-700 ease-in-out
-                        ${isRegister ? "opacity-100 translate-x-0" : "opacity-30 pointer-events-none translate-x-[-20px]"}
+                        ${isRegister 
+                            ? "flex opacity-100 translate-x-0" 
+                            : "hidden md:flex md:opacity-30 md:pointer-events-none md:-translate-x-5"
+                        }
                     `}
                 >
-                    <div className="max-w-sm mx-auto w-full space-y-5 pt-8 md:pt-0">
+                    <div className="max-w-sm mx-auto w-full space-y-5">
                         <div className="text-center md:text-left space-y-1">
                             <div className="flex items-center gap-2 justify-center md:justify-start">
-                                <h2 className="text-3xl font-black text-white uppercase tracking-wider">Registration</h2>
+                                <h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-wider">Registration</h2>
                                 <span className="px-2 py-0.5 rounded bg-neon-cyan/10 border border-neon-cyan/30 text-neon-cyan text-[10px] font-mono font-bold uppercase">New Account</span>
                             </div>
                             <p className="text-xs text-dark-400 font-medium">Buat akun baru untuk akses FraudGuard AI</p>
@@ -378,6 +381,24 @@ export default function UnifiedAuthCard({ initialMode = "login" }: UnifiedAuthCa
                                 <span>{loading ? "Registering..." : "Register"}</span>
                             </button>
                         </form>
+
+                        {/* Toggle ke Login (Khusus Tampilan Mobile) */}
+                        <div className="md:hidden text-center pt-4 border-t border-white/10">
+                            <p className="text-xs text-dark-300 font-medium">
+                                Sudah punya akun?{" "}
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setMode("login");
+                                        setErrorMessage("");
+                                        setSuccessMessage("");
+                                    }}
+                                    className="text-neon-cyan font-bold hover:underline cursor-pointer ml-1"
+                                >
+                                    Masuk (Login)
+                                </button>
+                            </p>
+                        </div>
                     </div>
                 </div>
 
@@ -385,18 +406,21 @@ export default function UnifiedAuthCard({ initialMode = "login" }: UnifiedAuthCa
                 {/* ─── LOGIN / RESET FORM (Berada di Sisi Kanan) ─── */}
                 <div 
                     className={`
-                        w-full md:w-1/2 p-8 md:p-12 bg-dark-950/90 flex flex-col justify-center
+                        w-full md:w-1/2 p-6 pt-14 md:p-12 bg-dark-950/90 flex-col justify-center
                         transition-all duration-700 ease-in-out
-                        ${isLogin || isReset ? "opacity-100 translate-x-0" : "opacity-30 pointer-events-none translate-x-[20px]"}
+                        ${isLogin || isReset 
+                            ? "flex opacity-100 translate-x-0" 
+                            : "hidden md:flex md:opacity-30 md:pointer-events-none md:translate-x-5"
+                        }
                     `}
                 >
-                    <div className="max-w-sm mx-auto w-full space-y-5 pt-8 md:pt-0">
+                    <div className="max-w-sm mx-auto w-full space-y-5">
                         
                         {/* HEADER LOGIN / RESET */}
                         {isReset ? (
                             <div className="text-center md:text-left space-y-1 animate-fade-in">
                                 <div className="flex items-center gap-2 justify-center md:justify-start">
-                                    <h2 className="text-3xl font-black text-white uppercase tracking-wider">Reset Password</h2>
+                                    <h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-wider">Reset Password</h2>
                                     <span className="px-2 py-0.5 rounded bg-amber-400/10 border border-amber-400/30 text-amber-400 text-[10px] font-mono font-bold uppercase">Recovery</span>
                                 </div>
                                 <p className="text-xs text-dark-400 font-medium">Setel ulang kata sandi akses akun FraudGuard Anda</p>
@@ -404,7 +428,7 @@ export default function UnifiedAuthCard({ initialMode = "login" }: UnifiedAuthCa
                         ) : (
                             <div className="text-center md:text-left space-y-1 animate-fade-in">
                                 <div className="flex items-center gap-2 justify-center md:justify-start">
-                                    <h2 className="text-3xl font-black text-white uppercase tracking-wider">Login</h2>
+                                    <h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-wider">Login</h2>
                                     <span className="px-2 py-0.5 rounded bg-neon-cyan/10 border border-neon-cyan/30 text-neon-cyan text-[10px] font-mono font-bold uppercase">v2.0</span>
                                 </div>
                                 <p className="text-xs text-dark-400 font-medium">Masuk ke sistem deteksi FraudGuard AI</p>
@@ -499,7 +523,7 @@ export default function UnifiedAuthCard({ initialMode = "login" }: UnifiedAuthCa
                                             setErrorMessage("");
                                             setSuccessMessage("");
                                         }}
-                                        className="text-xs font-medium text-dark-400 hover:text-white transition-colors underline underline-offset-4"
+                                        className="text-xs font-medium text-dark-400 hover:text-white transition-colors underline underline-offset-4 cursor-pointer"
                                     >
                                         Ingat Password Anda? Kembali ke Login
                                     </button>
@@ -547,7 +571,7 @@ export default function UnifiedAuthCard({ initialMode = "login" }: UnifiedAuthCa
                                             setErrorMessage("");
                                             setSuccessMessage("");
                                         }}
-                                        className="text-xs font-medium text-dark-400 hover:text-neon-cyan transition-colors"
+                                        className="text-xs font-medium text-dark-400 hover:text-neon-cyan transition-colors cursor-pointer"
                                     >
                                         Forgot password?
                                     </button>
@@ -563,6 +587,26 @@ export default function UnifiedAuthCard({ initialMode = "login" }: UnifiedAuthCa
                             </form>
                         )}
 
+                        {/* Toggle ke Register (Khusus Tampilan Mobile) */}
+                        {isLogin && (
+                            <div className="md:hidden text-center pt-4 border-t border-white/10">
+                                <p className="text-xs text-dark-300 font-medium">
+                                    Belum memiliki akun?{" "}
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setMode("register");
+                                            setErrorMessage("");
+                                            setSuccessMessage("");
+                                        }}
+                                        className="text-neon-cyan font-bold hover:underline cursor-pointer ml-1"
+                                    >
+                                        Daftar Akun Baru
+                                    </button>
+                                </p>
+                            </div>
+                        )}
+
                     </div>
                 </div>
 
@@ -571,3 +615,4 @@ export default function UnifiedAuthCard({ initialMode = "login" }: UnifiedAuthCa
         </div>
     );
 }
+
