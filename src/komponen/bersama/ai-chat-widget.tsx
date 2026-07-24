@@ -116,20 +116,34 @@ export default function AiChatWidget() {
         return () => window.removeEventListener("open-remi-chat", handleOpenRemi as EventListener);
     }, []);
 
-    // ── Formatter Teks Markdown (Tebal / Bold & Sanitasi Bullet) ──
-    const formatText = (text: string) => {
-        // Sanitasi dari double bullet seperti ". .", "• .", atau "- ."
-        const cleanText = text.replace(/^[\s\.\•\-]+/, "").trim();
-        const parts = cleanText.split(/(\*\*.*?\*\*)/g);
-        return parts.map((part, index) => {
-            if (part.startsWith("**") && part.endsWith("**")) {
+    // ── Formatter Teks Markdown Lanjutan (Header, Tabel, List, Tebal, Miring) ──
+    const formatLineContent = (text: string) => {
+        const clean = text.replace(/^[\s\.\•\-]+/, "").trim();
+        // Split bold (**), italic (*), code (`), and table pipes (|)
+        const tokens = clean.split(/(\*\*.*?\*\*|\*.*?\*|`.*?`)/g);
+        return tokens.map((tok, i) => {
+            if (tok.startsWith("**") && tok.endsWith("**") && tok.length > 4) {
                 return (
-                    <strong key={index} className="font-extrabold text-neon-cyan drop-shadow-sm">
-                        {part.slice(2, -2)}
+                    <strong key={i} className="font-extrabold text-neon-cyan drop-shadow-sm">
+                        {tok.slice(2, -2)}
                     </strong>
                 );
             }
-            return part;
+            if (tok.startsWith("*") && tok.endsWith("*") && tok.length > 2) {
+                return (
+                    <em key={i} className="italic text-dark-200">
+                        {tok.slice(1, -1)}
+                    </em>
+                );
+            }
+            if (tok.startsWith("`") && tok.endsWith("`") && tok.length > 2) {
+                return (
+                    <code key={i} className="px-1.5 py-0.5 rounded bg-dark-950 text-neon-cyan font-mono text-[10px] border border-white/10">
+                        {tok.slice(1, -1)}
+                    </code>
+                );
+            }
+            return tok;
         });
     };
 
@@ -355,24 +369,52 @@ export default function AiChatWidget() {
                                                         : "bg-dark-900 border border-white/10 text-dark-200 rounded-tl-none"
                                                 }`}
                                             >
-                                                {/* Text rendering dengan typography natural ala ChatGPT / Claude */}
+                                                {/* Text rendering dengan typography natural ala ChatGPT / Claude + Markdown Tables */}
                                                 <div className="space-y-2 font-sans leading-relaxed text-xs text-dark-100">
                                                     {msg.text.split("\n").map((line, i) => {
-                                                        if (!line.trim()) return <div key={i} className="h-1.5" />;
+                                                        const trimmed = line.trim();
+                                                        if (!trimmed) return <div key={i} className="h-1.5" />;
                                                         
-                                                        // Render list bullet yang sangat halus dan rapi
-                                                        if (line.trim().startsWith("•") || line.trim().startsWith("-") || /^[\.\-•]\s*/.test(line.trim()) || /^[0-9]+\./.test(line.trim())) {
+                                                        // Render Markdown Header (### / ## / #)
+                                                        if (trimmed.startsWith("#")) {
+                                                            const headerText = trimmed.replace(/^#+\s*/, "");
+                                                            return (
+                                                                <h4 key={i} className="text-xs font-black text-white uppercase tracking-wider mt-2 mb-1 border-b border-white/10 pb-1">
+                                                                    {formatLineContent(headerText)}
+                                                                </h4>
+                                                            );
+                                                        }
+
+                                                        // Render Markdown Table Row (| Col 1 | Col 2 |)
+                                                        if (trimmed.startsWith("|") && trimmed.endsWith("|")) {
+                                                            const cells = trimmed.split("|").map(c => c.trim()).filter(Boolean);
+                                                            const isSeparator = cells.every(c => /^:?-+:?$/.test(c));
+                                                            if (isSeparator) return null; // skip separator row
+
+                                                            return (
+                                                                <div key={i} className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-2 bg-dark-950/70 rounded-lg border border-white/5 font-mono text-[10px] my-1">
+                                                                    {cells.map((cell, cIdx) => (
+                                                                        <div key={cIdx} className="break-words text-dark-200">
+                                                                            {formatLineContent(cell)}
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            );
+                                                        }
+
+                                                        // Render list bullet
+                                                        if (trimmed.startsWith("•") || trimmed.startsWith("-") || /^[\.\-•]\s*/.test(trimmed) || /^[0-9]+\./.test(trimmed)) {
                                                             return (
                                                                 <div key={i} className="flex items-start gap-2 pl-1 my-1">
                                                                     <span className="text-neon-cyan font-bold text-xs mt-0.5">•</span>
-                                                                    <span className="text-dark-200">{formatText(line)}</span>
+                                                                    <span className="text-dark-200">{formatLineContent(trimmed)}</span>
                                                                 </div>
                                                             );
                                                         }
 
                                                         return (
                                                             <p key={i} className="text-dark-100">
-                                                                {formatText(line)}
+                                                                {formatLineContent(trimmed)}
                                                             </p>
                                                         );
                                                     })}
@@ -486,14 +528,7 @@ export default function AiChatWidget() {
                                             <span>Memproses Permintaan...</span>
                                         </>
                                     ) : (
-                                        <span>
-                                            {selectedModel === "local" ? "Analisis Risiko Fraud dengan REMI AI" :
-                                             selectedModel === "gemini_36_flash" ? "Tanya Gemini 3.6 Flash" :
-                                             selectedModel === "gemini_25_pro" ? "Tanya Gemini 2.5 Pro" :
-                                             selectedModel === "gemini_25_flash" ? "Tanya Gemini 2.5 Flash" :
-                                             selectedModel === "groq" ? "Tanya Groq Llama 3.3 70B" :
-                                             "Kirim Pesan (Enter)"}
-                                        </span>
+                                        <span>TANYA REMI AI</span>
                                     )}
                                 </button>
                             </form>
