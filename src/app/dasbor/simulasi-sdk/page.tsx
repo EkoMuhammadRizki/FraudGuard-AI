@@ -76,9 +76,11 @@ export default function SimulasiSDKPage() {
         sdkRef.current = sdk;
     }, [addLog]);
 
-    // Auto-scroll logs
+    // Auto-scroll logs only within the console log container
     useEffect(() => {
-        logEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        if (logEndRef.current && logEndRef.current.parentElement) {
+            logEndRef.current.parentElement.scrollTop = logEndRef.current.parentElement.scrollHeight;
+        }
     }, [logs]);
 
     // ── Update JWT token display whenever inputs change ──
@@ -416,8 +418,8 @@ export default function SimulasiSDKPage() {
                                             : "border-white/5 bg-dark-950/40 hover:border-white/20 hover:bg-white/[0.03]"
                                     }`}
                                 >
-                                    <div className="flex items-center gap-2 mb-1.5">
-                                        <span className="text-lg">{preset.icon}</span>
+                                    <div className="flex items-center gap-2.5 mb-1.5">
+                                        <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: preset.color }} />
                                         <span className="text-xs font-black text-white uppercase tracking-wider">{preset.name}</span>
                                         {activePreset === preset.id && (
                                             <span className="ml-auto text-[8px] font-black px-2 py-0.5 rounded bg-neon-cyan text-dark-950 uppercase tracking-widest font-mono">Aktif</span>

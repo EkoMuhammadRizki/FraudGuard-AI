@@ -132,7 +132,7 @@ export const SDK_PRESETS: PresetScenario[] = [
         name: "Nasabah Normal",
         description: "Transfer rutin dengan pola ketikan wajar, perangkat aman, dan histori transaksi stabil.",
         color: "#10B981",
-        icon: "🟢",
+        icon: "",
         telemetry: {
             avgDwellMs: 95,
             avgFlightMs: 120,
@@ -156,7 +156,7 @@ export const SDK_PRESETS: PresetScenario[] = [
         name: "Social Engineering",
         description: "Nasabah dipandu penipu via telepon. Ketikan sangat lambat, ragu-ragu, dan mengoreksi input berulang kali.",
         color: "#F59E0B",
-        icon: "🟡",
+        icon: "",
         telemetry: {
             avgDwellMs: 380,
             avgFlightMs: 950,
@@ -180,7 +180,7 @@ export const SDK_PRESETS: PresetScenario[] = [
         name: "Bot / Remote Access",
         description: "Perangkat dikuasai penuh oleh malware atau remote access (AnyDesk). Ketikan ultra-cepat, tekanan sentuh konstan, gyroscope flat.",
         color: "#EF4444",
-        icon: "🔴",
+        icon: "",
         telemetry: {
             avgDwellMs: 2,
             avgFlightMs: 1,
