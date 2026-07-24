@@ -398,7 +398,7 @@ export default function SimulasiSDKPage() {
                     <div className="glass-panel rounded-[2rem] p-6 space-y-4">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                                <Zap className="w-4 h-4 text-neon-cyan" />
+                                <span className="w-2 h-2 rounded-full bg-neon-cyan inline-block" />
                                 <h3 className="text-xs font-black text-white uppercase tracking-wider">Preset Skenario Transaksi (Profil Ancaman)</h3>
                             </div>
                             <span className="text-[8px] font-black px-2 py-0.5 rounded bg-neon-cyan/10 text-neon-cyan border border-neon-cyan/20 uppercase tracking-widest">
