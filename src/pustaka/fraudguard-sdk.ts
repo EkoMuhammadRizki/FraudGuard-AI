@@ -651,6 +651,8 @@ export class FraudGuardSDK {
                 body: JSON.stringify(apiPayload),
             });
 
+            const data = await res.json();
+
             const rawScore = typeof data.risk_score === "number" ? data.risk_score : parseFloat(data.risk_score || "0");
             const riskScorePct = rawScore <= 1.0 ? rawScore * 100 : rawScore;
 
