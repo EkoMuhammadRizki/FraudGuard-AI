@@ -356,11 +356,11 @@ export default function SimulasiSDKPage() {
                                     <div key={i} className="flex items-start gap-2 leading-relaxed">
                                         <span className="text-dark-600 shrink-0">[{lg.time}]</span>
                                         <span className={`shrink-0 font-bold ${
-                                            lg.type === "error" ? "text-status-error" :
-                                            lg.type === "warning" ? "text-amber-warning" :
-                                            lg.type === "success" ? "text-status-success" :
+                                            (lg.type as string) === "error" || (lg.type as string) === "ERROR" ? "text-status-error" :
+                                            (lg.type as string) === "warning" || (lg.type as string) === "WARN" ? "text-amber-warning" :
+                                            (lg.type as string) === "success" || (lg.type as string) === "SUCCESS" ? "text-status-success" :
                                             "text-neon-cyan"
-                                        }`}>[{lg.type.toUpperCase()}]</span>
+                                        }`}>[{String(lg.type).toUpperCase()}]</span>
                                         <span className="text-dark-200">{lg.message}</span>
                                     </div>
                                 ))}
