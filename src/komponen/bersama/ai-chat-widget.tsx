@@ -116,9 +116,11 @@ export default function AiChatWidget() {
         return () => window.removeEventListener("open-remi-chat", handleOpenRemi as EventListener);
     }, []);
 
-    // ── Formatter Teks Markdown (Tebal / Bold) ──
+    // ── Formatter Teks Markdown (Tebal / Bold & Sanitasi Bullet) ──
     const formatText = (text: string) => {
-        const parts = text.split(/(\*\*.*?\*\*)/g);
+        // Sanitasi dari double bullet seperti ". .", "• .", atau "- ."
+        const cleanText = text.replace(/^[\s\.\•\-]+/, "").trim();
+        const parts = cleanText.split(/(\*\*.*?\*\*)/g);
         return parts.map((part, index) => {
             if (part.startsWith("**") && part.endsWith("**")) {
                 return (
@@ -354,11 +356,11 @@ export default function AiChatWidget() {
                                                         if (!line.trim()) return <div key={i} className="h-1.5" />;
                                                         
                                                         // Render list bullet yang sangat halus dan rapi
-                                                        if (line.trim().startsWith("•") || line.trim().startsWith("-") || /^[0-9]+\./.test(line.trim())) {
+                                                        if (line.trim().startsWith("•") || line.trim().startsWith("-") || /^[\.\-•]\s*/.test(line.trim()) || /^[0-9]+\./.test(line.trim())) {
                                                             return (
                                                                 <div key={i} className="flex items-start gap-2 pl-1 my-1">
                                                                     <span className="text-neon-cyan font-bold text-xs mt-0.5">•</span>
-                                                                    <span className="text-dark-200">{formatText(line.replace(/^[•\-\d+\.]\s*/, ""))}</span>
+                                                                    <span className="text-dark-200">{formatText(line)}</span>
                                                                 </div>
                                                             );
                                                         }
