@@ -313,27 +313,29 @@ export default function SimulasiSDKPage() {
                         {/* ML Evaluation Result Alert Box */}
                         {mlResult && (
                             <div className={`glass-panel p-5 rounded-2xl border ${
-                                mlResult.blockTransaction ? "border-status-error/40 bg-status-error/5" : "border-status-success/40 bg-status-success/5"
+                                mlResult.finalDecision === "BLOCKED" ? "border-status-error/40 bg-status-error/5" : "border-status-success/40 bg-status-success/5"
                             }`}>
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="flex items-center gap-3">
                                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${
-                                            mlResult.blockTransaction ? "bg-status-error/20 border-status-error/40 text-status-error" : "bg-status-success/20 border-status-success/40 text-status-success"
+                                            mlResult.finalDecision === "BLOCKED" ? "bg-status-error/20 border-status-error/40 text-status-error" : "bg-status-success/20 border-status-success/40 text-status-success"
                                         }`}>
-                                            {mlResult.blockTransaction ? <ShieldAlert className="w-5 h-5" /> : <ShieldCheck className="w-5 h-5" />}
+                                            {mlResult.finalDecision === "BLOCKED" ? <ShieldAlert className="w-5 h-5" /> : <ShieldCheck className="w-5 h-5" />}
                                         </div>
                                         <div>
                                             <div className="flex items-center gap-2">
                                                 <span className={`text-xs font-black uppercase tracking-wider ${
-                                                    mlResult.blockTransaction ? "text-status-error" : "text-status-success"
+                                                    mlResult.finalDecision === "BLOCKED" ? "text-status-error" : "text-status-success"
                                                 }`}>
-                                                    {mlResult.recommendation}
+                                                    {mlResult.finalDecision === "BLOCKED" ? "DIBLOKIR SEMENTARA" : "TRANSAKSI DISETUJUI"}
                                                 </span>
                                                 <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-white/10 text-white border border-white/10">
                                                     Score: {(mlResult.riskScore * 100).toFixed(1)}%
                                                 </span>
                                             </div>
-                                            <p className="text-[10px] text-dark-300 mt-1 leading-relaxed">{mlResult.reasoning}</p>
+                                            <p className="text-[10px] text-dark-300 mt-1 leading-relaxed">
+                                                Ancaman: <strong className="text-white">{mlResult.fraudType}</strong> • Evaluasi FDS Engine selesai dalam {mlResult.processingTimeMs}ms
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -408,9 +410,9 @@ export default function SimulasiSDKPage() {
                         </div>
                         <div className="relative">
                             <pre className="h-56 overflow-y-auto font-mono text-[10px] text-white/90 bg-dark-950 p-3 rounded-xl border border-white/5 custom-scrollbar leading-relaxed">
-                                {SDK_CODE_SNIPPETS[devPlatform]}
+                                {SDK_CODE_SNIPPETS[devPlatform].usage}
                             </pre>
-                            <button onClick={() => copyToClipboard(SDK_CODE_SNIPPETS[devPlatform], devPlatform)}
+                            <button onClick={() => copyToClipboard(SDK_CODE_SNIPPETS[devPlatform].usage, devPlatform)}
                                 className="absolute top-2 right-2 flex items-center gap-1 text-[8px] font-bold px-2 py-1 rounded bg-white/10 hover:bg-white/20 text-white uppercase transition">
                                 {copiedSnippet === devPlatform ? <Check className="w-3 h-3 text-status-success" /> : <Copy className="w-3 h-3" />}
                                 {copiedSnippet === devPlatform ? "Tersalin!" : "Salin Kode"}
