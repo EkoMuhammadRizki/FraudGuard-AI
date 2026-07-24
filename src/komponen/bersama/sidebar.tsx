@@ -10,8 +10,8 @@ import {
     LogOut,
     X,
     ShieldAlert,
-    FlaskConical,
-    Smartphone
+    TestTube2,
+    Cpu
 } from "lucide-react";
 import Logo from "./logo";
 
@@ -37,14 +37,14 @@ const menuItems = [
         icon: <FileText className="w-5 h-5" strokeWidth={2} />,
     },
     {
-        label: "Simulasi",
+        label: "Sandbox Pengujian",
         href: "/dasbor/simulasi",
-        icon: <FlaskConical className="w-5 h-5" strokeWidth={2} />,
+        icon: <TestTube2 className="w-5 h-5" strokeWidth={2} />,
     },
     {
-        label: "Simulasi SDK",
+        label: "Mobile SDK Telemetry",
         href: "/dasbor/simulasi-sdk",
-        icon: <Smartphone className="w-5 h-5" strokeWidth={2} />,
+        icon: <Cpu className="w-5 h-5" strokeWidth={2} />,
     },
 ];
 interface SidebarProps {
