@@ -254,6 +254,49 @@ export default function SimulasiSDKPage() {
                 </div>
             </div>
 
+            {/* ════════ 1. PRESET SKENARIO SIMULASI (PROFIL ANCAMAN) ════════ */}
+            <div className="glass-panel rounded-[2rem] p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <Zap className="w-4 h-4 text-neon-cyan" />
+                        <h3 className="text-xs font-black text-white uppercase tracking-wider">Preset Skenario Transaksi (Profil Ancaman)</h3>
+                    </div>
+                    <span className="text-[8px] font-black px-2 py-0.5 rounded bg-neon-cyan/10 text-neon-cyan border border-neon-cyan/20 uppercase tracking-widest">
+                        Pilih Skenario
+                    </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {SDK_PRESETS.map(preset => (
+                        <button
+                            key={preset.id}
+                            onClick={() => applyPreset(preset)}
+                            disabled={isProcessing}
+                            className={`group p-4 rounded-2xl border text-left transition-all active:scale-[0.98] ${
+                                activePreset === preset.id
+                                    ? "border-neon-cyan/50 bg-neon-cyan/10 ring-1 ring-neon-cyan/30 shadow-lg shadow-neon-cyan/10"
+                                    : "border-white/5 bg-dark-950/40 hover:border-white/20 hover:bg-white/[0.03]"
+                            }`}
+                        >
+                            <div className="flex items-center gap-2 mb-2">
+                                <span className="text-lg">{preset.icon}</span>
+                                <span className="text-xs font-black text-white uppercase tracking-wider">{preset.name}</span>
+                                {activePreset === preset.id && (
+                                    <span className="ml-auto text-[8px] font-black px-2 py-0.5 rounded bg-neon-cyan text-dark-950 uppercase tracking-widest font-mono">Aktif</span>
+                                )}
+                            </div>
+                            <p className="text-[10px] text-dark-400 leading-relaxed">{preset.description}</p>
+                            <div className="mt-3 grid grid-cols-2 gap-2 text-[9px] font-mono">
+                                <div className="text-dark-500">Dwell: <span className="text-white font-bold">{preset.telemetry.avgDwellMs}ms</span></div>
+                                <div className="text-dark-500">Flight: <span className="text-white font-bold">{preset.telemetry.avgFlightMs}ms</span></div>
+                                <div className="text-dark-500">Hesitasi: <span className="text-white font-bold">{preset.telemetry.hesitationScore}%</span></div>
+                                <div className="text-dark-500">Konsistensi: <span className="text-white font-bold">{preset.telemetry.typingConsistency}%</span></div>
+                            </div>
+                        </button>
+                    ))}
+                </div>
+            </div>
+
             {/* ════════ 1. TABS CONSOLE, TOKEN INSPECTOR, INTEGRASI DEVELOPER (TOP FULL WIDTH) ════════ */}
             <div className="space-y-4">
                 {/* Tab Switcher */}
