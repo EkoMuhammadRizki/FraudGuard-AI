@@ -15,13 +15,36 @@ interface ChatMessage {
     codeSnippet?: string;
 }
 
-const QUICK_SUGGESTIONS = [
-    { label: ">_ Terindikasi ATO (Account Takeover)", prompt: "Terindikasi ATO: Pengguna melakukan login dari perangkat baru Android-Xiaomi di Jakarta Barat, diikuti pergantian PIN m-banking 2 menit lalu, dan langsung mencoba transfer sebesar Rp 15.000.000 ke rekening baru yang belum pernah ditransaksikan." },
-    { label: ">_ Jaringan Keledai (Money Mule Ring)", prompt: "Rekening ID-994821 menerima 14 kali transfer pecahan Rp 2.500.000 dari pengirim berbeda dalam 10 menit. Seluruh dana langsung diteruskan ke 1 rekening penampung utama." },
-    { label: ">_ Sesi AnyDesk / Remote Control", prompt: "Aktivitas m-banking berjalan dengan sinyal Mobile SDK: remoteDesktopActive=true, detectedApp=AnyDesk, dwell_avg=1.2ms, flight_avg=0.5ms. Terdeteksi eksekusi otomatis tanpa jeda ketikan manual." },
+// Preset khusus REMI AI (Analisis Transaksi Fraud)
+const LOCAL_PRESETS = [
+    { label: ">_ Indikasi ATO (Account Takeover)", prompt: "Terindikasi ATO: Pengguna login dari HP Android baru di Jakarta Barat, ganti PIN 2 menit lalu, dan mencoba transfer Rp 15.000.000 ke rekening baru." },
+    { label: ">_ Money Mule Ring (Pengepul)", prompt: "Rekening ID-994821 menerima 14x transfer pecahan Rp 2.500.000 dalam 10 menit dari pengirim berbeda." },
+    { label: ">_ Deteksi Screen Mirroring / AnyDesk", prompt: "Sinyal Telemetri SDK: remoteDesktopActive=true, detectedApp=AnyDesk. Eksekusi cepat tanpa jeda ketikan manual." },
     { label: "Cari Transaksi TX000424", prompt: "Detail transaksi TX000424 di database" },
-    { label: "Statistik Real-time Database", prompt: "Berapa total transaksi & statistik di database dasbor?" },
-    { label: "Daftar Transaksi Kritis", prompt: "Tampilkan transaksi berisiko kritis terbaru di database" },
+];
+
+// Preset khusus Gemini (Tips Keamanan & Edukasi Proteksi Akun)
+const GEMINI_PRESETS = [
+    { label: "Tips Amankan M-Banking", prompt: "Bagaimana cara terbaik mengamankan aplikasi m-banking dari kejahatan rekayasa sosial (social engineering)?" },
+    { label: "Ciri Phishing / APK Bodong", prompt: "Apa saja tanda-tanda aplikasi APK penipuan berkedok kurir atau undangan yang berbahaya?" },
+    { label: "Proteksi Rekening Penampung", prompt: "Bagaimana cara memproteksi akun perbankan agar tidak dimanfaatkan sebagai rekening keledai (mule account)?" },
+    { label: "Fitur Biometrik & OTP Safety", prompt: "Jelaskan mengapa otentikasi biometrik Wajah/Sidik Jari lebih aman daripada password statis." },
+];
+
+// Preset khusus Groq (Regulasi FDS, POJK, & Hukum Siber)
+const GROQ_PRESETS = [
+    { label: "Regulasi POJK 39 Anti-Fraud", prompt: "Jelaskan ringkasan kewajiban bank dalam menerapkan sistem deteksi fraud sesuai POJK No. 39/POJK.03/2019." },
+    { label: "Kepatuhan UU PDP Finansial", prompt: "Bagaimana standar perlindungan data pribadi nasabah dalam analisis AI FDS sesuai UU PDP Indonesia?" },
+    { label: "Prosedur Pembekuan Rekening", prompt: "Bagaimana alur hukum & standar operasional perbankan saat melakukan pembekuan sementara akun terindikasi fraud?" },
+    { label: "Kategori Fraud Perbankan OJK", prompt: "Sebutkan 5 pilar strategi anti-fraud yang diwajibkan oleh Otoritas Jasa Keuangan (OJK)." },
+];
+
+// Preset gabungan (Auto Model)
+const AUTO_PRESETS = [
+    { label: "Statistik Real-time Database", prompt: "Berapa total transaksi & statistik risiko di database dasbor saat ini?" },
+    { label: "Daftar Transaksi Kritis", prompt: "Tampilkan ringkasan transaksi berisiko paling tinggi di database" },
+    { label: "Tips Proteksi Akun Nasabah", prompt: "Berikan tips keamanan akun m-banking dari serangan malware AnyDesk." },
+    { label: "Regulasi Anti-Fraud POJK", prompt: "Jelaskan kewajiban FDS perbankan menurut POJK No. 39/2019." },
 ];
 
 export default function AiChatWidget() {
@@ -380,10 +403,15 @@ export default function AiChatWidget() {
                                 <div ref={messagesEndRef} />
                             </div>
 
-                            {/* Preset Log Contoh Transaksi Bar */}
+                            {/* Dynamic Preset Suggestions according to selected model */}
                             <div className="px-3 pt-2 pb-1.5 bg-dark-900/90 border-t border-white/10 shrink-0 space-y-1.5">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[9px] font-black text-dark-400 uppercase tracking-wider">Preset Log Contoh Transaksi:</span>
+                                    <span className="text-[9px] text-dark-400 uppercase tracking-wider font-extrabold">
+                                        {selectedModel === "local" ? "Preset Analisis Transaksi Fraud (REMI AI):" :
+                                         selectedModel === "gemini" ? "Preset Keamanan Akun & Tips (Gemini 2.0):" :
+                                         selectedModel === "groq" ? "Preset Analisis Regulasi & Perbankan (Groq Llama):" :
+                                         "Preset Pertanyaan Populer (Auto):"}
+                                    </span>
                                     {input && (
                                         <button
                                             type="button"
@@ -395,7 +423,10 @@ export default function AiChatWidget() {
                                     )}
                                 </div>
                                 <div className="flex gap-1.5 overflow-x-auto custom-scrollbar pb-1">
-                                    {QUICK_SUGGESTIONS.map((item, idx) => (
+                                    {((selectedModel === "local" ? LOCAL_PRESETS :
+                                       selectedModel === "gemini" ? GEMINI_PRESETS :
+                                       selectedModel === "groq" ? GROQ_PRESETS :
+                                       AUTO_PRESETS) as typeof LOCAL_PRESETS).map((item, idx) => (
                                         <button
                                             key={idx}
                                             type="button"
@@ -423,21 +454,37 @@ export default function AiChatWidget() {
                                     rows={2}
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
-                                    placeholder="Pilih preset di atas atau masukkan detail transaksi, log aktivitas, & prompt untuk dianalisis..."
-                                    className="w-full bg-dark-950 border border-white/10 rounded-xl p-2.5 text-xs text-white placeholder-dark-500 outline-none focus:border-neon-cyan/50 transition-all font-mono leading-relaxed custom-scrollbar resize-none"
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter" && !e.shiftKey) {
+                                            e.preventDefault();
+                                            handleSend();
+                                        }
+                                    }}
+                                    placeholder={
+                                        selectedModel === "local" ? "Masukkan ID transaksi / detail log aktivitas untuk dianalisis FDS Engine..." :
+                                        selectedModel === "gemini" ? "Tanyakan tips amankan akun, perlindungan biometrik, atau proteksi fraud..." :
+                                        selectedModel === "groq" ? "Tanyakan regulasi POJK, UU PDP, atau studi kasus kejahatan siber..." :
+                                        "Pilih preset di atas atau ketik pertanyaan Anda (Tekan Enter untuk kirim)..."
+                                    }
+                                    className="w-full bg-dark-950 border border-white/10 rounded-xl p-2.5 text-xs text-white placeholder-dark-500 outline-none focus:border-neon-cyan/50 transition-all font-sans leading-relaxed custom-scrollbar resize-none"
                                 />
                                 <button
                                     type="submit"
                                     disabled={!input.trim() || isTyping}
-                                    className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-neon-cyan via-primary-blue to-hyper-violet text-dark-950 font-black text-xs hover:opacity-90 active:scale-[0.99] transition-all disabled:opacity-40 disabled:scale-100 flex items-center justify-center gap-2 shadow-lg shadow-neon-cyan/20 uppercase tracking-wider"
+                                    className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-neon-cyan via-primary-blue to-hyper-violet text-dark-950 font-extrabold text-xs hover:opacity-90 active:scale-[0.99] transition-all disabled:opacity-40 disabled:scale-100 flex items-center justify-center gap-2 shadow-lg shadow-neon-cyan/20 uppercase tracking-wider"
                                 >
                                     {isTyping ? (
                                         <>
                                             <RefreshCw className="w-3.5 h-3.5 animate-spin text-dark-950" />
-                                            <span>Menganalisis Risiko Fraud via REMI AI...</span>
+                                            <span>Memproses Permintaan...</span>
                                         </>
                                     ) : (
-                                        <span>Analisis Risiko Fraud dengan REMI AI</span>
+                                        <span>
+                                            {selectedModel === "local" ? "Analisis Risiko Fraud dengan REMI AI" :
+                                             selectedModel === "gemini" ? "Kirim Pertanyaan ke Gemini 2.0" :
+                                             selectedModel === "groq" ? "Tanya Groq Llama 3.3 70B" :
+                                             "Kirim Pesan (Enter)"}
+                                        </span>
                                     )}
                                 </button>
                             </form>
