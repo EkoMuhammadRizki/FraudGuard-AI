@@ -52,7 +52,7 @@ export default function AiChatWidget() {
     const [isMinimized, setIsMinimized] = useState(false);
     const [input, setInput] = useState("");
     const [isTyping, setIsTyping] = useState(false);
-    const [selectedModel, setSelectedModel] = useState<"auto" | "local" | "groq" | "gemini">("auto");
+    const [selectedModel, setSelectedModel] = useState<"auto" | "local" | "groq" | "gemini_36_flash" | "gemini_25_pro" | "gemini_25_flash">("auto");
     const [aiSource, setAiSource] = useState<string>("Auto Cascade Engine");
     const [messages, setMessages] = useState<ChatMessage[]>([
         {
@@ -213,11 +213,15 @@ export default function AiChatWidget() {
                 
                 // Update Badge Nama Engine di Header
                 if (selectedModel === "local") {
-                    setAiSource("REMI AI (Local Engine)");
+                    setAiSource("REMI AI Engine");
                 } else if (selectedModel === "groq") {
                     setAiSource("Groq (Llama 3.3 70B)");
-                } else if (selectedModel === "gemini") {
-                    setAiSource("Gemini 2.0 Flash");
+                } else if (selectedModel === "gemini_36_flash") {
+                    setAiSource("Gemini 3.6 Flash");
+                } else if (selectedModel === "gemini_25_pro") {
+                    setAiSource("Gemini 2.5 Pro");
+                } else if (selectedModel === "gemini_25_flash") {
+                    setAiSource("Gemini 2.5 Flash");
                 } else if (data.model_used) {
                     setAiSource(data.model_used);
                 }
@@ -298,9 +302,11 @@ export default function AiChatWidget() {
                                             className="appearance-none bg-dark-900/90 hover:bg-dark-850 border border-white/10 hover:border-neon-cyan/40 text-dark-200 hover:text-white text-[10px] font-semibold rounded-lg pl-2.5 pr-6 py-1 focus:outline-none focus:ring-1 focus:ring-neon-cyan/50 backdrop-blur-md cursor-pointer transition-all duration-200 shadow-sm"
                                         >
                                             <option value="auto" className="bg-dark-900 text-white font-medium py-1">Auto (Smart Cascade)</option>
-                                            <option value="local" className="bg-dark-900 text-white font-medium py-1">REMI AI (Local Engine)</option>
+                                            <option value="local" className="bg-dark-900 text-white font-medium py-1">REMI AI Engine</option>
                                             <option value="groq" className="bg-dark-900 text-white font-medium py-1">Groq (Llama 3.3 70B)</option>
-                                            <option value="gemini" className="bg-dark-900 text-white font-medium py-1">Gemini 2.0 Flash</option>
+                                            <option value="gemini_36_flash" className="bg-dark-900 text-white font-medium py-1">Gemini 3.6 Flash</option>
+                                            <option value="gemini_25_pro" className="bg-dark-900 text-white font-medium py-1">Gemini 2.5 Pro</option>
+                                            <option value="gemini_25_flash" className="bg-dark-900 text-white font-medium py-1">Gemini 2.5 Flash</option>
                                         </select>
                                         <ChevronDown className="w-3 h-3 text-dark-400 pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2" />
                                     </div>
@@ -410,7 +416,7 @@ export default function AiChatWidget() {
                                 <div className="flex items-center justify-between">
                                     <span className="text-[9px] text-dark-400 uppercase tracking-wider font-extrabold">
                                         {selectedModel === "local" ? "Preset Analisis Transaksi Fraud (REMI AI):" :
-                                         selectedModel === "gemini" ? "Preset Keamanan Akun & Tips (Gemini 2.0):" :
+                                         selectedModel.startsWith("gemini") ? "Preset Keamanan Akun & Tips (Gemini AI):" :
                                          selectedModel === "groq" ? "Preset Analisis Regulasi & Perbankan (Groq Llama):" :
                                          "Preset Pertanyaan Populer (Auto):"}
                                     </span>
@@ -426,7 +432,7 @@ export default function AiChatWidget() {
                                 </div>
                                 <div className="flex gap-1.5 overflow-x-auto custom-scrollbar pb-1">
                                     {((selectedModel === "local" ? LOCAL_PRESETS :
-                                       selectedModel === "gemini" ? GEMINI_PRESETS :
+                                       selectedModel.startsWith("gemini") ? GEMINI_PRESETS :
                                        selectedModel === "groq" ? GROQ_PRESETS :
                                        AUTO_PRESETS) as typeof LOCAL_PRESETS).map((item, idx) => (
                                         <button
@@ -464,7 +470,7 @@ export default function AiChatWidget() {
                                     }}
                                     placeholder={
                                         selectedModel === "local" ? "Masukkan ID transaksi / detail log aktivitas untuk dianalisis FDS Engine..." :
-                                        selectedModel === "gemini" ? "Tanyakan tips amankan akun, perlindungan biometrik, atau proteksi fraud..." :
+                                        selectedModel.startsWith("gemini") ? "Tanyakan tips amankan akun, perlindungan biometrik, atau proteksi fraud..." :
                                         selectedModel === "groq" ? "Tanyakan regulasi POJK, UU PDP, atau studi kasus kejahatan siber..." :
                                         "Pilih preset di atas atau ketik pertanyaan Anda (Tekan Enter untuk kirim)..."
                                     }
@@ -483,7 +489,9 @@ export default function AiChatWidget() {
                                     ) : (
                                         <span>
                                             {selectedModel === "local" ? "Analisis Risiko Fraud dengan REMI AI" :
-                                             selectedModel === "gemini" ? "Kirim Pertanyaan ke Gemini 2.0" :
+                                             selectedModel === "gemini_36_flash" ? "Tanya Gemini 3.6 Flash" :
+                                             selectedModel === "gemini_25_pro" ? "Tanya Gemini 2.5 Pro" :
+                                             selectedModel === "gemini_25_flash" ? "Tanya Gemini 2.5 Flash" :
                                              selectedModel === "groq" ? "Tanya Groq Llama 3.3 70B" :
                                              "Kirim Pesan (Enter)"}
                                         </span>

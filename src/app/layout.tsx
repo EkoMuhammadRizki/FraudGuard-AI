@@ -17,6 +17,11 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Amankan Fraud - Deteksi Fraud Digital Real-time",
   description: "Platform deteksi fraud mutakhir dengan GNN dan XAI.",
+  icons: {
+    icon: "/logo-transparent.png",
+    shortcut: "/logo-transparent.png",
+    apple: "/logo-transparent.png",
+  },
 };
 
 export default function RootLayout({
@@ -25,8 +30,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id">
-      <body className={`${publicSans.variable} ${jetbrainsMono.variable} font-sans antialiased bg-dark-900 text-dark-100 flex flex-col min-h-screen`}>
+    <html lang="id" suppressHydrationWarning>
+      <body suppressHydrationWarning className={`${publicSans.variable} ${jetbrainsMono.variable} font-sans antialiased bg-dark-900 text-dark-100 flex flex-col min-h-screen`}>
         <SplashScreen />
         {children}
       </body>

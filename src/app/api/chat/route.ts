@@ -53,9 +53,20 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    if (selectedProvider === "gemini" && GEMINI_API_KEY) {
+    if (selectedProvider.startsWith("gemini") && GEMINI_API_KEY) {
       try {
-        const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+        let modelEndpoint = "gemini-2.5-flash";
+        let displayModelName = "Gemini 2.5 Flash";
+
+        if (selectedProvider === "gemini_36_flash") {
+          modelEndpoint = "gemini-3.6-flash";
+          displayModelName = "Gemini 3.6 Flash";
+        } else if (selectedProvider === "gemini_25_pro") {
+          modelEndpoint = "gemini-2.5-pro";
+          displayModelName = "Gemini 2.5 Pro";
+        }
+
+        const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelEndpoint}:generateContent?key=${GEMINI_API_KEY}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -69,7 +80,7 @@ export async function POST(req: NextRequest) {
             response: aiResponse,
             result: aiResponse,
             status: "success",
-            model_used: "Google Gemini 1.5 Flash",
+            model_used: displayModelName,
             fallback_status: false,
           });
         }
