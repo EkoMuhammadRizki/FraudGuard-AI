@@ -107,7 +107,6 @@ export default function ModelStatusBadge({
                         {/* F1 Score */}
                         {status.f1_score !== undefined && (
                             <div className="flex items-center gap-1">
-                                <Zap className="w-2.5 h-2.5 text-neon-cyan" />
                                 <span className="text-dark-400">F1:</span>
                                 <span className="text-emerald-400 font-bold">{(status.f1_score * 100).toFixed(1)}%</span>
                             </div>
