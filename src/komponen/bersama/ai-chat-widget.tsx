@@ -120,7 +120,7 @@ export default function AiChatWidget() {
         }
 
         return {
-            text: "⚠️ **Asisten REMI AI**:\n\nSistem memproses pertanyaan Anda berpatokan pada data transaksi & regulasi POJK No. 39/POJK.03/2019 (Anti-Fraud System).",
+            text: "Sebagai asisten REMI AI, saya siap membantu Anda menganalisis transaksi suspicious, investigasi fraud perbankan, maupun pertanyaan regulasi POJK & UU PDP.",
             category: "info"
         };
     };
@@ -313,17 +313,17 @@ export default function AiChatWidget() {
                                                         : "bg-dark-900 border border-white/10 text-dark-200 rounded-tl-none"
                                                 }`}
                                             >
-                                                {/* Text rendering dengan Formatter Markdown & Badge visual yang cantik */}
-                                                <div className="space-y-1.5 font-sans leading-relaxed text-[11px]">
+                                                {/* Text rendering dengan typography natural ala ChatGPT / Claude */}
+                                                <div className="space-y-2 font-sans leading-relaxed text-xs text-dark-100">
                                                     {msg.text.split("\n").map((line, i) => {
-                                                        if (!line.trim()) return <div key={i} className="h-1" />;
+                                                        if (!line.trim()) return <div key={i} className="h-1.5" />;
                                                         
-                                                        // Render list bullet yang rapi
+                                                        // Render list bullet yang sangat halus dan rapi
                                                         if (line.trim().startsWith("•") || line.trim().startsWith("-") || /^[0-9]+\./.test(line.trim())) {
                                                             return (
-                                                                <div key={i} className="flex items-start gap-1.5 pl-1 my-0.5">
-                                                                    <span className="text-neon-cyan font-bold text-[10px] mt-0.5">•</span>
-                                                                    <span>{formatText(line.replace(/^[•\-\d+\.]\s*/, ""))}</span>
+                                                                <div key={i} className="flex items-start gap-2 pl-1 my-1">
+                                                                    <span className="text-neon-cyan font-bold text-xs mt-0.5">•</span>
+                                                                    <span className="text-dark-200">{formatText(line.replace(/^[•\-\d+\.]\s*/, ""))}</span>
                                                                 </div>
                                                             );
                                                         }
@@ -338,15 +338,15 @@ export default function AiChatWidget() {
 
                                                 {/* Code Snippet pendukung bila ada */}
                                                 {msg.codeSnippet && (
-                                                    <div className="mt-2.5 bg-dark-950 p-3 rounded-xl border border-neon-cyan/20 font-mono text-[10px] text-neon-cyan overflow-x-auto shadow-inner">
+                                                    <div className="mt-3 bg-dark-950/80 p-3.5 rounded-2xl border border-white/10 font-mono text-[11px] text-neon-cyan overflow-x-auto shadow-inner">
                                                         <pre>{msg.codeSnippet}</pre>
                                                     </div>
                                                 )}
                                             </div>
 
-                                            <div className={`text-[9px] font-mono text-dark-500 flex items-center gap-1.5 ${msg.sender === "user" ? "justify-end" : "justify-start"}`}>
+                                            <div className={`text-[9px] font-mono text-dark-500 flex items-center gap-1.5 pt-0.5 ${msg.sender === "user" ? "justify-end" : "justify-start"}`}>
                                                 <span>{msg.timestamp}</span>
-                                                {msg.sender === "user" && <span className="text-neon-cyan">✓ Terkirim</span>}
+                                                {msg.sender === "user" && <span className="text-neon-cyan/80">✓ Terkirim</span>}
                                             </div>
                                         </div>
                                     </div>
