@@ -185,9 +185,18 @@ export default function AiChatWidget() {
 
             if (data.status === "success" && (data.response || data.result)) {
                 replyText = data.response || data.result;
-                if (data.model_used) {
+                
+                // Update Badge Nama Engine di Header
+                if (selectedModel === "local") {
+                    setAiSource("REMI AI (Local Engine)");
+                } else if (selectedModel === "groq") {
+                    setAiSource("Groq (Llama 3.3 70B)");
+                } else if (selectedModel === "gemini") {
+                    setAiSource("Gemini 2.0 Flash");
+                } else if (data.model_used) {
                     setAiSource(data.model_used);
                 }
+
                 if (replyText.includes("🚨") || replyText.includes("BLOKIR") || replyText.includes("ATO")) {
                     cat = "warning";
                 }
