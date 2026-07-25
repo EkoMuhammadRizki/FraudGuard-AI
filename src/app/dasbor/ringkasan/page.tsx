@@ -292,12 +292,6 @@ export default function RingkasanPage() {
                     {/* Header Controls & Action Bar (ML Engine Badge Underneath Buttons) */}
                     <div className="flex flex-col items-start lg:items-end gap-3 shrink-0">
                         <div className="flex flex-wrap items-center gap-3">
-                            <button
-                                onClick={() => setIsTourOpen(true)}
-                                className="inline-flex items-center px-3.5 py-2 rounded-xl bg-neon-cyan/10 border border-neon-cyan/30 text-neon-cyan hover:bg-neon-cyan hover:text-dark-950 text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer shadow-md shadow-neon-cyan/10 active:scale-95"
-                            >
-                                <span>Panduan Interaktif</span>
-                            </button>
                             <Link
                                 href="/dasbor/transaksi"
                                 className="inline-flex items-center px-3.5 py-2 rounded-xl bg-dark-900 border border-white/10 hover:border-white/20 text-white text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer hover:bg-white/5"

@@ -302,7 +302,7 @@ export default function SimulasiSDKPage() {
                                 <div className="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center border border-white/10">
                                     <Cpu className="w-3 h-3 text-neon-cyan" />
                                 </div>
-                                <span className="text-[10px] font-black text-white tracking-widest uppercase italic">Rakyat Digital</span>
+                                <span className="text-[10px] font-black text-white tracking-widest uppercase italic">Bank Rakyat Digital</span>
                             </div>
                             <div className="flex items-center gap-1">
                                 <Wifi className="w-3.5 h-3.5 text-status-success" />

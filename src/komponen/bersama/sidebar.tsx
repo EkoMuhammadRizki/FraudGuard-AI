@@ -11,7 +11,8 @@ import {
     X,
     ShieldAlert,
     TestTube2,
-    Cpu
+    Cpu,
+    BookOpen
 } from "lucide-react";
 import Logo from "./logo";
 
@@ -58,6 +59,16 @@ const menuCategories = [
                 label: "Mobile SDK Telemetry",
                 href: "/dasbor/simulasi-sdk",
                 icon: <Cpu className="w-4 h-4" strokeWidth={2} />,
+            },
+        ],
+    },
+    {
+        category: "BANTUAN & PANDUAN",
+        items: [
+            {
+                label: "Panduan Amankan Fraud",
+                href: "/dasbor/panduan",
+                icon: <BookOpen className="w-4 h-4" strokeWidth={2} />,
             },
         ],
     },

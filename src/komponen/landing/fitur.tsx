@@ -103,10 +103,10 @@ export default function Fitur() {
                 {/* Secondary Feature List */}
                 <div className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-6 pt-12 border-t border-white/10">
                     {[
-                        { title: "Pemrosesan Real-time", desc: "Verifikasi latensi rendah <50ms" },
-                        { title: "Enkripsi E2E & Telemetry", desc: "Standar keamanan biometrik militer" },
-                        { title: "Skalabilitas Tinggi", desc: "Mampu melayani hingga 10.000 TPS" },
-                        { title: "Kepatuhan Regulasi", desc: "Standar POJK 39 & ISO 27001" },
+                        { title: "Pemrosesan <10ms", desc: "Verifikasi tanpa delay" },
+                        { title: "Enkripsi E2E", desc: "Standar keamanan militer" },
+                        { title: "Skalabilitas", desc: "Mampu melayani 10k TPS" },
+                        { title: "Kepatuhan", desc: "Standardisasi ISO 27001" },
                     ].map((item, index) => (
                         <div 
                             key={item.title}

@@ -15,27 +15,23 @@ export default function Footer() {
                         <p className="text-dark-400 text-sm leading-relaxed mb-6">
                             Platform deteksi fraud digital real-time dengan kecerdasan buatan terdepan untuk melindungi transaksi keuangan Anda.
                         </p>
-                        {/* Social Icons */}
-                        <div className="flex gap-3">
-                            {["twitter", "linkedin", "github"].map((social) => (
-                                <a
-                                    key={social}
-                                    href="#"
-                                    className="w-9 h-9 rounded bg-dark-700 hover:bg-dark-600 flex items-center justify-center text-dark-400 hover:text-primary-blue-light transition-all duration-200"
-                                >
-                                    <span className="text-xs font-semibold uppercase">{social[0]}</span>
-                                </a>
-                            ))}
-                        </div>
                     </div>
 
                     {/* Produk */}
                     <div className="reveal-on-scroll" style={{ transitionDelay: "100ms" }}>
                         <h4 className="text-sm font-semibold text-dark-100 uppercase tracking-wider mb-4">Produk</h4>
                         <ul className="space-y-3">
-                            {["Deteksi Real-time", "Analisis GNN", "Explainable AI", "Biometrik"].map((item) => (
-                                <li key={item}>
-                                    <a href="#" className="text-dark-400 hover:text-primary-blue-light transition-colors text-sm">{item}</a>
+                            {[
+                                { label: "Fitur", href: "#fitur" },
+                                { label: "Graph Neural Network (GNN)", href: "#fitur" },
+                                { label: "LightGBM Classifier", href: "#fitur" },
+                                { label: "Ensemble Final Stacker", href: "#fitur" },
+                                { label: "Explainable AI (XAI)", href: "#fitur" },
+                                { label: "Biometrik Lanjutan", href: "#fitur" },
+                                { label: "REMI AI Chatbot Assistant", href: "#fitur" },
+                            ].map((item) => (
+                                <li key={item.label}>
+                                    <a href={item.href} className="text-dark-400 hover:text-primary-blue-light transition-colors text-sm">{item.label}</a>
                                 </li>
                             ))}
                         </ul>
@@ -45,9 +41,13 @@ export default function Footer() {
                     <div className="reveal-on-scroll" style={{ transitionDelay: "200ms" }}>
                         <h4 className="text-sm font-semibold text-dark-100 uppercase tracking-wider mb-4">Perusahaan</h4>
                         <ul className="space-y-3">
-                            {["Tentang Kami", "Karir", "Blog", "Keamanan"].map((item) => (
-                                <li key={item}>
-                                    <a href="#" className="text-dark-400 hover:text-primary-blue-light transition-colors text-sm">{item}</a>
+                            {[
+                                { label: "Fitur", href: "#fitur" },
+                                { label: "Tentang Kami", href: "#tentang" },
+                                { label: "Keamanan", href: "#keamanan" },
+                            ].map((item) => (
+                                <li key={item.label}>
+                                    <a href={item.href} className="text-dark-400 hover:text-primary-blue-light transition-colors text-sm">{item.label}</a>
                                 </li>
                             ))}
                         </ul>
@@ -59,15 +59,15 @@ export default function Footer() {
                         <ul className="space-y-3 text-sm text-dark-400">
                             <li className="flex items-center gap-2">
                                 <Mail className="w-4 h-4 text-primary-blue-light shrink-0" strokeWidth={2} />
-                                info@amankanfraud.ai
+                                amankanguard@gmail.com
                             </li>
                             <li className="flex items-center gap-2">
                                 <Phone className="w-4 h-4 text-primary-blue-light shrink-0" strokeWidth={2} />
-                                +62 21 1234 5678
+                                +62 821-1708-0704
                             </li>
                             <li className="flex items-start gap-2">
                                 <MapPin className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" strokeWidth={2} />
-                                Jakarta, Indonesia
+                                Purwakarta JawaBarat, Indonesia
                             </li>
                         </ul>
                     </div>

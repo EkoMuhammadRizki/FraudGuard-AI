@@ -11,9 +11,19 @@ export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db
         return { client, db };
     }
 
-    client = new MongoClient(MONGO_URI);
-    await client.connect();
-    db = client.db(DB_NAME);
-    return { client, db };
+    try {
+        const _client = new MongoClient(MONGO_URI, {
+            serverSelectionTimeoutMS: 2500,
+            connectTimeoutMS: 2500,
+        });
+        await _client.connect();
+        const _db = _client.db(DB_NAME);
+        client = _client;
+        db = _db;
+        return { client: _client, db: _db };
+    } catch (err) {
+        client = null;
+        db = null;
+        throw err;
+    }
 }
-

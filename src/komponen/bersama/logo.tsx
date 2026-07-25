@@ -42,7 +42,7 @@ export default function Logo({ className = '', size = 'md', withText = true }: L
             Amankan Fraud
           </span>
           <span className={`${subtitleSizes[size]} font-bold text-primary-blue tracking-[0.3em] uppercase opacity-80 mt-1`}>
-            Cyber Intel
+            Fraud Guard
           </span>
         </div>
       )}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { 
     LayoutDashboard, 
     Search, 
@@ -78,6 +79,7 @@ const LANGKAH_PANDUAN = [
 ];
 
 export default function ModalPanduan({ isOpen, onClose }: ModalPanduanProps) {
+    const router = useRouter();
     const [currentStep, setCurrentStep] = useState(0);
 
     if (!isOpen) return null;
@@ -102,6 +104,7 @@ export default function ModalPanduan({ isOpen, onClose }: ModalPanduanProps) {
     const handleFinish = () => {
         setCurrentStep(0);
         onClose();
+        router.push("/dasbor/panduan");
     };
 
     return (
@@ -212,8 +215,8 @@ export default function ModalPanduan({ isOpen, onClose }: ModalPanduanProps) {
                         >
                             {currentStep === LANGKAH_PANDUAN.length - 1 ? (
                                 <>
-                                    Mulai Sistem
-                                    <Check className="w-4 h-4" strokeWidth={2.5} />
+                                    Panduan Lengkap
+                                    <BookOpen className="w-4 h-4" strokeWidth={2} />
                                 </>
                             ) : (
                                 <>

@@ -52,6 +52,7 @@ export default function AiChatWidget() {
     const [isMinimized, setIsMinimized] = useState(false);
     const [input, setInput] = useState("");
     const [isTyping, setIsTyping] = useState(false);
+    const [imgError, setImgError] = useState(false);
     const [selectedModel, setSelectedModel] = useState<"local" | "groq" | "gemini_36_flash" | "gemini_25_pro" | "gemini_25_flash">("local");
     const [aiSource, setAiSource] = useState<string>("REMI AI Engine");
     const [messages, setMessages] = useState<ChatMessage[]>([
@@ -218,13 +219,13 @@ export default function AiChatWidget() {
             }
 
             const data = await res.json();
-            
+
             let replyText = "";
             let cat: "info" | "warning" | "success" | "code" = "info";
 
             if (data.status === "success" && (data.response || data.result)) {
                 replyText = data.response || data.result;
-                
+
                 // Update Badge Nama Engine di Header
                 if (selectedModel === "local") {
                     setAiSource("REMI AI Engine");
@@ -291,13 +292,19 @@ export default function AiChatWidget() {
                     <div className="bg-gradient-to-r from-blue-950/90 via-dark-900 to-dark-950 p-3.5 border-b border-white/10 flex items-center justify-between shrink-0">
                         <div className="flex items-center gap-3">
                             {/* Avatar AI Robot */}
-                            <div className="relative">
-                                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-neon-cyan via-primary-blue to-hyper-violet p-0.5 shadow-lg shadow-neon-cyan/20">
-                                    <div className="w-full h-full bg-dark-950 rounded-[14px] flex items-center justify-center">
-                                        <Bot className="w-5 h-5 text-neon-cyan animate-pulse" />
-                                    </div>
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-neon-cyan via-primary-blue to-hyper-violet p-0.5 shadow-md shadow-neon-cyan/20 shrink-0">
+                                <div className="w-full h-full bg-dark-950 rounded-full flex items-center justify-center overflow-hidden p-0.5">
+                                    {!imgError ? (
+                                        <img
+                                            src="/logo-remi.png"
+                                            alt="REMI AI"
+                                            onError={() => setImgError(true)}
+                                            className="w-full h-full object-contain rounded-full"
+                                        />
+                                    ) : (
+                                        <Bot className="w-5 h-5 text-neon-cyan" />
+                                    )}
                                 </div>
-                                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-status-success rounded-full border-2 border-dark-950 shadow-sm" />
                             </div>
 
                             <div>
@@ -305,7 +312,7 @@ export default function AiChatWidget() {
                                     <h3 className="text-xs font-black text-white uppercase tracking-wider">REMI AI</h3>
                                     <span className="px-2 py-0.5 rounded-full bg-neon-cyan/10 border border-neon-cyan/30 text-neon-cyan text-[8px] font-black uppercase tracking-wider">{aiSource}</span>
                                 </div>
-                                
+
                                 {/* Model Selector Dropdown */}
                                 <div className="mt-1 flex items-center gap-1.5">
                                     <span className="text-[9px] text-dark-400 font-medium">Model:</span>
@@ -363,18 +370,17 @@ export default function AiChatWidget() {
 
                                         <div className={`max-w-[85%] space-y-1.5 ${msg.sender === "user" ? "items-end" : "items-start"}`}>
                                             <div
-                                                className={`p-3.5 rounded-2xl text-xs leading-relaxed font-medium transition-all ${
-                                                    msg.sender === "user"
+                                                className={`p-3.5 rounded-2xl text-xs leading-relaxed font-medium transition-all ${msg.sender === "user"
                                                         ? "bg-primary-blue text-white rounded-tr-none shadow-md shadow-primary-blue/20"
                                                         : "bg-dark-900 border border-white/10 text-dark-200 rounded-tl-none"
-                                                }`}
+                                                    }`}
                                             >
                                                 {/* Text rendering dengan typography natural ala ChatGPT / Claude + Markdown Tables */}
                                                 <div className="space-y-2 font-sans leading-relaxed text-xs text-dark-100">
                                                     {msg.text.split("\n").map((line, i) => {
                                                         const trimmed = line.trim();
                                                         if (!trimmed) return <div key={i} className="h-1.5" />;
-                                                        
+
                                                         // Render Markdown Header (### / ## / #)
                                                         if (trimmed.startsWith("#")) {
                                                             const headerText = trimmed.replace(/^#+\s*/, "");
@@ -457,9 +463,9 @@ export default function AiChatWidget() {
                                 <div className="flex items-center justify-between">
                                     <span className="text-[9px] text-dark-400 uppercase tracking-wider font-extrabold">
                                         {selectedModel === "local" ? "Preset Analisis Transaksi Fraud (REMI AI):" :
-                                         selectedModel.startsWith("gemini") ? "Preset Keamanan Akun & Tips (Gemini AI):" :
-                                         selectedModel === "groq" ? "Preset Analisis Regulasi & Perbankan (Groq Llama):" :
-                                         "Preset Pertanyaan Populer (Auto):"}
+                                            selectedModel.startsWith("gemini") ? "Preset Keamanan Akun & Tips (Gemini AI):" :
+                                                selectedModel === "groq" ? "Preset Analisis Regulasi & Perbankan (Groq Llama):" :
+                                                    "Preset Pertanyaan Populer (Auto):"}
                                     </span>
                                     {input && (
                                         <button
@@ -473,23 +479,22 @@ export default function AiChatWidget() {
                                 </div>
                                 <div className="flex gap-1.5 overflow-x-auto custom-scrollbar pb-1">
                                     {((selectedModel === "local" ? LOCAL_PRESETS :
-                                       selectedModel.startsWith("gemini") ? GEMINI_PRESETS :
-                                       selectedModel === "groq" ? GROQ_PRESETS :
-                                       AUTO_PRESETS) as typeof LOCAL_PRESETS).map((item, idx) => (
-                                        <button
-                                            key={idx}
-                                            type="button"
-                                            onClick={() => setInput(item.prompt)}
-                                            className={`shrink-0 px-2.5 py-1 rounded-xl border text-[9px] font-mono transition-all flex items-center gap-1 ${
-                                                input === item.prompt
-                                                    ? "bg-neon-cyan/20 text-neon-cyan border-neon-cyan/50 font-bold shadow-sm shadow-neon-cyan/20"
-                                                    : "bg-white/5 hover:bg-neon-cyan/10 text-dark-300 hover:text-neon-cyan border-white/10 hover:border-neon-cyan/30 font-medium"
-                                            }`}
-                                        >
-                                            <Terminal className="w-3 h-3 text-neon-cyan shrink-0" />
-                                            {item.label}
-                                        </button>
-                                    ))}
+                                        selectedModel.startsWith("gemini") ? GEMINI_PRESETS :
+                                            selectedModel === "groq" ? GROQ_PRESETS :
+                                                AUTO_PRESETS) as typeof LOCAL_PRESETS).map((item, idx) => (
+                                                    <button
+                                                        key={idx}
+                                                        type="button"
+                                                        onClick={() => setInput(item.prompt)}
+                                                        className={`shrink-0 px-2.5 py-1 rounded-xl border text-[9px] font-mono transition-all flex items-center gap-1 ${input === item.prompt
+                                                                ? "bg-neon-cyan/20 text-neon-cyan border-neon-cyan/50 font-bold shadow-sm shadow-neon-cyan/20"
+                                                                : "bg-white/5 hover:bg-neon-cyan/10 text-dark-300 hover:text-neon-cyan border-white/10 hover:border-neon-cyan/30 font-medium"
+                                                            }`}
+                                                    >
+                                                        <Terminal className="w-3 h-3 text-neon-cyan shrink-0" />
+                                                        {item.label}
+                                                    </button>
+                                                ))}
                                 </div>
                             </div>
 
@@ -511,9 +516,9 @@ export default function AiChatWidget() {
                                     }}
                                     placeholder={
                                         selectedModel === "local" ? "Masukkan ID transaksi / detail log aktivitas untuk dianalisis FDS Engine..." :
-                                        selectedModel.startsWith("gemini") ? "Tanyakan tips amankan akun, perlindungan biometrik, atau proteksi fraud..." :
-                                        selectedModel === "groq" ? "Tanyakan regulasi POJK, UU PDP, atau studi kasus kejahatan siber..." :
-                                        "Pilih preset di atas atau ketik pertanyaan Anda (Tekan Enter untuk kirim)..."
+                                            selectedModel.startsWith("gemini") ? "Tanyakan tips amankan akun, perlindungan biometrik, atau proteksi fraud..." :
+                                                selectedModel === "groq" ? "Tanyakan regulasi POJK, UU PDP, atau studi kasus kejahatan siber..." :
+                                                    "Pilih preset di atas atau ketik pertanyaan Anda (Tekan Enter untuk kirim)..."
                                     }
                                     className="w-full bg-dark-950 border border-white/10 rounded-xl p-2.5 text-xs text-white placeholder-dark-500 outline-none focus:border-neon-cyan/50 transition-all font-sans leading-relaxed custom-scrollbar resize-none"
                                 />
@@ -550,15 +555,21 @@ export default function AiChatWidget() {
                 <div className="absolute inset-0 rounded-full bg-neon-cyan/30 animate-ping opacity-75 pointer-events-none" />
 
                 {/* Inner Avatar Container */}
-                <div className="w-14 h-14 rounded-full bg-dark-950 flex items-center justify-center relative overflow-hidden group-hover:scale-105 transition-transform">
+                <div className="w-14 h-14 rounded-full bg-dark-950 flex items-center justify-center relative overflow-hidden group-hover:scale-105 transition-transform p-1">
                     {/* Background Cyber Grid effect */}
                     <div className="absolute inset-0 bg-gradient-to-t from-primary-blue/20 to-transparent opacity-60" />
 
-                    {/* Robot Avatar Icon */}
-                    <Bot className="w-7 h-7 text-neon-cyan group-hover:rotate-12 transition-transform duration-300 relative z-10" />
-
-                    {/* Badge Icon */}
-                    <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-status-success rounded-full border-2 border-dark-950 shadow-sm" />
+                    {/* REMI Logo */}
+                    {!imgError ? (
+                        <img
+                            src="/logo-remi.png"
+                            alt="REMI AI"
+                            onError={() => setImgError(true)}
+                            className="w-full h-full object-contain rounded-full relative z-10 p-0.5 transition-transform duration-300 group-hover:scale-110"
+                        />
+                    ) : (
+                        <Bot className="w-7 h-7 text-neon-cyan relative z-10" />
+                    )}
                 </div>
             </button>
 

@@ -96,15 +96,24 @@ export default function Hero() {
                             </Link>
                         </div>
                         
-                        {/* Social Proof Placeholder */}
-                        <div className={`pt-12 flex items-center gap-8 grayscale opacity-40 transition-all duration-1000 delay-400 ease-[cubic-bezier(0.22,1,0.36,1)] transform ${
+                        {/* Social Proof - Scrolling Logos */}
+                        <div className={`pt-12 grayscale opacity-40 transition-all duration-1000 delay-400 ease-[cubic-bezier(0.22,1,0.36,1)] transform ${
                             isAnimated ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
                         }`}>
-                            <div className="text-sm font-bold tracking-widest text-dark-500 uppercase">Trusted By</div>
-                            <div className="flex gap-6 text-xl font-bold italic">
-                                <span>FIN-TECH</span>
-                                <span>BANK-XR</span>
-                                <span>E-COMM</span>
+                            <div className="text-sm font-bold tracking-widest text-dark-500 uppercase mb-4">Trusted By</div>
+                            <div className="overflow-hidden whitespace-nowrap">
+                                <div className="inline-flex gap-12 text-xl font-bold italic animate-scroll">
+                                    <span>FIN-TECH</span>
+                                    <span>BANK-XR</span>
+                                    <span>E-COMM</span>
+                                    <span>HEALTH-CARE</span>
+                                    <span>INSURANCE</span>
+                                    <span>FIN-TECH</span>
+                                    <span>BANK-XR</span>
+                                    <span>E-COMM</span>
+                                    <span>HEALTH-CARE</span>
+                                    <span>INSURANCE</span>
+                                </div>
                             </div>
                         </div>
                     </div>

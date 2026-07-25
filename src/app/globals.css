@@ -163,6 +163,16 @@ body {
   animation: float 6s ease-in-out infinite;
 }
 
+/* Scrolling logos animation */
+@keyframes scroll-right {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-scroll {
+  animation: scroll-right 20s linear infinite;
+}
+
 /* Leaflet Custom Dark Theme Popup Styling */
 .leaflet-popup-content-wrapper {
   background: #020617 !important;
