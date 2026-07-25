@@ -78,20 +78,6 @@ Swagger UI Dokumentasi API Python dapat diakses di: `http://localhost:8000/docs`
 
 ---
 
-## 🔑 Akun Pintas Demo (Credentials)
-
-Untuk pengujian login cepat di halaman `http://localhost:3000/login`, Anda dapat mengklik tombol pintas atau memasukkan kredensial berikut:
-
-| Username | Password | Role |
-| :--- | :--- | :--- |
-| **eko** | `eko123` | Lead Developer |
-| **juri** | `juri123` | Dewan Juri FDS Evaluator |
-| **ihya** | `ihya123` | FDS Analyst |
-| **ibin** | `ibin123` | Security Specialist |
-| **reza** | `reza123` | ML Engineer |
-
----
-
 ## 📁 Struktur Direktori Project
 
 ```
