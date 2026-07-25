@@ -45,14 +45,14 @@ export default function Fitur() {
     ];
 
     return (
-        <section id="fitur" className="py-24 bg-dark-950 border-t border-white/5 relative overflow-hidden">
+        <section id="fitur" className="py-16 sm:py-24 bg-dark-950 border-t border-white/5 relative overflow-hidden">
             {/* Ambient Background Glow */}
             <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-primary-blue/10 blur-[150px] rounded-full pointer-events-none" />
             <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-neon-cyan/10 blur-[150px] rounded-full pointer-events-none" />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 {/* Header */}
-                <div className="mb-16 reveal-on-scroll text-center md:text-left">
+                <div className="mb-10 sm:mb-16 reveal-on-scroll text-center md:text-left">
                     <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neon-cyan/10 border border-neon-cyan/20 text-neon-cyan text-[11px] font-mono font-bold uppercase tracking-widest mb-3">
                         ⚡ Infrastruktur Solusi Berkelanjutan
                     </div>
@@ -65,26 +65,26 @@ export default function Fitur() {
                 </div>
 
                 {/* Feature Grid - Auto responsive matching any row count cleanly */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                     {fiturList.map((fitur, index) => (
                         <div
                             key={fitur.title}
-                            className="glass-panel p-8 rounded-3xl border border-white/10 hover:border-neon-cyan/40 transition-all duration-300 group reveal-on-scroll flex flex-col hover:shadow-2xl hover:shadow-neon-cyan/10 relative overflow-hidden bg-dark-900/60"
+                            className="glass-panel p-5 sm:p-8 rounded-3xl border border-white/10 hover:border-neon-cyan/40 transition-all duration-300 group reveal-on-scroll flex flex-col hover:shadow-2xl hover:shadow-neon-cyan/10 relative overflow-hidden bg-dark-900/60"
                             style={{ transitionDelay: `${index * 100}ms` }}
                         >
                             {/* Hover Neon Highlight Bar */}
                             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-neon-cyan via-primary-blue to-hyper-violet opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                             {/* Icon Box */}
-                            <div className="w-14 h-14 rounded-2xl bg-dark-950 border border-white/10 flex items-center justify-center text-neon-cyan mb-6 group-hover:scale-110 group-hover:bg-neon-cyan group-hover:text-dark-950 transition-all duration-300 shadow-inner">
+                            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-dark-950 border border-white/10 flex items-center justify-center text-neon-cyan mb-4 sm:mb-6 group-hover:scale-110 group-hover:bg-neon-cyan group-hover:text-dark-950 transition-all duration-300 shadow-inner">
                                 {fitur.icon}
                             </div>
 
                             {/* Content */}
-                            <h3 className="text-xl font-extrabold text-white mb-3 tracking-tight group-hover:text-neon-cyan transition-colors">
+                            <h3 className="text-base sm:text-xl font-extrabold text-white mb-2 sm:mb-3 tracking-tight group-hover:text-neon-cyan transition-colors">
                                 {fitur.title}
                             </h3>
-                            <p className="text-dark-300 leading-relaxed text-xs sm:text-sm mb-8 flex-1">
+                            <p className="text-dark-300 leading-relaxed text-xs sm:text-sm mb-5 sm:mb-8 flex-1">
                                 {fitur.description}
                             </p>
 
@@ -101,7 +101,7 @@ export default function Fitur() {
                 </div>
 
                 {/* Secondary Feature List */}
-                <div className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-6 pt-12 border-t border-white/10">
+                <div className="mt-10 sm:mt-16 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 pt-8 sm:pt-12 border-t border-white/10">
                     {[
                         { title: "Pemrosesan <10ms", desc: "Verifikasi tanpa delay" },
                         { title: "Enkripsi E2E", desc: "Standar keamanan militer" },
@@ -122,7 +122,7 @@ export default function Fitur() {
 
             {/* Cybersecurity Detail Modal */}
             {modalType && (
-                <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-[10000] flex items-end sm:items-center justify-center p-0 sm:p-4">
                     {/* Backdrop */}
                     <div 
                         className="absolute inset-0 bg-black/70 backdrop-blur-md transition-opacity duration-300 animate-fade-in"
@@ -130,7 +130,7 @@ export default function Fitur() {
                     />
                     
                     {/* Modal Content Panel */}
-                    <div className="relative w-full max-w-2xl bg-[#0b1329] border border-white/10 rounded-3xl p-8 md:p-10 shadow-2xl overflow-hidden z-10 animate-fade-in transform transition-all duration-300 scale-100 max-h-[90vh] overflow-y-auto">
+                    <div className="relative w-full sm:max-w-2xl bg-[#0b1329] border border-white/10 rounded-t-3xl sm:rounded-3xl p-5 sm:p-8 md:p-10 shadow-2xl z-10 animate-fade-in transform transition-all duration-300 scale-100 max-h-[85vh] overflow-y-auto">
                         {/* Ambient cybersecurity glow behind */}
                         <div className="absolute -top-24 -left-24 w-48 h-48 bg-primary-blue/20 blur-[80px] rounded-full pointer-events-none" />
                         <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-neon-cyan/20 blur-[80px] rounded-full pointer-events-none" />

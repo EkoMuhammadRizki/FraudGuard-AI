@@ -5,8 +5,8 @@ import Logo from "./logo";
 export default function Footer() {
     return (
         <footer id="kontak" className="border-t border-dark-700/50 bg-dark-900">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-12">
                     {/* Brand */}
                     <div className="lg:col-span-1 reveal-on-scroll">
                         <div className="mb-6">
@@ -74,7 +74,7 @@ export default function Footer() {
                 </div>
 
                 {/* Bottom */}
-                <div className="mt-12 pt-8 border-t border-dark-700/50 flex flex-col md:flex-row items-center justify-between gap-4 reveal-on-scroll" style={{ transitionDelay: "400ms" }}>
+                <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-dark-700/50 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4 reveal-on-scroll text-center md:text-left" style={{ transitionDelay: "400ms" }}>
                     <p className="text-dark-500 text-sm">
                         © 2026 Amankan Fraud. All rights reserved.
                     </p>

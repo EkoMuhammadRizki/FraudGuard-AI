@@ -52,7 +52,7 @@ export default function HalamanLanding() {
       <Fitur />
 
       {/* Tentang Kami Section */}
-      <section id="tentang" className="py-24 relative reveal-on-scroll">
+      <section id="tentang" className="py-16 sm:py-24 relative reveal-on-scroll">
         <div className="absolute top-0 left-1/4 w-[500px] h-[300px] bg-hyper-violet/10 blur-[120px] rounded-full pointer-events-none" />
         
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -60,14 +60,14 @@ export default function HalamanLanding() {
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-hyper-violet/10 border border-hyper-violet/30 text-hyper-violet text-[10px] font-mono uppercase tracking-widest mb-4">
               <span>Tentang Kami</span>
             </div>
-            <h2 className="text-3xl md:text-5xl font-black text-white tracking-tighter leading-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-black text-white tracking-tighter leading-tight">
               Tim Di Balik <span className="text-neon-cyan">Amankan Fraud</span>
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
-              <p className="text-dark-300 text-lg leading-relaxed">
+              <p className="text-dark-300 text-base sm:text-lg leading-relaxed">
                 Amankan Fraud adalah platform Real-Time Fraud Detection System (FDS) perbankan generasi baru yang dikembangkan oleh tim FDS AI & Cyber Security.
               </p>
               <p className="text-dark-400 leading-relaxed">
@@ -95,7 +95,7 @@ export default function HalamanLanding() {
                 ].map((member) => (
                   <li key={member.name} className="flex items-center gap-4">
                     {member.photo ? (
-                      <img src={member.photo} alt={member.name} className="w-10 h-10 rounded-xl object-cover" />
+                  <img src={member.photo} alt={member.name} className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-cover shrink-0" />
                     ) : (
                       <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-blue to-hyper-violet flex items-center justify-center text-white text-sm font-black">
                         {member.name.split(" ").map(w => w[0]).join("").slice(0, 2)}
@@ -114,7 +114,7 @@ export default function HalamanLanding() {
       </section>
 
       {/* Keamanan Section */}
-      <section id="keamanan" className="py-24 relative reveal-on-scroll">
+      <section id="keamanan" className="py-16 sm:py-24 relative reveal-on-scroll">
         <div className="absolute bottom-0 right-1/4 w-[500px] h-[300px] bg-neon-cyan/10 blur-[120px] rounded-full pointer-events-none" />
         
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -122,7 +122,7 @@ export default function HalamanLanding() {
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neon-cyan/10 border border-neon-cyan/30 text-neon-cyan text-[10px] font-mono uppercase tracking-widest mb-4">
               <span>Keamanan</span>
             </div>
-            <h2 className="text-3xl md:text-5xl font-black text-white tracking-tighter leading-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-black text-white tracking-tighter leading-tight">
               Keamanan <span className="text-neon-cyan">Tingkat Lanjut</span>
             </h2>
             <p className="text-dark-400 mt-4 max-w-2xl mx-auto">
@@ -176,19 +176,19 @@ export default function HalamanLanding() {
       </section>
 
       {/* CTA Section */}
-      <section id="cta" className="py-32 relative reveal-on-scroll">
+      <section id="cta" className="py-16 sm:py-32 relative reveal-on-scroll">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-primary-blue/20 blur-[120px] rounded-full pointer-events-none" />
         
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="glass-panel p-16 md:p-24 rounded-[3rem] text-center relative overflow-hidden group">
+          <div className="glass-panel p-8 sm:p-12 md:p-20 lg:p-24 rounded-[2rem] sm:rounded-[3rem] text-center relative overflow-hidden group">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon-cyan to-transparent opacity-50" />
             
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-8 tracking-tighter leading-tight">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 sm:mb-8 tracking-tighter leading-tight">
               Siap Mengamankan <br />
               <span className="text-neon-cyan">Ekosistem Anda?</span>
             </h2>
             
-            <p className="text-dark-300 text-xl mb-12 max-w-2xl mx-auto leading-relaxed font-medium">
+            <p className="text-dark-300 text-base sm:text-xl mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed font-medium">
               Bergabung dengan ribuan institusi finansial yang telah memangkas false-positive rate hingga 89%. Integrasi dalam hitungan menit, perlindungan seumur hidup.
             </p>
             
