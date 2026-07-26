@@ -1,89 +1,88 @@
-import Link from "next/link";
 import { Mail, Phone, MapPin } from "lucide-react";
 import Logo from "./logo";
 
 export default function Footer() {
-    return (
-        <footer id="kontak" className="border-t border-dark-700/50 bg-dark-900">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-12">
-                    {/* Brand */}
-                    <div className="lg:col-span-1 reveal-on-scroll">
-                        <div className="mb-6">
-                            <Logo size="sm" className="scale-90 origin-left" />
-                        </div>
-                        <p className="text-dark-400 text-sm leading-relaxed mb-6">
-                            Platform deteksi fraud digital real-time dengan kecerdasan buatan terdepan untuk melindungi transaksi keuangan Anda.
-                        </p>
-                    </div>
-
-                    {/* Produk */}
-                    <div className="reveal-on-scroll" style={{ transitionDelay: "100ms" }}>
-                        <h4 className="text-sm font-semibold text-dark-100 uppercase tracking-wider mb-4">Produk</h4>
-                        <ul className="space-y-3">
-                            {[
-                                { label: "Fitur", href: "#fitur" },
-                                { label: "Graph Neural Network (GNN)", href: "#fitur" },
-                                { label: "LightGBM Classifier", href: "#fitur" },
-                                { label: "Ensemble Final Stacker", href: "#fitur" },
-                                { label: "Explainable AI (XAI)", href: "#fitur" },
-                                { label: "Biometrik Lanjutan", href: "#fitur" },
-                                { label: "REMI AI Chatbot Assistant", href: "#fitur" },
-                            ].map((item) => (
-                                <li key={item.label}>
-                                    <a href={item.href} className="text-dark-400 hover:text-primary-blue-light transition-colors text-sm">{item.label}</a>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    {/* Perusahaan */}
-                    <div className="reveal-on-scroll" style={{ transitionDelay: "200ms" }}>
-                        <h4 className="text-sm font-semibold text-dark-100 uppercase tracking-wider mb-4">Perusahaan</h4>
-                        <ul className="space-y-3">
-                            {[
-                                { label: "Fitur", href: "#fitur" },
-                                { label: "Tentang Kami", href: "#tentang" },
-                                { label: "Keamanan", href: "#keamanan" },
-                            ].map((item) => (
-                                <li key={item.label}>
-                                    <a href={item.href} className="text-dark-400 hover:text-primary-blue-light transition-colors text-sm">{item.label}</a>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    {/* Kontak */}
-                    <div className="reveal-on-scroll" style={{ transitionDelay: "300ms" }}>
-                        <h4 className="text-sm font-semibold text-dark-100 uppercase tracking-wider mb-4">Kontak</h4>
-                        <ul className="space-y-3 text-sm text-dark-400">
-                            <li className="flex items-center gap-2">
-                                <Mail className="w-4 h-4 text-primary-blue-light shrink-0" strokeWidth={2} />
-                                amankanguard@gmail.com
-                            </li>
-                            <li className="flex items-center gap-2">
-                                <Phone className="w-4 h-4 text-primary-blue-light shrink-0" strokeWidth={2} />
-                                +62 821-1708-0704
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <MapPin className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" strokeWidth={2} />
-                                Purwakarta JawaBarat, Indonesia
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                {/* Bottom */}
-                <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-dark-700/50 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4 reveal-on-scroll text-center md:text-left" style={{ transitionDelay: "400ms" }}>
-                    <p className="text-dark-500 text-sm">
-                        © 2026 Amankan Fraud. All rights reserved.
-                    </p>
-                    <div className="flex items-center gap-6 text-sm text-dark-500">
-                        <a href="#" className="hover:text-dark-300 transition-colors">Kebijakan Privasi</a>
-                        <a href="#" className="hover:text-dark-300 transition-colors">Syarat & Ketentuan</a>
-                    </div>
-                </div>
+  return (
+    <footer id="kontak" className="border-t border-dark-700/50 bg-dark-900">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-12">
+          {/* Brand */}
+          <div className="lg:col-span-1 reveal-on-scroll">
+            <div className="mb-6">
+              <Logo size="sm" className="scale-90 origin-left" />
             </div>
-        </footer>
-    );
+            <p className="text-dark-400 text-sm leading-relaxed mb-6">
+              Platform deteksi fraud digital real-time dengan kecerdasan buatan terdepan untuk melindungi transaksi keuangan Anda.
+            </p>
+          </div>
+
+          {/* Produk */}
+          <div className="reveal-on-scroll" style={{ transitionDelay: "100ms" }}>
+            <h4 className="text-sm font-semibold text-dark-100 uppercase tracking-wider mb-4">Produk</h4>
+            <ul className="space-y-3">
+              {[
+                { label: "Fitur", href: "#fitur" },
+                { label: "Graph Neural Network (GNN)", href: "#fitur" },
+                { label: "LightGBM Classifier", href: "#fitur" },
+                { label: "Ensemble Final Stacker", href: "#fitur" },
+                { label: "Explainable AI (XAI)", href: "#fitur" },
+                { label: "Biometrik Lanjutan", href: "#fitur" },
+                { label: "REMI AI Chatbot Assistant", href: "#fitur" },
+              ].map((item) => (
+                <li key={item.label}>
+                  <a href={item.href} className="text-dark-400 hover:text-primary-blue-light transition-colors text-sm">{item.label}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Perusahaan */}
+          <div className="reveal-on-scroll" style={{ transitionDelay: "200ms" }}>
+            <h4 className="text-sm font-semibold text-dark-100 uppercase tracking-wider mb-4">Perusahaan</h4>
+            <ul className="space-y-3">
+              {[
+                { label: "Fitur", href: "#fitur" },
+                { label: "Tentang Kami", href: "#tentang" },
+                { label: "Keamanan", href: "#keamanan" },
+              ].map((item) => (
+                <li key={item.label}>
+                  <a href={item.href} className="text-dark-400 hover:text-primary-blue-light transition-colors text-sm">{item.label}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Kontak */}
+          <div className="reveal-on-scroll" style={{ transitionDelay: "300ms" }}>
+            <h4 className="text-sm font-semibold text-dark-100 uppercase tracking-wider mb-4">Kontak</h4>
+            <ul className="space-y-3 text-sm text-dark-400">
+              <li className="flex items-center gap-2">
+                <Mail className="w-4 h-4 text-primary-blue-light shrink-0" strokeWidth={2} />
+                amankanguard@gmail.com
+              </li>
+              <li className="flex items-center gap-2">
+                <Phone className="w-4 h-4 text-primary-blue-light shrink-0" strokeWidth={2} />
+                +62 821-1708-0704
+              </li>
+              <li className="flex items-start gap-2">
+                <MapPin className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" strokeWidth={2} />
+                Purwakarta JawaBarat, Indonesia
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom */}
+        <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-dark-700/50 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4 reveal-on-scroll text-center md:text-left" style={{ transitionDelay: "400ms" }}>
+          <p className="text-dark-500 text-sm">
+            © 2026 Amankan Fraud. All rights reserved.
+          </p>
+          <div className="flex items-center gap-6 text-sm text-dark-500">
+            <a href="#" className="hover:text-dark-300 transition-colors">Kebijakan Privasi</a>
+            <a href="#" className="hover:text-dark-300 transition-colors">Syarat & Ketentuan</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
 }
