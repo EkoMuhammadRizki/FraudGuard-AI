@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/pustaka/mongodb";
+import bcrypt from "bcryptjs";
 
 export async function POST(req: NextRequest) {
     try {
@@ -38,9 +39,10 @@ export async function POST(req: NextRequest) {
             });
 
             if (existingUser) {
+                const hashedPassword = await bcrypt.hash(cleanNewPassword, 12);
                 await usersCollection.updateOne(
                     { _id: existingUser._id },
-                    { $set: { password: cleanNewPassword, updatedAt: new Date() } }
+                    { $set: { password: hashedPassword, updatedAt: new Date() } }
                 );
                 dbUpdated = true;
             }

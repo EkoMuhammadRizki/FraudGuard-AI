@@ -2,20 +2,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { User, Lock, Mail, Eye, EyeOff, ShieldCheck, ArrowLeft, Bot, KeyRound } from "lucide-react";
+import { User, Lock, Mail, Eye, EyeOff, ArrowLeft, Bot, KeyRound } from "lucide-react";
 
 interface UnifiedAuthCardProps {
     initialMode?: "login" | "register" | "reset";
 }
-
-// Preset Akun MongoDB untuk pengujian cepat (juri, eko, ihya, ibin, reza)
-const DEMO_ACCOUNTS = [
-    { username: "juri", password: "juri123", role: "Juri FDS" },
-    { username: "eko", password: "eko123", role: "Lead Dev" },
-    { username: "ihya", password: "ihya123", role: "Analyst" },
-    { username: "ibin", password: "ibin123", role: "Security" },
-    { username: "reza", password: "reza123", role: "ML Engineer" },
-];
 
 export default function UnifiedAuthCard({ initialMode = "login" }: UnifiedAuthCardProps) {
     const router = useRouter();
@@ -31,13 +22,6 @@ export default function UnifiedAuthCard({ initialMode = "login" }: UnifiedAuthCa
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
-
-    // Auto fill dari tombol cepat akun MongoDB
-    const handleQuickFill = (acc: typeof DEMO_ACCOUNTS[0]) => {
-        setUsername(acc.username);
-        setPassword(acc.password);
-        setErrorMessage("");
-    };
 
     // Submit Handler Login
     const handleLoginSubmit = async (e: React.FormEvent) => {
@@ -432,32 +416,6 @@ export default function UnifiedAuthCard({ initialMode = "login" }: UnifiedAuthCa
                                     <span className="px-2 py-0.5 rounded bg-neon-cyan/10 border border-neon-cyan/30 text-neon-cyan text-[10px] font-mono font-bold uppercase">v2.0</span>
                                 </div>
                                 <p className="text-xs text-dark-400 font-medium">Masuk ke sistem deteksi FraudGuard AI</p>
-                            </div>
-                        )}
-
-                        {/* Preset Quick Fill Buttons untuk Akun MongoDB (Hanya Tampil di Mode Login) */}
-                        {isLogin && (
-                            <div className="bg-dark-900/90 p-3 rounded-2xl border border-white/10 animate-fade-in">
-                                <p className="text-[10px] font-mono font-bold text-dark-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                                    <ShieldCheck className="w-3.5 h-3.5 text-neon-cyan" />
-                                    <span>Pilih Akun MongoDB (Pintas 1-Klik):</span>
-                                </p>
-                                <div className="flex flex-wrap gap-1.5">
-                                    {DEMO_ACCOUNTS.map((acc) => (
-                                        <button
-                                            key={acc.username}
-                                            type="button"
-                                            onClick={() => handleQuickFill(acc)}
-                                            className={`px-2.5 py-1 rounded-xl text-xs font-mono font-bold transition-all ${
-                                                username === acc.username
-                                                    ? "bg-gradient-to-r from-neon-cyan to-primary-blue text-dark-950 font-black shadow-md shadow-neon-cyan/20"
-                                                    : "bg-white/5 hover:bg-neon-cyan/10 text-dark-300 hover:text-neon-cyan border border-white/10 hover:border-neon-cyan/30"
-                                            }`}
-                                        >
-                                            {acc.username}
-                                        </button>
-                                    ))}
-                                </div>
                             </div>
                         )}
 

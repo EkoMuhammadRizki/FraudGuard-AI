@@ -4,7 +4,7 @@ import { transactionFeed, dashboardSummary } from "@/pustaka/data-fraudguard";
 import { formatCurrency } from "@/pustaka/utilitas";
 
 // Fallback IP Kamatera Publik atau dari Environment Variable
-const REMOTE_AI_SERVER_URL = process.env.AI_SERVER_URL ?? "http://103.102.46.104:8000/v1/detect-fraud";
+const REMOTE_AI_SERVER_URL = process.env.AI_SERVER_URL || "http://localhost:8000/v1/detect-fraud";
 const LOCAL_PYTHON_URL = process.env.PYTHON_API_URL ?? "http://localhost:8000";
 
 interface FallbackData {
@@ -448,7 +448,7 @@ export async function POST(req: NextRequest) {
                     xai_features: data.xai_features ?? fallback.xai_features,
                     forensic_narrative: data.forensic_narrative ?? fallback.forensic_narrative,
                     source: "kamatera_cloud_ai",
-                    server_ip: "103.102.46.104:8000",
+                    server_ip: REMOTE_AI_SERVER_URL,
                 });
             }
         } catch (kamateraErr) {
@@ -466,7 +466,7 @@ export async function POST(req: NextRequest) {
             xai_features: fallback.xai_features,
             forensic_narrative: fallback.forensic_narrative,
             source: "remi_embedded_ai",
-            notice: "Server Kamatera (103.102.46.104:8000) sedang offline/tidak terjangkau. Menampilkan hasil analisis mesin intelijen REMI AI lokal.",
+            notice: "Server Kamatera sedang offline/tidak terjangkau. Menampilkan hasil analisis mesin intelijen REMI AI lokal.",
         });
 
     } catch (err: unknown) {
@@ -495,7 +495,6 @@ export async function GET() {
         return NextResponse.json({
             status: "ok",
             kamatera_server: {
-                ip: "103.102.46.104:8000",
                 url: REMOTE_AI_SERVER_URL,
                 online: isKamateraOnline,
             },
@@ -505,7 +504,7 @@ export async function GET() {
         return NextResponse.json({
             status: "ok",
             kamatera_server: {
-                ip: "103.102.46.104:8000",
+                url: REMOTE_AI_SERVER_URL,
                 online: false,
             },
         });

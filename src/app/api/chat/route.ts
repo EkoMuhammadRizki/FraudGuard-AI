@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
-const KAMATERA_AI_URL = process.env.KAMATERA_AI_URL || process.env.AI_SERVER_URL || "http://100.113.232.83:8000/v1";
+const KAMATERA_AI_URL = process.env.KAMATERA_AI_URL || process.env.AI_SERVER_URL || "http://localhost:8000/v1";
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
@@ -66,9 +66,12 @@ export async function POST(req: NextRequest) {
           displayModelName = "Gemini 2.5 Pro";
         }
 
-        const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelEndpoint}:generateContent?key=${GEMINI_API_KEY}`, {
+        const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelEndpoint}:generateContent`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": GEMINI_API_KEY,
+          },
           body: JSON.stringify({
             contents: [{ parts: [{ text: fullMessages.map(m => `${m.role}: ${m.content}`).join("\n") }] }]
           })

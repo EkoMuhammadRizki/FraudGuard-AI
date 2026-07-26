@@ -1,7 +1,14 @@
 import { MongoClient, Db } from "mongodb";
 
-const MONGO_URI = process.env.MONGODB_URI || "mongodb+srv://fraudguard:amankan_fraud@clusterfraud.cw2s6z.mongodb.net/fraud_detection?retryWrites=true&w=majority";
 const DB_NAME = process.env.DB_NAME || "fraud_detection";
+
+function getMongoUri(): string {
+    const uri = process.env.MONGODB_URI;
+    if (!uri) {
+        throw new Error("MONGODB_URI environment variable is required. Copy .env.example to .env.local and configure it.");
+    }
+    return uri;
+}
 
 let client: MongoClient | null = null;
 let db: Db | null = null;
@@ -12,7 +19,7 @@ export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db
     }
 
     try {
-        const _client = new MongoClient(MONGO_URI, {
+        const _client = new MongoClient(getMongoUri(), {
             serverSelectionTimeoutMS: 2500,
             connectTimeoutMS: 2500,
         });

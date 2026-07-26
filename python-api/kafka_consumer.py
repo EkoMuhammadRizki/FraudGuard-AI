@@ -7,7 +7,7 @@ import traceback
 from datetime import datetime
 import inference
 
-KAFKA_BROKERS = os.getenv("KAFKA_BROKER", "100.103.158.30:9094,103.102.46.104:9094,localhost:9094").split(",")
+KAFKA_BROKERS = os.getenv("KAFKA_BROKER", "localhost:9094").split(",")
 
 def start_kafka_consumer_background():
     """

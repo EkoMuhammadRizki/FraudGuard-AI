@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/pustaka/mongodb";
+import bcrypt from "bcryptjs";
 
 export async function POST(req: NextRequest) {
     try {
@@ -48,10 +49,12 @@ export async function POST(req: NextRequest) {
                 );
             }
 
+            const hashedPassword = await bcrypt.hash(cleanPassword, 12);
+
             const newUser = {
                 username: cleanUsername,
                 email: cleanEmail,
-                password: cleanPassword,
+                password: hashedPassword,
                 name: cleanUsername.charAt(0).toUpperCase() + cleanUsername.slice(1),
                 role: "Analyst",
                 createdAt: new Date(),
